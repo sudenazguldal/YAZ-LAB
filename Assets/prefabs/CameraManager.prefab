@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1890524771575172220}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.3696557, y: -2.183188, z: 12.473431}
+  m_LocalPosition: {x: -1.0470381, y: -1.4529674, z: -6.4644527}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -177,6 +177,11 @@ MonoBehaviour:
   inputAxisController: {fileID: 1115803229984334811}
   player: {fileID: 0}
   crosshairUICanvas: {fileID: 0}
+  aimPos: {fileID: 0}
+  aimSmoothSpeed: 20
+  aimMask:
+    serializedVersion: 2
+    m_Bits: 65
 --- !u!1 &6482691490886908215
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,8 +211,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6482691490886908215}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11102908, y: -0.0115208635, z: 0.0012871964, w: 0.99374956}
-  m_LocalPosition: {x: -1.7696557, y: -1.9803648, z: 10.358562}
+  m_LocalRotation: {x: 0.111027054, y: -0.012953448, z: 0.0014472549, w: 0.9937319}
+  m_LocalPosition: {x: -1.447038, y: -1.250144, z: -8.57932}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
