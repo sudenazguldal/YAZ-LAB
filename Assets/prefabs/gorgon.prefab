@@ -727,6 +727,8 @@ GameObject:
   - component: {fileID: 8538220365019072302}
   - component: {fileID: 4361893154610671806}
   - component: {fileID: 5898071570801696357}
+  - component: {fileID: 1188993292361149603}
+  - component: {fileID: 8772724890160451177}
   m_Layer: 8
   m_Name: gorgon
   m_TagString: enemy
@@ -825,7 +827,53 @@ MonoBehaviour:
   throwForce: 10
   animator: {fileID: 8538220365019072302}
   runBoolName: isrun
-  attackTriggerName: isattack
+  attackBoolName: isattack
+--- !u!114 &1188993292361149603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847148997874690335}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 184753fc6b68a0a4fbfa65be1e485a80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  destroyDelay: 3
+  animator: {fileID: 8538220365019072302}
+  dieTriggerName: isdie
+--- !u!136 &8772724890160451177
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847148997874690335}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6045556
+  m_Height: 2.3146062
+  m_Direction: 1
+  m_Center: {x: -0.009279251, y: 0.9480505, z: 0}
 --- !u!1 &1876847026498876315
 GameObject:
   m_ObjectHideFlags: 0

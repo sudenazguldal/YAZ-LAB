@@ -10,19 +10,18 @@ public class enemy1 : MonoBehaviour
     [Header("Ranges & Timing")]
     public float detectRange = 10f;
     public float stopRange = 3.0f;
-    public float attackCooldown = 0.7f; // Her tam saldırı döngüsü (animasyon + bekleme) arası süre
+    public float attackCooldown = 0.7f;
     private float lastAttackTime;
 
     [Header("Throw")]
     public GameObject bonePrefab;
     public Transform throwPoint;
     public float throwForce = 10f;
-    // public float throwUpward = 0; // Doğrudan fırlatma için bu değişkene artık gerek yok
 
     [Header("Animation")]
     public Animator animator;
     public string runBoolName = "isrun";
-    public string attackTriggerName = "isattack"; // Trigger olarak değiştirildi!
+    public string attackBoolName = "isattack";
 
     private NavMeshAgent agent;
 
@@ -39,7 +38,10 @@ public class enemy1 : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // 1) Takip (Menzil İçi Ama Saldırı Dışı)
+        // [YENİ]: Düşmanın mevcut durumda saldırmakta olup olmadığını kontrol eder.
+        bool isAttacking = animator && animator.GetBool(attackBoolName);
+
+
         if (distance <= detectRange && distance > stopRange)
         {
             agent.isStopped = false;
@@ -48,16 +50,13 @@ public class enemy1 : MonoBehaviour
             if (animator)
             {
                 animator.SetBool(runBoolName, true);
-                // Saldırıya başlama sinyalini burada kesiyoruz
-                // NOT: Trigger'lar otomatik sıfırlandığı için burada SetBool kullanmadık.
+                // Bu, NPC'nin koşarken saldırı duruşunda kalmasını engeller.
+                animator.SetBool(attackBoolName, false);
             }
         }
-        // 2) Saldırı Menzilinde
         else if (distance <= stopRange)
         {
             agent.isStopped = true;
-
-            // Oyuncuya döner (Saldırı öncesi hedefi doğrular)
             Vector3 faceDir = (player.position - transform.position);
             faceDir.y = 0;
             if (faceDir.sqrMagnitude > 0.0001f)
@@ -71,60 +70,66 @@ public class enemy1 : MonoBehaviour
                 animator.SetBool(runBoolName, false);
             }
 
-            // Cooldown dolduysa saldırı animasyonunu BAŞLAT
-            if (Time.time - lastAttackTime >= attackCooldown)
+            if (!isAttacking && (Time.time - lastAttackTime >= attackCooldown))
             {
                 if (animator)
                 {
-                    // SADECE animasyonu tetikle! Kemik fırlatma işi Animasyon Olayında.
-                    animator.SetTrigger(attackTriggerName);
+                    animator.SetBool(attackBoolName, true);
                 }
-                // lastAttackTime, kemik FİİLİ OLARAK fırlatıldığında (ThrowBone() içinde) güncellenecek.
             }
         }
-
-        // 3) Çok Uzakta
         else
         {
             agent.isStopped = true;
             if (animator)
             {
                 animator.SetBool(runBoolName, false);
-                // Saldırı sinyallerini temizle
+                animator.SetBool(attackBoolName, false);
+
+                // Ayrıca, eğer Idle (Bekleme) animasyonunuzun adını biliyorsanız:
+                // animator.CrossFade("Idle", 0.1f); // Animasyonu zorla keser (önceden tartışıldı)
             }
         }
     }
-
-    // --- Kemik fırlatma (Animation Event tarafından çağrılacak) ---
-    // PUBLIC OLMALIDIR!
-    public void ThrowBone()
+// --- Kemik fırlatma (Animation Event tarafından çağrılacak) ---
+// PUBLIC OLMALIDIR!
+public void ThrowBone()
     {
-        // YALNIZCA KEMİK FIRLATILDIĞINDA COOLDOWN SÜRESİNİ SIFIRLA
-        lastAttackTime = Time.time;
+        if (bonePrefab == null || throwPoint == null || player == null)
+        { 
+            return;
+        }
+        float currentDistance = Vector3.Distance(transform.position, player.position);
 
-        if (bonePrefab == null || throwPoint == null || player == null) return;
+        if (currentDistance > stopRange)
+        {
+             Debug.Log("Hedef menzil dışına çıktı. Fırlatma iptal edildi.");
+            return;
+        }
 
-        // 1. Kemik oluştur
         GameObject bone = Instantiate(bonePrefab, throwPoint.position, throwPoint.rotation);
-
-        // 2. Yön hesaplama (Düzeltilmiş: Doğrudan hedefe)
-        // Oyuncunun göğüs yüksekliğini hedefle
+        Debug.Log("Fırlatılan nesne: " + bone.name + " - Script var mı? " + (bone.GetComponent<BoneDamage>() != null));
         Vector3 targetPosition = player.position + Vector3.up;
 
-        // Fırlatma noktasından hedefe olan saf yön vektörünü hesapla
         Vector3 direction = (targetPosition - throwPoint.position).normalized;
 
-        // 3. Kuvvet Uygulama
+        // Kuvvet Uygulama
         if (bone.TryGetComponent<Rigidbody>(out var rb))
         {
+            // Önceki hızları sıfırlayarak temiz bir fırlatma sağlar
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
             // Hesaplanan yönde Impulse (Ani Kuvvet) uygula
             rb.AddForce(direction * throwForce, ForceMode.Impulse);
         }
-
-        // sahneyi kalabalıklaştırmamak için
+        else
+        {
+            Debug.LogError("Fırlatılan kemik prefabrikasında Rigidbody bileşeni bulunamadı!", bone);
+            Destroy(bone);
+            return; 
+        }
+        lastAttackTime = Time.time;
         Destroy(bone, 6f);
     }
 }
