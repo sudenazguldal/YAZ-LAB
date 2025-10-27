@@ -1022,7 +1022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19a86d88e27669847925c85a12dbb3e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ClipSize: 12
+  ClipSize: 6
   ExtraAmmo: 24
   CurrentAmmo: 0
 --- !u!4 &7979291774852272663 stripped

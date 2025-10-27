@@ -27,12 +27,19 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField] private float coyoteTime = 0.1f;       // kısa tolerans
 
     [Header("Crouch")]
-    [SerializeField] private float crouchSpeedMultiplier = 0.5f;   // yürüme hızına çarpan
+
     [SerializeField] private float standHeight = 1.8f;
     [SerializeField] private float crouchHeight = 1.2f;
     [SerializeField] private float standCenterY = 0.9f;
     [SerializeField] private float crouchCenterY = 0.6f;
     [SerializeField] private float crouchTransitionSpeed = 12f;    // yükseklik geçiş hızı
+
+    [Header("Cover Detection")]
+    [SerializeField] private LayerMask coverLayerMask; // Sadece siper alınabilecek objelerin katmanı
+    [SerializeField] private float coverDetectionRange = 1.0f; // Ne kadar yakından siper alınabilir
+    [SerializeField] private float coverDetectionHeight = 1.5f;
+
+
 
 
 
@@ -47,7 +54,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private Vector3 velocity;    // sadece dikey bileşen
     private bool isSprinting;
     public bool isAiming;
-    
+
     private float lastGroundedTime;
 
 
@@ -93,23 +100,33 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             case PlayerStance.Standing:
                 Debug.Log("Ayakta duruyor");
-                Player_anim.SetBool("isCrouching", false);
-                Player_anim.SetBool("isInCover", false);
+                // Animasyon ve diğer durum parametrelerini sıfırla
+                Player_anim.SetBool("isCrouching", false); // Crouch kapalı
+                Player_anim.SetBool("isInCover", false);  // Cover kapalı
+                                                          // Karakter Kontrolcü boyutu Stand boyuna ayarlanır (Update'teki Lerp ile).
                 break;
 
             case PlayerStance.Crouching:
                 Debug.Log("Crouch durumunda");
-                Player_anim.SetBool("isCrouching", true);
-                Player_anim.SetBool("isInCover", false);
+                // Animasyon
+                Player_anim.SetBool("isCrouching", true); // Crouch açık
+                Player_anim.SetBool("isInCover", false);  // Cover kapalı
+                isSprinting = false;
+                // Karakter Kontrolcü boyutu Crouch boyuna ayarlanır.
                 break;
 
             case PlayerStance.Covering:
-                Debug.Log("Cover aldı");
-                Player_anim.SetBool("isCrouching", false);
-                Player_anim.SetBool("isInCover", true);
+                Debug.Log("Siper Aldı (Alçak)");
+                // Animasyon (Crouch animasyonunu kullanır, Cover pozunu düzeltir)
+                Player_anim.SetBool("isCrouching", true);  // Crouch açık 
+                Player_anim.SetBool("isInCover", true);    // Cover açık
                 isSprinting = false;
+                // Karakter Kontrolcü boyutu Crouch boyuna ayarlanır.
                 break;
         }
+
+
+
     }
 
     #endregion
@@ -144,36 +161,132 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             shootingHandler.HandleShootInput(ctx.ReadValueAsButton());
         }
     }
+    private PlayerStance CheckCoverType()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        Vector3 direction = transform.forward;
 
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, coverDetectionRange, coverLayerMask))
+        {
+            // Mutlak Yükseklik yerine, objenin zemin seviyesine göre boyunu baz alıyoruz
+            float hitPointY = hit.point.y;
+            float groundY = transform.position.y;
+            float objectHitHeightFromGround = hitPointY - groundY;
 
-    public void OnCrouch(InputAction.CallbackContext ctx) {
+            // Sadece Low Cover kontrolü: Çarptığımız nokta Low Cover sınırından küçük mü?
+            if (objectHitHeightFromGround <= coverDetectionHeight)
+            {
+                Debug.DrawRay(origin, direction * coverDetectionRange, Color.blue, Time.deltaTime);
+                return PlayerStance.Covering; // Tek tip Cover döndür
+            }
 
-        // cover yok: sadece crouch kontrolü
-        // C -> toggle, LeftCtrl -> hold
-        var keyName = ctx.control?.name;         // "c", "leftCtrl" vb.
-        bool pressed = ctx.ReadValueAsButton();  // basılı mı?
+            // Çarptı ama çok yüksek (Duvar), siper alınamaz.
+            Debug.DrawRay(origin, direction * coverDetectionRange, Color.red, Time.deltaTime);
+            return PlayerStance.Standing;
+        }
 
+        // Çarpışma yoksa
+        Debug.DrawRay(origin, direction * coverDetectionRange, Color.red, Time.deltaTime);
+        return PlayerStance.Standing;
+    }
+
+    private void EnterCover(PlayerStance stance)
+    {
+        // HighCovering veya LowCovering'e geçişi SetStance'e devret
+        SetStance(stance);
+        Debug.Log($"Siper Alındı: {stance}");
+        // Buraya ilerde siper alma sesi/vfx eklenebilir.
+    }
+
+    private void ExitCover()
+    {
+        // Ayakta duruşa geçişi SetStance'e devret
+        SetStance(PlayerStance.Standing);
+        Debug.Log("Siperden Çıkıldı");
+    }
+
+    private void Crouch()
+    {
+        // Çömelmeye geçişi SetStance'e devret
+        SetStance(PlayerStance.Crouching);
+        Debug.Log("Çömeldi");
+    }
+
+    private void StandUp()
+    {
+        // Ayağa kalkışı SetStance'e devret
+        SetStance(PlayerStance.Standing);
+        Debug.Log("Ayağa Kalktı");
+    }
+
+    private void TryCoverOrCrouch()
+    {
+        // 1. ÇIKIŞ ÖNCELİĞİ: Eğer zaten Cover modundaysa -> Ayakta duruşa geç
+        if (currentStance == PlayerStance.Covering) // SADECE BU SATIRI DEĞİŞTİRİN
+        {
+            ExitCover();
+            return;
+        }
+
+        // 2. COVER GİRİŞ ÖNCELİĞİ: Siper bulabiliyorsa -> Cover pozisyonuna gir
+        PlayerStance coverType = CheckCoverType();
+
+        // Eğer Covering döndüyse (Low/High yok artık)
+        if (coverType == PlayerStance.Covering) // SADECE BU SATIRI DEĞİŞTİRİN
+        {
+            EnterCover(coverType);
+            return;
+        }
+
+        // 3. CROUCH/STAND: Cover yoksa -> Crouch/Stand toggle yap
+
+        if (currentStance == PlayerStance.Crouching)
+        {
+            StandUp();
+        }
+        else if (currentStance == PlayerStance.Standing)
+        {
+            Crouch();
+        }
+    }
+    // PlayerController.cs (OnCrouch metodu)
+
+    public void OnCrouch(InputAction.CallbackContext ctx)
+    {
+        var keyName = ctx.control?.name;
+        bool pressed = ctx.ReadValueAsButton();
+
+        // --------------------------------------------------------
+        // C TUŞU: TOGGLE (Ana Karar Verici)
+        // --------------------------------------------------------
         if (keyName == "c")
         {
             if (!ctx.performed) return;
-            // Toggle
-            if (currentStance == PlayerStance.Crouching)
-                SetStance(PlayerStance.Standing);
-            else
-                SetStance(PlayerStance.Crouching);
+
+            // Tüm karar mantığı TryCoverOrCrouch metoduna devredilir.
+            TryCoverOrCrouch();
         }
+        // --------------------------------------------------------
+        // LEFT CTRL TUŞU: HOLD (Basılı Tutma)
+        // --------------------------------------------------------
         else if (keyName == "leftCtrl")
         {
-            // Hold
-            if (pressed) SetStance(PlayerStance.Crouching);
-            if (ctx.canceled) SetStance(PlayerStance.Standing);
+            // HOLD tuşlarındaki mantık farklı:
+
+            // 1. Hangi moda geçeceğine karar ver (Cover veya Crouch)
+            PlayerStance nextStance = CheckCoverType();
+
+            // Eğer siper yoksa (Standing döndüyse), zorla Crouch yap
+            if (nextStance == PlayerStance.Standing)
+                nextStance = PlayerStance.Crouching;
+
+            if (pressed)
+                SetStance(nextStance); // Basılı tutulursa Cover/Crouch'a gir
+            if (ctx.canceled)
+                SetStance(PlayerStance.Standing); // Bırakılırsa ayağa kalk
         }
-        else
-        {
-            // Fallback: toggle davranışı
-            if (ctx.performed)
-                SetStance(currentStance == PlayerStance.Crouching ? PlayerStance.Standing : PlayerStance.Crouching);
-        }
+
+
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
@@ -190,16 +303,36 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
     }
 
+
+
     public void OnAim(InputAction.CallbackContext ctx)
     {
-        isAiming = ctx.ReadValueAsButton();
+        bool pressed = ctx.ReadValueAsButton();
+        isAiming = pressed;
 
-        //  Aim durumunu PlayerShooting'e de bildir.
+        // Siperde miyiz?
+        bool isCurrentlyCovering = (currentStance == PlayerStance.Covering);
+
+
+        if (Player_anim != null)
+        {
+            // Peeking animasyonunu tetikle (Siperdeysek VE Nişan Alıyorsak)
+            bool shouldPeekAnimate = isCurrentlyCovering && isAiming;
+            Player_anim.SetBool("isPeeking", shouldPeekAnimate);
+        }
+
+        // PlayerShooting'e hem Aim durumunu hem de Cover durumunu bildir.
         if (shootingHandler != null)
         {
-            shootingHandler.SetAiming(isAiming);
+            // 🔹 KRİTİK DEĞİŞİKLİK: isCurrentlyCovering'i ikinci parametre olarak gönderiyoruz.
+            shootingHandler.SetAiming(isAiming, isCurrentlyCovering);
         }
+
+
     }
+
+    // NOT: PlayerShooting.cs'e bu yeni metot imzasına uygun olması için SetAiming(bool isAiming, bool isCovering) 
+    //          şeklinde bir metot eklememiz gerekecek.
 
     public void OnSwitchShoulder(InputAction.CallbackContext ctx)
     {
@@ -210,7 +343,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     }
 
     // Ateşleme input'u PlayerShooting'e delege edilecek
-   
+
 
 
     void Update()
@@ -223,7 +356,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
 
         #endregion
-       
+
 
 
         #region Ground Handling
@@ -276,9 +409,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         #endregion
 
         #region Rotation
-        
 
-        
+
+
         // her zaman kameranın baktığı yöne dön (TPS stili)
         Vector3 lookDir = isAiming ? yawTarget.forward : cameraTransform.forward;
         lookDir.y = 0f;
@@ -300,9 +433,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 break;
 
             case PlayerStance.Covering:
-                walkSpeed *= 0.3f; // coverdayken daha yavaş hareket
-                
+                walkSpeed *= 0.4f;
+
                 break;
+
 
             case PlayerStance.Standing:
             default:
@@ -349,7 +483,31 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         #endregion
 
 
-        // PlayerController.cs (Update metodunun içindeki #region Animator bloğu)
+
+
+        #region Cover Validation (Siper Geçerliliğini Kontrol Etme)
+
+
+
+
+
+
+
+        if (currentStance == PlayerStance.Covering)
+        {
+            // Yalnızca siperde isek, önümüzde hala siper var mı kontrol et
+            PlayerStance requiredStance = CheckCoverType();
+
+            // Eğer CheckCoverType artık Cover değil (Standing döndü) ise,
+            // karakter nesneden ayrıldı demektir.
+            if (requiredStance != PlayerStance.Covering)
+            {
+                // 🔹 KRİTİK DÜŞÜŞ: Cover durumundan Crouch durumuna indir
+                SetStance(PlayerStance.Crouching);
+                // Crouch'a inmek, karakterin gizliliğini korur ama siper pozunu bozar.
+            }
+        }
+        #endregion
 
         #region Animator
         if (Player_anim != null)
@@ -362,8 +520,22 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             // HAREKET VE YÖN PARAMETRELERİ (Mevcut kodunuz)
             // ----------------------------------------------------
             const float damp = 0.12f;
-            float moveX = Vector3.Dot(moveDirection, camRight);
-            float moveY = Vector3.Dot(moveDirection, camFwd);
+
+
+            float moveX;
+            float moveY;
+
+            if (currentStance == PlayerStance.Covering)
+            {
+                //KONTROL EKLENDİ: Sadece yatay hareket (strafe) ve dikey kilit (0)
+                moveX = moveInput.x;
+                moveY = 0f; // Dikey hareketi kilitler!
+            }
+            else
+            {
+                moveX = Vector3.Dot(moveDirection, camRight);
+                moveY = Vector3.Dot(moveDirection, camFwd);
+            }
             Player_anim.SetFloat("MoveX", moveX, damp, Time.deltaTime);
             Player_anim.SetFloat("MoveY", moveY, damp, Time.deltaTime);
 
@@ -396,13 +568,18 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             // ==============================================================
             if (aimConstraint != null)
             {
-                float targetRigWeight = isAiming ? 1f : 0f;
+                // 🔹 KRİTİK MANTIK: Peeking yapıyorsak (SpinePeek açık), Rig'i Kapat!
+                bool shouldBePeeking = currentStance == PlayerStance.Covering && isAiming;
 
-                // Rig ağırlığını da Animasyon ağırlığıyla senkronize olarak ayarla
+                // YENİ TARGET: Eğer Peeking yapmıyorsak ve Aiming yapıyorsak Rig'i aç (1f).
+                // Peeking yapıyorsak veya Nişan almıyorsak Rig'i kapat (0f).
+                float targetRigWeight = (isAiming && !shouldBePeeking) ? 1f : 0f;
+
+                // Rig ağırlığını senkronize olarak ayarla
                 aimConstraint.weight = Mathf.Lerp(
                     aimConstraint.weight,
                     targetRigWeight,
-                    Time.deltaTime * BLEND_SPEED // Aynı hızlı geçişi kullan
+                    Time.deltaTime * BLEND_SPEED
                 );
             }
 
@@ -429,6 +606,25 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                     Time.deltaTime * BLEND_SPEED // Hızlı geçiş
                 );
                 Player_anim.SetLayerWeight(aimLayerHandIndex, newHandWeight);
+            }
+            {
+
+                int spinePeekLayerIndex = 3;
+
+                float currentSpineWeight = Player_anim.GetLayerWeight(spinePeekLayerIndex);
+
+                // Kriter: SADECE Siperdeysek VE Nişan Alıyorsak aç
+                bool shouldBePeeking = currentStance == PlayerStance.Covering && isAiming;
+
+                float targetSpineWeight = shouldBePeeking ? 1f : 0f;
+
+
+                float newSpineWeight = Mathf.Lerp(
+                    currentSpineWeight,
+                    targetSpineWeight,
+                    Time.deltaTime * BLEND_SPEED // Hızlı geçiş (30f)
+                );
+                Player_anim.SetLayerWeight(spinePeekLayerIndex, newSpineWeight);
             }
         }
         #endregion

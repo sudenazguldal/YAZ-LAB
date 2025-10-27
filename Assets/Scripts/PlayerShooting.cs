@@ -19,6 +19,11 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private AudioClip shootSound;     // Ana atýþ sesi klibi
     [SerializeField] private AudioClip hitTargetSound; // Zombiye vuruþ sesi (Opsiyonel)
     [SerializeField] private AudioClip hitOthersSound; // Duvara vuruþ sesi (Opsiyonel)
+    [SerializeField] private AudioClip emptyGunSound;
+    [Header("Cover Shooting")]
+    private bool isPeeking = false; // PlayerController'dan gelen Cover Aim durumu
+    [SerializeField] private float peekHeightOffset = 0.6f; // Siperden uzanma yüksekliði (Örn: 0.6m)
+
     WeaponAmmo Ammo;
 
     private float nextFireTime = 0.1f;
@@ -29,13 +34,16 @@ public class PlayerShooting : MonoBehaviour
 
     void Start()
     {
-                Ammo = GetComponentInChildren<WeaponAmmo>();
+        Ammo = GetComponentInChildren<WeaponAmmo>();
     }
 
     // PlayerController'dan çaðrýlacak Aim durumunu güncelleme metodu
-    public void SetAiming(bool isAiming)
+    public void SetAiming(bool isAiming, bool isCovering)
     {
         currentIsAiming = isAiming;
+
+        // isPeeking durumu: Siperdeysen VE niþan alýyorsan TRUE
+        isPeeking = isCovering && isAiming;
     }
     public void HandleShootInput(bool isPressed)
     {
@@ -46,40 +54,65 @@ public class PlayerShooting : MonoBehaviour
     public void Shoot(Vector3 targetPoint)
     {
         if (currentIsAiming == false) return; // Sadece niþan alýndýðýnda ateþle
-        if (Ammo.CurrentAmmo == 0) return; // Mermi yoksa ateþleme
+        if (Ammo.CurrentAmmo == 0) {
+
+            if (audioSource != null && emptyGunSound != null)
+            {
+
+                audioSource.PlayOneShot(emptyGunSound);
+            }
+
+
+            return; // Mermi yoksa ateþleme
+         }
+            
+            
+            
+
+        Vector3 bulletSpawnPosition = spawnBulletPosition.position;
+
+        if (isPeeking)
+        {
+            // Namlu pozisyonunu siperden uzanýyormuþ gibi yukarý kaydýr
+            bulletSpawnPosition += Vector3.up * peekHeightOffset;
+        }
+
+
         // 1. Namlu Alevi Efekti
+
+
         if (vfxMuzzleFlash != null)
         {
 
-            
+
             //  1. TANIMLAMA ve OLUÞTURMA (Scope için kritik)
             GameObject muzzleFlashInstance = Instantiate(
                 vfxMuzzleFlash,
-                spawnBulletPosition.position,
-                spawnBulletPosition.rotation
+                bulletSpawnPosition,
+            spawnBulletPosition.rotation
             );
 
             ParticleSystem ps = muzzleFlashInstance.GetComponent<ParticleSystem>();
 
             if (ps != null)
             {
-               // 1. Manuel Hesaplamaya Geri Dönüþ
-        // Parçacýklarýn maksimum ömrünü al (eðer ayar sabit deðilse .constantMax kullanýlýr)
-        float maxLifetime = ps.main.startLifetime.constantMax; 
-        
-        // Toplam Süre = Yayma Süresi + Parçacýk Ömrü
-        float totalDuration = ps.main.duration + maxLifetime; 
+                // 1. Manuel Hesaplamaya Geri Dönüþ
+                // Parçacýklarýn maksimum ömrünü al (eðer ayar sabit deðilse .constantMax kullanýlýr)
+                float maxLifetime = ps.main.startLifetime.constantMax;
 
-        ps.Play(); // Manuel olarak baþlat
+                // Toplam Süre = Yayma Süresi + Parçacýk Ömrü
+                float totalDuration = ps.main.duration + maxLifetime;
 
-        // 2. Güvenli Marj ile Yok Et
-        Destroy(muzzleFlashInstance, totalDuration + 0.1f);
-    }
-    else
-    {
-        // Eðer Partikül Sistemi yoksa (veya bulunamazsa), yine de yok et
-        Destroy(muzzleFlashInstance, 0.5f);
-    }
+                ps.Play(); // Manuel olarak baþlat
+
+                // 2. Güvenli Marj ile Yok Et
+                Destroy(muzzleFlashInstance, totalDuration + 0.1f);
+            }
+            else
+            {
+                // Eðer Partikül Sistemi yoksa (veya bulunamazsa), yine de yok et
+                Destroy(muzzleFlashInstance, 0.5f);
+            }
 
 
 
@@ -92,14 +125,13 @@ public class PlayerShooting : MonoBehaviour
             audioSource.PlayOneShot(shootSound);
         }
 
-        // 2. Namludan Hedefe Yön Hesabý
-        Vector3 shootDirection = (targetPoint - spawnBulletPosition.position).normalized;
+        //  Namludan Hedefe Yön Hesabý
+        Vector3 shootDirection = (targetPoint - bulletSpawnPosition).normalized;
 
         // 3. HITSCAN RAYCAST
         RaycastHit hitInfo;
-        if (Physics.Raycast(spawnBulletPosition.position, shootDirection, out hitInfo, 1000f, aimColliderLayerMask))
+        if (Physics.Raycast(bulletSpawnPosition, shootDirection, out hitInfo, 1000f, aimColliderLayerMask))
         {
-            // 4. Hasar ve Efekt Uygulama
             HandleHit(hitInfo);
         }
 
@@ -133,7 +165,7 @@ public class PlayerShooting : MonoBehaviour
         }
         else
         {
-            
+
             // Duvar/Zemin Vuruldu
             if (vfxHitOthers != null)
             {
@@ -172,13 +204,13 @@ public class PlayerShooting : MonoBehaviour
 
         }
 
-            // Diðer Vuruþ Sesi
-            if (audioSource != null && hitOthersSound != null)
-            {
-                AudioSource.PlayClipAtPoint(hitOthersSound, hitInfo.point);
-            }
+        // Diðer Vuruþ Sesi
+        if (audioSource != null && hitOthersSound != null)
+        {
+            AudioSource.PlayClipAtPoint(hitOthersSound, hitInfo.point);
         }
-    
+    }
+
 
     private Vector3 GetAimTarget()
     {
@@ -214,7 +246,7 @@ public class PlayerShooting : MonoBehaviour
             nextFireTime = Time.time + FireRate;
         }
 
-        
+
 
     }
 
