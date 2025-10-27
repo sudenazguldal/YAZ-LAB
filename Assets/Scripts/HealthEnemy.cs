@@ -11,6 +11,7 @@ public class HealthEnemy : MonoBehaviour
     [Header("Health Settings")]
     public float maxHealth = 100f;
    
+   
     [SerializeField]
     private float currentHealth;
 
@@ -19,7 +20,7 @@ public class HealthEnemy : MonoBehaviour
     public UnityEvent<float, float> onHealthChanged;
 
     [Header("Death")]
-    public float destroyDelay = 3f;
+    public float destroyDelay = 6f;
 
     public Animator animator;
     public string dieTriggerName = "isdie";
@@ -35,6 +36,20 @@ public class HealthEnemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         colliders = GetComponentsInChildren<Collider>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
+    }
+    void Update()
+    {
+        // Test için: H tuþuna basýnca 20 hasar ver
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            TakeDamage(20f);
+        }
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            TakeDamage(10f);
+        }
+
+
     }
     public void TakeDamage(float amount)
     {
@@ -63,19 +78,18 @@ public class HealthEnemy : MonoBehaviour
     {
         _dead = true;
 
-        if (agent)
+        if (agent && agent.isOnNavMesh)
         {
             agent.isStopped = true;
             agent.ResetPath();
             agent.enabled = false;
         }
 
-
         foreach (var col in colliders) col.enabled = false;
 
-        if (animator) animator.SetTrigger(dieTriggerName);
+        animator.SetTrigger(dieTriggerName);
+
         Destroy(gameObject, destroyDelay);
-       
     }
 
 }

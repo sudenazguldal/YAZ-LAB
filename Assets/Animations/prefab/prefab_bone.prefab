@@ -22,11 +22,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 339c0f2898019134da970e5b680c055c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.08170026
+      value: -0.087
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 339c0f2898019134da970e5b680c055c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.028222624
+      value: 0.0481
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 339c0f2898019134da970e5b680c055c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -106,7 +106,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.03775109, y: 0.28328314, z: 0.07955538}
+  m_Size: {x: 0.03775109, y: 0.3, z: 0.07955538}
   m_Center: {x: -0.001025649, y: -0.0022600817, z: -0.00058104686}
 --- !u!54 &6948366560370659225
 Rigidbody:
@@ -132,9 +132,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &1602423689056878448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,10 +142,10 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5158492366889485678}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 20438bfe94588d641b681f85c2a3f2cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 10
   lifetime: 3

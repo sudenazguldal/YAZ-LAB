@@ -353,6 +353,7 @@ Transform:
   - {fileID: 6825885361968469825}
   - {fileID: 2444291441172066798}
   - {fileID: 7376309241318799754}
+  - {fileID: 9189330846384010581}
   m_Father: {fileID: 4673311525767860324}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &712722235587951823
@@ -822,7 +823,7 @@ MonoBehaviour:
   detectRange: 10
   stopRange: 3
   attackCooldown: 0
-  bonePrefab: {fileID: 5158492366889485678, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+  WeapeonPrefab: {fileID: 5158492366889485678, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
   throwPoint: {fileID: 7376309241318799754}
   throwForce: 10
   animator: {fileID: 8538220365019072302}
@@ -835,7 +836,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1847148997874690335}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 184753fc6b68a0a4fbfa65be1e485a80, type: 3}
   m_Name: 
@@ -848,7 +849,7 @@ MonoBehaviour:
   onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
-  destroyDelay: 3
+  destroyDelay: 6
   animator: {fileID: 8538220365019072302}
   dieTriggerName: isdie
 --- !u!136 &8772724890160451177
@@ -3541,3 +3542,65 @@ Transform:
   - {fileID: 4860971332219204073}
   m_Father: {fileID: 2899294344744402399}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3700404601907931777
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5069868167845482595}
+    m_Modifications:
+    - target: {fileID: 5158492366889485678, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_Name
+      value: prefab_bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.087
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0481
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.025999863
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.9930042
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.00000054016704
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.0000000372529
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.11807943
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 13.563
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+--- !u!4 &9189330846384010581 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5538712681062817748, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
+  m_PrefabInstance: {fileID: 3700404601907931777}
+  m_PrefabAsset: {fileID: 0}

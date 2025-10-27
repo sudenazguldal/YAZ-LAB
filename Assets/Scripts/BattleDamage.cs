@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class BoneDamage : MonoBehaviour
+public class BattleDamage : MonoBehaviour
 {
-    public float damage = 10f;
+    public float damage = 20f;
     public float lifetime = 3f;
 
     private void Start()
