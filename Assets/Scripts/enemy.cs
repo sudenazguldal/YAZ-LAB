@@ -8,15 +8,20 @@ public class enemy1 : MonoBehaviour
     public Transform player;
 
     [Header("Ranges & Timing")]
-    public float detectRange = 10f;
-    public float stopRange = 3.0f;
+    public float detectRange = 15f;
+    public float stopRange = 2.5f;
     public float attackCooldown = 0.7f;
     private float lastAttackTime;
 
     [Header("Throw")]
     public GameObject WeapeonPrefab;
     public Transform throwPoint;
-    public float throwForce = 10f;
+    public float throwForce = 8f;
+
+    [Header("Throw Settings")]
+    public float projectileSpeed = 2f;
+    public float projectileLifetime = 6f;
+    public float upBias = 0.5f;
 
     [Header("Animation")]
     public Animator animator;
@@ -25,19 +30,28 @@ public class enemy1 : MonoBehaviour
 
     private NavMeshAgent agent;
     private bool triedWarpOnce = false; // güvenlik flag'i
+    private HealthEnemy healthEnemy;
+
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = 2.5f;     
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         EnsureOnNavMesh();
     }
-
+    void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        healthEnemy = GetComponent<HealthEnemy>();
+    }
     private void Update()
     {
+        if (healthEnemy != null && healthEnemy.isDead)
+            return;
         // Agent yok veya devre dışıysa çık
         if (agent == null || !agent.enabled)
             return;

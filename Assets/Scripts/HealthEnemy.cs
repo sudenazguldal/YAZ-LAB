@@ -25,11 +25,14 @@ public class HealthEnemy : MonoBehaviour
     public Animator animator;
     public string dieTriggerName = "isdie";
 
-    private bool isDead = false;
+    public bool isDead = false;
 
     Collider[] colliders;
-    bool _dead;
     NavMeshAgent agent;
+
+    public delegate void EnemyDeathEvent(HealthEnemy enemy);
+    public static event EnemyDeathEvent OnEnemyDeath;
+
     void Awake()
     {
         currentHealth = maxHealth;
@@ -39,17 +42,10 @@ public class HealthEnemy : MonoBehaviour
     }
     void Update()
     {
-        // Test için: H tuþuna basýnca 20 hasar ver
         if (Input.GetKeyDown(KeyCode.P))
         {
             TakeDamage(20f);
         }
-        if(Input.GetKeyDown(KeyCode.M))
-        {
-            TakeDamage(10f);
-        }
-
-
     }
     public void TakeDamage(float amount)
     {
@@ -60,9 +56,9 @@ public class HealthEnemy : MonoBehaviour
 
         onHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        // --- YENÝ EKLENTÝ (SADECE EDITOR'DE GÜNCELLEMEK ÝÇÝN) ---
+        //(SADECE EDITOR'DE GÜNCELLEMEK ÝÇÝN)
 #if UNITY_EDITOR
-        // Eðer oyun çalýþýyorsa ve bu bileþen seçiliyse, Inspector'ý yeniden çiz.
+       
         if (EditorUtility.IsDirty(this))
         {
             EditorUtility.SetDirty(this);
@@ -76,20 +72,24 @@ public class HealthEnemy : MonoBehaviour
     }
     void Die()
     {
-        _dead = true;
+        if (isDead) return; // Tekrar tetiklenmesin
+        isDead = true;
 
-        if (agent && agent.isOnNavMesh)
-        {
+        if (agent != null && agent.isActiveAndEnabled)
             agent.isStopped = true;
-            agent.ResetPath();
-            agent.enabled = false;
+
+        foreach (Collider col in colliders)
+        {
+            if (col != null)
+                col.enabled = false;
         }
+        onDeath?.Invoke();
+        OnEnemyDeath?.Invoke(this);
 
-        foreach (var col in colliders) col.enabled = false;
-
-        animator.SetTrigger(dieTriggerName);
+        if (animator != null)
+            animator.SetTrigger(dieTriggerName);
 
         Destroy(gameObject, destroyDelay);
     }
 
-}
+    }
