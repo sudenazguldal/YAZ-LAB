@@ -820,12 +820,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  patrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
   detectRange: 10
   stopRange: 3
+  idleDuration: 3
   attackCooldown: 0
   WeapeonPrefab: {fileID: 5158492366889485678, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
   throwPoint: {fileID: 7376309241318799754}
   throwForce: 10
+  projectileLifetime: 6
   animator: {fileID: 8538220365019072302}
   runBoolName: isrun
   attackBoolName: isattack
@@ -852,6 +857,7 @@ MonoBehaviour:
   destroyDelay: 6
   animator: {fileID: 8538220365019072302}
   dieTriggerName: isdie
+  isDead: 0
 --- !u!136 &8772724890160451177
 CapsuleCollider:
   m_ObjectHideFlags: 0
