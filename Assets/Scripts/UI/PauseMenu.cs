@@ -29,10 +29,8 @@ public class PauseMenu : MonoBehaviour
         StartCoroutine(FadeCanvas(false));
         Time.timeScale = 1f;
         GameIsPaused = false;
-
         animator.Play("FadeOut");
-        Time.timeScale = 1f;
-        GameIsPaused = false;
+
     }
 
     public void Restart()
@@ -49,7 +47,7 @@ public class PauseMenu : MonoBehaviour
     public void ExitToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     void Pause()
@@ -58,10 +56,8 @@ public class PauseMenu : MonoBehaviour
         StartCoroutine(FadeCanvas(true));
         Time.timeScale = 0f;
         GameIsPaused = true;
-
         animator.Play("FadeIn");
-        Time.timeScale = 0f;
-        GameIsPaused = true;
+
     }
 
     IEnumerator FadeCanvas(bool fadeIn)
@@ -91,35 +87,7 @@ public class PauseMenu : MonoBehaviour
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
-        else
-        {
-            // fade bittikten sonra buton animasyonlarýný sýrayla baþlat
-            //StartCoroutine(AnimateButtons());
-        }
+        else{}
     }
 
-
-    /*IEnumerator AnimateButtons()
-    {
-        yield return null;
-        // butonlarý sýrayla hafif büyüterek içeri getir
-        foreach (Transform child in pauseMenuUI.transform)
-        {
-            if (!child.gameObject.activeSelf) continue;
-            Vector3 originalScale = child.localScale;
-            child.localScale = Vector3.zero;
-
-            float elapsed = 0f;
-            while (elapsed < 0.25f)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t = elapsed / 0.25f;
-                child.localScale = Vector3.Lerp(Vector3.zero, originalScale, t);
-                yield return null;
-            }
-
-            child.localScale = originalScale;
-            yield return new WaitForSecondsRealtime(buttonStaggerDelay);
-        }
-    }*/
 }
