@@ -4,127 +4,250 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class enemy1 : MonoBehaviour
 {
+    public enum EnemyState { Idle, Patrol, Chase, Attack }
+    private EnemyState currentState = EnemyState.Idle;
+
     [Header("Target")]
     public Transform player;
 
+    [Header("Patrol Points")]
+    public Transform[] patrolPoints;
+    private int patrolIndex = 0;
+
     [Header("Ranges & Timing")]
-    public float detectRange = 10f;
-    public float stopRange = 3.0f;
-    public float attackCooldown = 0.7f; // Her tam saldırı döngüsü (animasyon + bekleme) arası süre
+    public float detectRange = 15f;
+    public float stopRange = 3f;
+    public float idleDuration = 3f;
+    private float idleTimer = 0f;
+    public float attackCooldown = 0.7f;
     private float lastAttackTime;
 
     [Header("Throw")]
-    public GameObject bonePrefab;
+    public GameObject WeapeonPrefab;
     public Transform throwPoint;
-    public float throwForce = 10f;
-    // public float throwUpward = 0; // Doğrudan fırlatma için bu değişkene artık gerek yok
+    public float throwForce = 7f;
+    public float projectileLifetime = 6f;
 
     [Header("Animation")]
     public Animator animator;
     public string runBoolName = "isrun";
-    public string attackTriggerName = "isattack"; // Trigger olarak değiştirildi!
+    public string attackBoolName = "isattack";
 
     private NavMeshAgent agent;
+    private HealthEnemy healthEnemy;
+    private float distance;
+    private bool triedWarpOnce = false;
 
-    private void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        healthEnemy = GetComponent<HealthEnemy>();
+    }
+
+    void Start()
+    {
+        agent.speed = 1.5f;
+
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        EnsureOnNavMesh();
+        ChangeState(EnemyState.Idle);
     }
 
-    private void Update()
+    void Update()
     {
-        if (player == null) return;
+        if (healthEnemy != null && healthEnemy.isDead)
+            return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        if (agent == null || !agent.enabled)
+            return;
 
-        // 1) Takip (Menzil İçi Ama Saldırı Dışı)
-        if (distance <= detectRange && distance > stopRange)
+        if (player == null)
+            return;
+
+        distance = Vector3.Distance(transform.position, player.position);
+
+        switch (currentState)
         {
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
+            case EnemyState.Idle:
+                IdleState();
+                break;
 
-            if (animator)
-            {
-                animator.SetBool(runBoolName, true);
-                // Saldırıya başlama sinyalini burada kesiyoruz
-                // NOT: Trigger'lar otomatik sıfırlandığı için burada SetBool kullanmadık.
-            }
-        }
-        // 2) Saldırı Menzilinde
-        else if (distance <= stopRange)
-        {
-            agent.isStopped = true;
+            case EnemyState.Patrol:
+                PatrolState();
+                break;
 
-            // Oyuncuya döner (Saldırı öncesi hedefi doğrular)
-            Vector3 faceDir = (player.position - transform.position);
-            faceDir.y = 0;
-            if (faceDir.sqrMagnitude > 0.0001f)
-            {
-                Quaternion look = Quaternion.LookRotation(faceDir.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, look, Time.deltaTime * 6f);
-            }
+            case EnemyState.Chase:
+                ChaseState();
+                break;
 
-            if (animator)
-            {
-                animator.SetBool(runBoolName, false);
-            }
-
-            // Cooldown dolduysa saldırı animasyonunu BAŞLAT
-            if (Time.time - lastAttackTime >= attackCooldown)
-            {
-                if (animator)
-                {
-                    // SADECE animasyonu tetikle! Kemik fırlatma işi Animasyon Olayında.
-                    animator.SetTrigger(attackTriggerName);
-                }
-                // lastAttackTime, kemik FİİLİ OLARAK fırlatıldığında (ThrowBone() içinde) güncellenecek.
-            }
-        }
-
-        // 3) Çok Uzakta
-        else
-        {
-            agent.isStopped = true;
-            if (animator)
-            {
-                animator.SetBool(runBoolName, false);
-                // Saldırı sinyallerini temizle
-            }
+            case EnemyState.Attack:
+                AttackState();
+                break;
         }
     }
 
-    // --- Kemik fırlatma (Animation Event tarafından çağrılacak) ---
-    // PUBLIC OLMALIDIR!
+
+    private void IdleState()
+    {
+        agent.isStopped = true;
+        animator.SetBool(runBoolName, false);
+        animator.SetBool(attackBoolName, false);
+
+        idleTimer += Time.deltaTime;
+
+
+        if (distance <= detectRange)
+        {
+            ChangeState(EnemyState.Chase);
+            return;
+        }
+
+        if (idleTimer >= idleDuration)
+        {
+            idleTimer = 0f;
+            ChangeState(EnemyState.Patrol);
+        }
+    }
+
+    private void PatrolState()
+    {
+        if (patrolPoints.Length == 0)
+        {
+            ChangeState(EnemyState.Idle);
+            return;
+        }
+        agent.isStopped = false;
+        agent.SetDestination(patrolPoints[patrolIndex].position);
+        animator.SetBool(runBoolName, true);
+
+
+        if (distance <= detectRange)
+        {
+            ChangeState(EnemyState.Chase);
+            return;
+        }
+
+        if (!agent.pathPending && agent.remainingDistance < 0.3f)
+        {
+            patrolIndex = (patrolIndex == 0) ? 1 : 0;
+            agent.SetDestination(patrolPoints[patrolIndex].position);
+        }
+    }
+
+    private void ChaseState()
+    {
+        agent.isStopped = false;
+        agent.SetDestination(player.position);
+        animator.SetBool(runBoolName, true);
+        animator.SetBool(attackBoolName, false);
+
+
+        if (distance <= stopRange)
+        {
+            ChangeState(EnemyState.Attack);
+            return;
+        }
+
+        if (distance > detectRange * 1.2f)
+        {
+            ChangeState(EnemyState.Idle);
+        }
+    }
+
+    private void AttackState()
+    {
+        agent.isStopped = true;
+        animator.SetBool(runBoolName, false);
+
+        Vector3 faceDir = (player.position - transform.position);
+        faceDir.y = 0;
+        if (faceDir.sqrMagnitude > 0.001f)
+        {
+            Quaternion look = Quaternion.LookRotation(faceDir.normalized);
+            transform.rotation = Quaternion.Slerp(transform.rotation, look, Time.deltaTime * 6f);
+        }
+
+
+        if (Time.time - lastAttackTime >= attackCooldown)
+        {
+            animator.SetBool(attackBoolName, true);
+        }
+
+        if (distance > stopRange + 1f)
+        {
+            ChangeState(EnemyState.Chase);
+        }
+    }
+
+
+    private void ChangeState(EnemyState newState)
+    {
+        currentState = newState;
+        idleTimer = 0f;
+    }
+
+
     public void ThrowBone()
     {
-        // YALNIZCA KEMİK FIRLATILDIĞINDA COOLDOWN SÜRESİNİ SIFIRLA
-        lastAttackTime = Time.time;
+        if (WeapeonPrefab == null || throwPoint == null || player == null)
+            return;
 
-        if (bonePrefab == null || throwPoint == null || player == null) return;
+        float currentDistance = Vector3.Distance(transform.position, player.position);
+        if (currentDistance > stopRange)
+            return;
 
-        // 1. Kemik oluştur
-        GameObject bone = Instantiate(bonePrefab, throwPoint.position, throwPoint.rotation);
+        GameObject bone = Instantiate(WeapeonPrefab, throwPoint.position, throwPoint.rotation);
+        Vector3 direction = (player.position + Vector3.up - throwPoint.position).normalized;
 
-        // 2. Yön hesaplama (Düzeltilmiş: Doğrudan hedefe)
-        // Oyuncunun göğüs yüksekliğini hedefle
-        Vector3 targetPosition = player.position + Vector3.up;
-
-        // Fırlatma noktasından hedefe olan saf yön vektörünü hesapla
-        Vector3 direction = (targetPosition - throwPoint.position).normalized;
-
-        // 3. Kuvvet Uygulama
         if (bone.TryGetComponent<Rigidbody>(out var rb))
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-
-            // Hesaplanan yönde Impulse (Ani Kuvvet) uygula
             rb.AddForce(direction * throwForce, ForceMode.Impulse);
         }
 
-        // sahneyi kalabalıklaştırmamak için
-        Destroy(bone, 6f);
+        lastAttackTime = Time.time;
+        Destroy(bone, projectileLifetime);
+    }
+
+    public void EndAttack()
+    {
+        animator.SetBool(attackBoolName, false);
+        lastAttackTime = Time.time;
+
+        // Oyuncu hala menzildeyse tekrar saldırabilir
+        if (distance <= stopRange)
+        {
+            ChangeState(EnemyState.Attack);
+        }
+        else
+        {
+            ChangeState(EnemyState.Chase);
+        }
+    }
+
+    private void EnsureOnNavMesh()
+    {
+        if (agent == null) return;
+        if (!agent.enabled) agent.enabled = true;
+
+        if (agent.isOnNavMesh) return;
+
+        if (!triedWarpOnce)
+        {
+            triedWarpOnce = true;
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
+                Debug.Log($"{name}: NavMesh'e warp yapıldı -> {hit.position}");
+            }
+            else
+            {
+                Debug.LogError($"{name}: Yakında NavMesh bulunamadı!");
+                agent.enabled = false;
+            }
+        }
     }
 }
