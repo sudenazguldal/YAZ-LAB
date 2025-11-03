@@ -2219,6 +2219,7 @@ GameObject:
   - component: {fileID: 6104219676295075179}
   - component: {fileID: 2702014657943369935}
   - component: {fileID: 1734204180188811303}
+  - component: {fileID: 7290209745730610221}
   m_Layer: 7
   m_Name: Phobos
   m_TagString: Untagged
@@ -2234,7 +2235,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6592167951169831523}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.3522073, z: -0, w: 0.935922}
+  m_LocalRotation: {x: 0, y: 0.35220915, z: 0, w: 0.9359213}
   m_LocalPosition: {x: -3.0153725, y: 1.169, z: -16.091}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2333,10 +2334,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  patrolPoints: []
-  detectRange: 4
-  stopRange: 2.4
-  idleDuration: 3
+  patrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  detectRange: 5
+  stopRange: 2
+  idleDuration: 1
   attackCooldown: 0.7
   WeapeonPrefab: {fileID: 5158492366889485678, guid: 33b7e6bcf56b51a4ebb77cb80e6cbea0, type: 3}
   throwPoint: {fileID: 2791524702725019025}
@@ -2345,6 +2348,29 @@ MonoBehaviour:
   animator: {fileID: 1153251857377543757}
   runBoolName: isrun
   attackBoolName: isattack
+--- !u!136 &7290209745730610221
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6592167951169831523}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.3483453
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &6599798453947804861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,7 +2661,7 @@ Transform:
   m_GameObject: {fileID: 7123953084050477408}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000014636532, y: 0.35220727, z: 0.000000043736332, w: -0.9359221}
-  m_LocalPosition: {x: 8, y: -2.35, z: -1.16}
+  m_LocalPosition: {x: -0.165, y: -0.003, z: 0.032}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
