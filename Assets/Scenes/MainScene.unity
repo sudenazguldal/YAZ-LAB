@@ -579,6 +579,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 191347688}
   m_CullTransparentMesh: 1
+--- !u!82 &257059574 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 5012335502947782745, guid: e06e6c1b8883dfe48813e56d3662a08c, type: 3}
+  m_PrefabInstance: {fileID: 1076301687}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &296252238
 GameObject:
   m_ObjectHideFlags: 0
@@ -1205,6 +1210,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527691092}
   m_CullTransparentMesh: 1
+--- !u!4 &661876636 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
+  m_PrefabInstance: {fileID: 1213327085}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &738974062
 GameObject:
   m_ObjectHideFlags: 0
@@ -1926,7 +1936,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1099993332}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11101986, y: -0.017235674, z: 0.0019256978, w: 0.9936669}
+  m_LocalRotation: {x: 0.111033574, y: -0.00732059, z: 0.0008179108, w: 0.9937894}
   m_LocalPosition: {x: -1.447038, y: 2.1388233, z: 1.4951322}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2150,19 +2160,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9936669
+      value: 0.9937894
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.11101986
+      value: 0.11103355
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.017235672
+      value: -0.0073205885
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0019256978
+      value: 0.00081791054
       objectReference: {fileID: 0}
     - target: {fileID: 7554137510859970365, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: CameraDistance
@@ -3073,15 +3083,19 @@ PrefabInstance:
     - target: {fileID: 3542957246060539371, guid: cd052ac59d39be248afb4c65bb08ccc2, type: 3}
       propertyPath: audioSource
       value: 
-      objectReference: {fileID: 1021746192}
+      objectReference: {fileID: 257059574}
     - target: {fileID: 3542957246060539371, guid: cd052ac59d39be248afb4c65bb08ccc2, type: 3}
       propertyPath: emptyGunSound
       value: 
       objectReference: {fileID: 8300000, guid: 0c187ee2790c74c4e9985aa1ee1a12d5, type: 3}
+    - target: {fileID: 3542957246060539371, guid: cd052ac59d39be248afb4c65bb08ccc2, type: 3}
+      propertyPath: aimColliderLayerMask.m_Bits
+      value: 375
+      objectReference: {fileID: 0}
     - target: {fileID: 3589622070581107418, guid: cd052ac59d39be248afb4c65bb08ccc2, type: 3}
       propertyPath: cameraTransform
       value: 
-      objectReference: {fileID: 1213327086}
+      objectReference: {fileID: 661876636}
     - target: {fileID: 3589622070581107418, guid: cd052ac59d39be248afb4c65bb08ccc2, type: 3}
       propertyPath: coverLayerMask.m_Bits
       value: 64
@@ -3093,7 +3107,7 @@ PrefabInstance:
     - target: {fileID: 5426009275384777967, guid: cd052ac59d39be248afb4c65bb08ccc2, type: 3}
       propertyPath: audioSource
       value: 
-      objectReference: {fileID: 1665458641}
+      objectReference: {fileID: 257059574}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
