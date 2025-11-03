@@ -5,7 +5,7 @@ public class PlayerShooting : MonoBehaviour
     [Header("Shooting Config")]
     [SerializeField] private float fireRate = 0.15f;
     public float FireRate => fireRate; // Dışarıdan okumak için
-    [SerializeField] private float damage = 10f;
+    [SerializeField] private float damage = 25f;
     [SerializeField] private LayerMask aimColliderLayerMask = default; // Gerekirse
 
     [Header("VFX")]

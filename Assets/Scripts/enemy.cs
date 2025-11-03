@@ -15,9 +15,9 @@ public class enemy1 : MonoBehaviour
     private int patrolIndex = 0;
 
     [Header("Ranges & Timing")]
-    public float detectRange = 15f;
-    public float stopRange = 3f;
-    public float idleDuration = 3f;
+    public float detectRange;
+    public float stopRange ;
+    public float idleDuration;
     private float idleTimer = 0f;
     public float attackCooldown = 0.7f;
     private float lastAttackTime;
