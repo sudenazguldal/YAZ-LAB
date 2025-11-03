@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // üstte ekli olsun
+using TMPro;
 
 public class AmmoDisplay : MonoBehaviour
 {
@@ -49,7 +49,7 @@ public class AmmoDisplay : MonoBehaviour
 
     }
 
-    void UpdateAmmoUI()
+    public void UpdateAmmoUI()
     {
         for (int i = 0; i < bullets.Length; i++)
         {

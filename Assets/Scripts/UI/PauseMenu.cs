@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Esper.ESave;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -34,14 +35,20 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void Restart()
-    {
+    {// Kayýt dosyasýný sil (FileDeleter.cs görüntüsüne göre bu metot doðru yolu siliyor)
+        FileDeleter.DeleteMainSave();
+
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // Mevcut sahneyi yeniden yükle
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
+
 
     public void Save()
     {
         Debug.Log("Oyun kaydedildi!");
+        var player = GameObject.FindWithTag("Player");
+        if (player) player.GetComponent<PlayerSaveData>()?.SaveGame();
     }
 
     public void ExitToMainMenu()
