@@ -8,6 +8,7 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private float damage = 25f;
     [SerializeField] private LayerMask aimColliderLayerMask = default; // Gerekirse
 
+
     [Header("VFX")]
     [SerializeField] private Transform spawnBulletPosition;
     [SerializeField] private GameObject vfxMuzzleFlash;
@@ -86,7 +87,7 @@ public class PlayerShooting : MonoBehaviour
         {
 
 
-            //  1. TANIMLAMA ve OLUŞTURMA (Scope için kritik)
+            //  1. TANIMLAMA ve OLUŞTURMA 
             GameObject muzzleFlashInstance = Instantiate(
         vfxMuzzleFlash,
         bulletSpawnPosition,
@@ -133,11 +134,11 @@ public class PlayerShooting : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(bulletSpawnPosition, shootDirection, out hitInfo, 1000f))
         {
-            Debug.Log("💥 Raycast hit: " + hitInfo.collider.name);
+            
             HandleHit(hitInfo);
         }
         else {
-            Debug.Log("❌ Raycast hit nothing!");
+            
         }
         
 
@@ -151,10 +152,10 @@ public class PlayerShooting : MonoBehaviour
 
         if (targetHealth != null)
         {
-            // 🎯 Zombi vuruldu
+            //  Zombi vuruldu
             targetHealth.TakeDamage(damage);
 
-            // 💥 Vuruş efekti
+            //  Vuruş efekti
             if (vfxHitTarget != null)
             {
                 GameObject hitVFX = Instantiate(vfxHitTarget, hitInfo.point, hitRotation);
@@ -167,15 +168,16 @@ public class PlayerShooting : MonoBehaviour
                 }
             }
 
-            // 🔊 Zombi Vuruş Sesi
+            //  Zombi Vuruş Sesi
             if (audioSource != null && hitTargetSound != null)
             {
-                AudioSource.PlayClipAtPoint(hitTargetSound, hitInfo.point);
+                Debug.Log("Playing hit target sound");
+                audioSource.PlayOneShot(hitTargetSound, 1.0f);
             }
         }
         else
         {
-            // 💥 Duvar/Zemin vuruldu
+            // Duvar/Zemin vuruldu
             if (vfxHitOthers != null)
             {
                 GameObject hitVFX = Instantiate(vfxHitOthers, hitInfo.point, hitRotation);
@@ -192,7 +194,7 @@ public class PlayerShooting : MonoBehaviour
                 }
             }
 
-            // 🔊 Diğer yüzey sesi
+            // Diğer yüzey sesi
             if (audioSource != null && hitOthersSound != null)
             {
                 AudioSource.PlayClipAtPoint(hitOthersSound, hitInfo.point);
