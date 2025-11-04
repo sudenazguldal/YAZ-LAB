@@ -1,85 +1,119 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Shooting Config")]
     [SerializeField] private float fireRate = 0.15f;
-    public float FireRate => fireRate; // D��ar�dan okumak i�in
-    [SerializeField] private float damage = 10f;
-    [SerializeField] private LayerMask aimColliderLayerMask = default; // Gerekirse
+    public float FireRate => fireRate; // Dışarıdan okumak için
+    [SerializeField] private float damage = 10f;
+    [SerializeField] private LayerMask aimColliderLayerMask = default; 
 
-    [Header("VFX")]
+    [Header("VFX")]
     [SerializeField] private Transform spawnBulletPosition;
     [SerializeField] private GameObject vfxMuzzleFlash;
     [SerializeField] private GameObject vfxHitTarget;
     [SerializeField] private GameObject vfxHitOthers;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource audioSource; // At�� sesini �alacak AudioSource bile�eni
-    [SerializeField] private AudioClip shootSound;     // Ana at�� sesi klibi
-    [SerializeField] private AudioClip hitTargetSound; // Zombiye vuru� sesi (Opsiyonel)
-    [SerializeField] private AudioClip hitOthersSound; // Duvara vuru� sesi (Opsiyonel)
-    WeaponAmmo Ammo;
+    [SerializeField] private AudioSource audioSource; // Atış sesini çalacak AudioSource bileşeni
+    [SerializeField] private AudioClip shootSound;     // Ana atış sesi klibi
+    [SerializeField] private AudioClip hitTargetSound; // Zombiye vuruş sesi (Opsiyonel)
+    [SerializeField] private AudioClip hitOthersSound; // Duvara vuruş sesi (Opsiyonel)
+    [SerializeField] private AudioClip emptyGunSound;
+    [Header("Cover Shooting")]
+    private bool isPeeking = false; // PlayerController'dan gelen Cover Aim durumu
+    [SerializeField] private float peekHeightOffset = 0.6f; // Siperden uzanma yüksekliği (Örn: 0.6m)
+
+    WeaponAmmo Ammo;
 
     private float nextFireTime = 0.1f;
     private bool isShooting = false;
     private bool currentIsAiming = false; // PlayerController'dan gelecek Aim durumunu tutar
 
-    // PlayerController'dan gelecek input'u y�netir
+    // PlayerController'dan gelecek input'u yönetir
 
-    void Start()
+    void Start()
     {
-                Ammo = GetComponentInChildren<WeaponAmmo>();
+        Ammo = GetComponentInChildren<WeaponAmmo>();
     }
 
-    // PlayerController'dan �a�r�lacak Aim durumunu g�ncelleme metodu
-    public void SetAiming(bool isAiming)
+    // PlayerController'dan çağrılacak Aim durumunu güncelleme metodu
+    public void SetAiming(bool isAiming, bool isCovering)
     {
         currentIsAiming = isAiming;
+
+        // isPeeking durumu: Siperdeysen VE nişan alıyorsan TRUE
+        isPeeking = isCovering && isAiming;
     }
     public void HandleShootInput(bool isPressed)
     {
         isShooting = isPressed;
     }
 
-    // PlayerController'dan �a�r�lacak ana metod
-    public void Shoot(Vector3 targetPoint)
+    // PlayerController'dan çağrılacak ana metod
+    public void Shoot(Vector3 targetPoint)
     {
-        if (currentIsAiming == false) return; // Sadece ni�an al�nd���nda ate�le
-        if (Ammo.CurrentAmmo == 0) return; // Mermi yoksa ate�leme
-        // 1. Namlu Alevi Efekti
-        if (vfxMuzzleFlash != null)
+        if (currentIsAiming == false) return; // Sadece nişan alındığında ateşle
+        if (Ammo.CurrentAmmo == 0)
         {
 
-            
-            //  1. TANIMLAMA ve OLU�TURMA (Scope i�in kritik)
-            GameObject muzzleFlashInstance = Instantiate(
-                vfxMuzzleFlash,
-                spawnBulletPosition.position,
-                spawnBulletPosition.rotation
-            );
+            if (audioSource != null && emptyGunSound != null)
+            {
+
+                audioSource.PlayOneShot(emptyGunSound);
+            }
+
+
+            return; // Mermi yoksa ateşleme
+        }
+
+
+
+
+        Vector3 bulletSpawnPosition = spawnBulletPosition.position;
+
+        if (isPeeking)
+        {
+            // Namlu pozisyonunu siperden uzanıyormuş gibi yukarı kaydır
+            bulletSpawnPosition += Vector3.up * peekHeightOffset;
+        }
+
+
+        // 1. Namlu Alevi Efekti
+
+
+        if (vfxMuzzleFlash != null)
+        {
+
+
+            //  1. TANIMLAMA ve OLUŞTURMA 
+            GameObject muzzleFlashInstance = Instantiate(
+        vfxMuzzleFlash,
+        bulletSpawnPosition,
+      spawnBulletPosition.rotation
+      );
 
             ParticleSystem ps = muzzleFlashInstance.GetComponent<ParticleSystem>();
 
             if (ps != null)
             {
-               // 1. Manuel Hesaplamaya Geri D�n��
-        // Par�ac�klar�n maksimum �mr�n� al (e�er ayar sabit de�ilse .constantMax kullan�l�r)
-        float maxLifetime = ps.main.startLifetime.constantMax; 
-        
-        // Toplam S�re = Yayma S�resi + Par�ac�k �mr�
-        float totalDuration = ps.main.duration + maxLifetime; 
+                // 1. Manuel Hesaplamaya Geri Dönüş
+                // Parçacıkların maksimum ömrünü al (eğer ayar sabit değilse .constantMax kullanılır)
+                float maxLifetime = ps.main.startLifetime.constantMax;
 
-        ps.Play(); // Manuel olarak ba�lat
+                // Toplam Süre = Yayma Süresi + Parçacık Ömrü
+                float totalDuration = ps.main.duration + maxLifetime;
 
-        // 2. G�venli Marj ile Yok Et
-        Destroy(muzzleFlashInstance, totalDuration + 0.1f);
-    }
-    else
-    {
-        // E�er Partik�l Sistemi yoksa (veya bulunamazsa), yine de yok et
-        Destroy(muzzleFlashInstance, 0.5f);
-    }
+                ps.Play(); // Manuel olarak başlat
+
+                // 2. Güvenli Marj ile Yok Et
+                Destroy(muzzleFlashInstance, totalDuration + 0.1f);
+            }
+            else
+            {
+                // Eğer Partikül Sistemi yoksa (veya bulunamazsa), yine de yok et
+                Destroy(muzzleFlashInstance, 0.5f);
+            }
 
 
 
@@ -88,91 +122,78 @@ public class PlayerShooting : MonoBehaviour
 
         if (audioSource != null && shootSound != null)
         {
-            // PlayOneShot, AudioSource'un mevcut sesini kesmeden yeni bir ses �alar.
-            audioSource.PlayOneShot(shootSound);
+            // PlayOneShot, AudioSource'un mevcut sesini kesmeden yeni bir ses çalar.
+            audioSource.PlayOneShot(shootSound);
         }
 
-        // 2. Namludan Hedefe Y�n Hesab�
-        Vector3 shootDirection = (targetPoint - spawnBulletPosition.position).normalized;
+        //  Namludan Hedefe Yön Hesabı
+        Vector3 shootDirection = (targetPoint - bulletSpawnPosition).normalized;
 
-        // 3. HITSCAN RAYCAST
-        RaycastHit hitInfo;
-        if (Physics.Raycast(spawnBulletPosition.position, shootDirection, out hitInfo, 1000f, aimColliderLayerMask))
+        // 3. HITSCAN RAYCAST
+        RaycastHit hitInfo;
+        if (Physics.Raycast(bulletSpawnPosition, shootDirection, out hitInfo, 1000f))
         {
-            // 4. Hasar ve Efekt Uygulama
+            
             HandleHit(hitInfo);
         }
+        else {
+            
+        }
+        
 
         Ammo.CurrentAmmo--;
     }
 
     private void HandleHit(RaycastHit hitInfo)
     {
-        // ... (Hasar ve VFX kodunuz buraya gelir)
-        // HealthComponent'e hasar verme, efektleri oynatma vb.
-
-        // Vurulacak nesnenin Zombi mi yoksa Duvar m� oldu�unu anlama
-        HealthComponent targetHealth = hitInfo.transform.GetComponent<HealthComponent>();
-
-        // Vuru� efekti ve sesin do�ru y�ne bakmas� i�in d�n�� a��s�
-        // hitInfo.normal: Vurulan y�zeyin normali (y�zeye dik olan y�n)
+        HealthEnemy targetHealth = hitInfo.transform.GetComponent<HealthEnemy>();
         Quaternion hitRotation = Quaternion.LookRotation(hitInfo.normal);
 
         if (targetHealth != null)
         {
-            // ZOMB� VURULDU
-            // ... (VFX kodlar�)
+            //  Zombi vuruldu
+            targetHealth.TakeDamage(damage);
 
-            // Zombi Vuru� Sesi
+            //  Vuruş efekti
+            if (vfxHitTarget != null)
+            {
+                GameObject hitVFX = Instantiate(vfxHitTarget, hitInfo.point, hitRotation);
+                ParticleSystem ps = hitVFX.GetComponent<ParticleSystem>();
+                if (ps != null)
+                {
+                    float totalDuration = ps.main.duration + ps.main.startLifetime.constantMax;
+                    ps.Play();
+                    Destroy(hitVFX, totalDuration + 0.1f);
+                }
+            }
+
+            //  Zombi Vuruş Sesi
             if (audioSource != null && hitTargetSound != null)
             {
-                // Vuru� sesini, merminin �arpt��� yerde �almak daha ger�ek�i olabilir.
-                // Bu y�zden PlayClipAtPoint kullanmak daha iyi olabilir.
-                AudioSource.PlayClipAtPoint(hitTargetSound, hitInfo.point);
+                Debug.Log("Playing hit target sound");
+                audioSource.PlayOneShot(hitTargetSound, 1.0f);
             }
         }
         else
         {
-            
-            // Duvar/Zemin Vuruldu
+            // Duvar/Zemin vuruldu
             if (vfxHitOthers != null)
             {
-                GameObject HitOthersInstance = Instantiate(
-                    vfxHitOthers,
-                    hitInfo.point,
-                    hitRotation
-                );
-
-                ParticleSystem ps = HitOthersInstance.GetComponent<ParticleSystem>();
-
+                GameObject hitVFX = Instantiate(vfxHitOthers, hitInfo.point, hitRotation);
+                ParticleSystem ps = hitVFX.GetComponent<ParticleSystem>();
                 if (ps != null)
                 {
-                    // 1. Manuel Hesaplamaya Geri D�n��
-                    // Par�ac�klar�n maksimum �mr�n� al
-                    float maxLifetime = ps.main.startLifetime.constantMax;
-
-                    // Total S�re = Yayma S�resi + Par�ac�k �mr�
-                    float totalDuration = ps.main.duration + maxLifetime;
-
+                    float totalDuration = ps.main.duration + ps.main.startLifetime.constantMax;
                     ps.Play();
-
-                    // 2. G�venli Marj ile Yok Et
-                    Destroy(HitOthersInstance, totalDuration + 0.1f);
+                    Destroy(hitVFX, totalDuration + 0.1f);
                 }
                 else
                 {
-                    // KR�T�K D�ZELTME: Yanl�� de�i�keni yok etme hatas� d�zeltildi.
-                    // E�er Partik�l Sistemi yoksa, yine de objeyi yok et.
-                    Destroy(HitOthersInstance, 0.5f);
+                    Destroy(hitVFX, 0.5f);
                 }
             }
 
-
-
-
-        }
-
-            // Di�er Vuru� Sesi
+            // Diğer yüzey sesi
             if (audioSource != null && hitOthersSound != null)
             {
                 AudioSource.PlayClipAtPoint(hitOthersSound, hitInfo.point);
@@ -180,10 +201,19 @@ public class PlayerShooting : MonoBehaviour
         }
     
 
+
+        // Diğer Vuruş Sesi
+        if (audioSource != null && hitOthersSound != null)
+        {
+            AudioSource.PlayClipAtPoint(hitOthersSound, hitInfo.point);
+        }
+    }
+
+
     private Vector3 GetAimTarget()
     {
-        //  Kamera Raycast Mant��� buraya ta��nd�!
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        //  Kamera Raycast Mantığı buraya taşındı!
+        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
 
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
@@ -191,22 +221,22 @@ public class PlayerShooting : MonoBehaviour
             return raycastHit.point;
         }
 
-        return ray.GetPoint(999f); // Hi�bir �eye �arpmazsa uzak nokta
-    }
+        return ray.GetPoint(999f); // Hiçbir şeye çarpmazsa uzak nokta
+    }
 
-    // public void Shoot(Vector3 targetPoint) metodu ayn� kal�r.
-    // private void HandleHit(RaycastHit hitInfo) metodu ayn� kal�r.
-    void Update()
+    // public void Shoot(Vector3 targetPoint) metodu aynı kalır.
+    // private void HandleHit(RaycastHit hitInfo) metodu aynı kalır.
+    void Update()
     {
-        // 1. Ni�an Alma Tespiti (Kameradan hedefi bulma) - Art�k bu da burada!
-        Vector3 mouseWorldPosition = GetAimTarget();
+        // 1. Nişan Alma Tespiti (Kameradan hedefi bulma) - Artık bu da burada!
+        Vector3 mouseWorldPosition = GetAimTarget();
 
-        // 2. Ate�leme Zamanlamas� ve Kontrol�
-        if (currentIsAiming && isShooting && Time.time >= nextFireTime)
+        // 2. Ateşleme Zamanlaması ve Kontrolü
+        if (currentIsAiming && isShooting && Time.time >= nextFireTime)
         {
-            // YEN� KONTROL: Sadece ni�an al�yorsak ate� et.
-            Shoot(GetAimTarget()); // GetAimTarget metodunu da Update i�inde �a��rabiliriz.
-            nextFireTime = Time.time + FireRate;
+            // YENİ KONTROL: Sadece nişan alıyorsak ateş et.
+            Shoot(GetAimTarget()); // GetAimTarget metodunu da Update içinde çağırabiliriz.
+            nextFireTime = Time.time + FireRate;
         }
         if (isShooting && Time.time >= nextFireTime)
         {
@@ -214,7 +244,7 @@ public class PlayerShooting : MonoBehaviour
             nextFireTime = Time.time + FireRate;
         }
 
-        
+
 
     }
 
