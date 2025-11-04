@@ -15,9 +15,9 @@ public class enemy1 : MonoBehaviour
     private int patrolIndex = 0;
 
     [Header("Ranges & Timing")]
-    public float detectRange = 15f;
-    public float stopRange = 3f;
-    public float idleDuration = 3f;
+    public float detectRange;
+    public float stopRange ;
+    public float idleDuration;
     private float idleTimer = 0f;
     public float attackCooldown = 0.7f;
     private float lastAttackTime;
@@ -50,6 +50,7 @@ public class enemy1 : MonoBehaviour
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
 
         EnsureOnNavMesh();
         ChangeState(EnemyState.Idle);
@@ -88,7 +89,38 @@ public class enemy1 : MonoBehaviour
         }
     }
 
+    public void ActivateChase(Transform targetTransform)
+    {
+        // 1. Dışarıdan gelen hedefi (oyuncu) kendi hedef değişkenimize atıyoruz.
+        if (targetTransform != null)
+        {
+            player = targetTransform;
+        }
 
+        // 2. Düşman hayattaysa (ölmediyse) devam et.
+        if (healthEnemy == null || !healthEnemy.isDead)
+        {
+            // 3. Oyuncuya olan mesafeye bakarak hangi duruma geçeceğine karar ver.
+            float dist = Vector3.Distance(transform.position, player.position);
+
+            if (dist <= stopRange)
+            {
+                // Eğer oyuncu saldırı menzilindeyse hemen saldır.
+                ChangeState(EnemyState.Attack);
+            }
+            else
+            {
+                // Eğer menzilde değilse, oyuncunun yanına doğru koşmaya başla.
+                ChangeState(EnemyState.Chase);
+            }
+
+            // NavMeshAgent'ın hareketi durdurulmuşsa, tekrar başlat.
+            if (agent != null && agent.enabled)
+            {
+                agent.isStopped = false;
+            }
+        }
+    }
     private void IdleState()
     {
         agent.isStopped = true;
@@ -211,6 +243,7 @@ public class enemy1 : MonoBehaviour
         lastAttackTime = Time.time;
         Destroy(bone, projectileLifetime);
     }
+
 
     public void EndAttack()
     {
