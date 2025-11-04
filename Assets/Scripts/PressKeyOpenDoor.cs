@@ -1,17 +1,25 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PressKeyOpenDoor : MonoBehaviour
 {
     [Header("UI & References")]
-    public GameObject instructionUI;     // �Press E to open� yaz�s�
-    public Animator doorAnimator;        // Kap� animat�r� (her kap�ya �zg�)
-    public string animationName ; // Oynat�lacak animasyon ismi
-    public GameObject triggerZone;       // Trigger objesi (iste�e ba�l�)
+    public GameObject instructionUI;     // “Press E to open” yazısı
+    public Animator doorAnimator;        // Kapı animatörü (her kapıya özgü)
+    public string animationName ; // Oynatılacak animasyon ismi
+    public GameObject triggerZone;       // Trigger objesi (isteğe bağlı)
     public AudioSource DoorOpenSound;
 
     private bool canOpen = false;
+
+    [Header("Extra For SideDoor")]
+    public bool isSideDoor = false;      
+    public Transform walkTargetPoint;    
+    public float walkSpeed = 2.5f;
+    public doctor targetEnemy;         
+    private bool isWalking = false;
+    private Transform player;
 
     void Start()
     {
@@ -19,10 +27,21 @@ public class PressKeyOpenDoor : MonoBehaviour
             instructionUI.SetActive(false);
     }
 
+    /*void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (instructionUI != null)
+                instructionUI.SetActive(true);
+            canOpen = true;
+        }
+    }*/
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            player = other.transform;
+
             if (instructionUI != null)
                 instructionUI.SetActive(true);
             canOpen = true;
@@ -41,6 +60,21 @@ public class PressKeyOpenDoor : MonoBehaviour
         if (canOpen && Input.GetKeyDown(KeyCode.E))
         {
             OpenDoor();
+        }
+        //Eğer SideDoor ise player'ı hedef noktaya doğru yürüt
+        if (isWalking && player != null && walkTargetPoint != null)
+        {
+            player.position = Vector3.MoveTowards(
+                player.position,
+                walkTargetPoint.position,
+                walkSpeed * Time.deltaTime
+            );
+
+            // Hedefe ulaştıysa durdur
+            if (Vector3.Distance(player.position, walkTargetPoint.position) < 0.1f)
+            {
+                isWalking = false;
+            }
         }
     }
 
@@ -65,5 +99,15 @@ public class PressKeyOpenDoor : MonoBehaviour
         
 
         canOpen = false;
+        if (isSideDoor && targetEnemy != null)
+        {
+            Debug.Log($"SideDoor açıldı! {targetEnemy.name} çağırılıyor...");
+            targetEnemy.ActivateChase(GameObject.FindGameObjectWithTag("Player").transform);
+        }
+        else
+        {
+            Debug.LogWarning(" targetEnemy atanmamış veya SideDoor false!");
+        }
+
     }
 }
