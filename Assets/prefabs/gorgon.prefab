@@ -854,7 +854,30 @@ MonoBehaviour:
   animator: {fileID: 8538220365019072302}
   runBoolName: isrun
   attackBoolName: isattack
---- !u!114 &7902910342029994153
+--- !u!136 &9215365456224344800
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847148997874690335}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.0674598
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9209883, z: 0}
+--- !u!114 &6987653908828826915
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

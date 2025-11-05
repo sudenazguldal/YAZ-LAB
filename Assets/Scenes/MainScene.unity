@@ -5545,10 +5545,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: gorgon
       objectReference: {fileID: 0}
-    - target: {fileID: 1847148997874690335, guid: 23c5b7595c045434a9d5fd840a22cbda, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5898071570801696357, guid: 23c5b7595c045434a9d5fd840a22cbda, type: 3}
       propertyPath: player
       value: 
@@ -6467,6 +6463,18 @@ PrefabInstance:
     - target: {fileID: 273288729542671553, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
       propertyPath: m_LocalPosition.z
       value: -23.283
+      objectReference: {fileID: 0}
+    - target: {fileID: 362807342699231875, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 418520559835500689, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 418520559835500689, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.44
       objectReference: {fileID: 0}
     - target: {fileID: 1195528060065819175, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8438,7 +8446,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5475157330584662024, guid: 725ae0dcc8ae6e3448920b572b67b8dd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11.52734
+      value: -12.527
       objectReference: {fileID: 0}
     - target: {fileID: 5475157330584662024, guid: 725ae0dcc8ae6e3448920b572b67b8dd, type: 3}
       propertyPath: m_LocalRotation.w
