@@ -9,27 +9,23 @@ public class PlayerSaveData : MonoBehaviour
     [Header("Default Spawn")]
     public Transform startPoint;
 
-    public PlayerHealth playerHealth;
-    public RevolverAmmoDisplay ammoDisplay;
+    public HealthComponent playerHealth;
+    public WeaponAmmo weaponAmmo;              // 🔹 Silah referansı
+    public RevolverAmmoDisplay ammoDisplay;    // 🔹 UI referansı
     private SaveFile saveFile;
 
     void Start()
     {
-        // SaveStorage hazır mı? (Aynı kalır)
         if (SaveStorage.instance == null)
         {
             Debug.LogError("SaveStorage sahnede bulunamadı!");
             return;
         }
 
-        // @ 1. ADIM: SaveFile objesinin bellekte (storage'da) olduğundan emin ol
-        // Bu, New Game sonrası ilk save'in çalışması için kritiktir.
         EnsureSaveFileExists();
 
-        // MainSave’i çek
         saveFile = SaveStorage.instance.GetSaveByFileName("MainSave");
 
-        // Eğer SaveFile hala null ise, BindSaveFileNextFrame'i çağır.
         if (saveFile == null)
             StartCoroutine(BindSaveFileNextFrame());
         else
@@ -41,7 +37,7 @@ public class PlayerSaveData : MonoBehaviour
         yield return null;
         saveFile = SaveStorage.instance.GetSaveByFileName("MainSave");
         if (saveFile == null)
-            Debug.LogWarning("MainSave hala bulunamadı. SaveFile objesinde 'Add to Storage' açık mı?");
+            Debug.LogWarning("MainSave hala bulunamadı.");
         else
             LoadGame();
     }
@@ -66,15 +62,25 @@ public class PlayerSaveData : MonoBehaviour
         if (playerHealth != null)
             saveFile.AddOrUpdateData("PlayerHealth", playerHealth.currentHealth);
 
-        if (ammoDisplay != null)
+        // --- WEAPON DATA ---
+        if (weaponAmmo != null)
         {
-            saveFile.AddOrUpdateData("CurrentAmmo", ammoDisplay.currentAmmo);
-            saveFile.AddOrUpdateData("Magazines", ammoDisplay.currentMagazine); // 💡 currentMagazine alanına uyumlu hale getirildi
+            saveFile.AddOrUpdateData("CurrentAmmo", weaponAmmo.Current);
+            saveFile.AddOrUpdateData("ClipSize", weaponAmmo.Clip);
+
+            // --- INVENTORY DATA ---
+            if (weaponAmmo.playerInventoryData != null)
+            {
+                var inv = weaponAmmo.playerInventoryData;
+                saveFile.AddOrUpdateData("InventoryAmmo", inv.Ammo);
+                saveFile.AddOrUpdateData("InventoryHealthKits", inv.HealthKits);
+                saveFile.AddOrUpdateData("InventoryHasKey", inv.HasKey);
+            }
         }
 
         saveFile.AddOrUpdateData("SceneName", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        saveFile.Save(true);
 
-        saveFile.Save(true); // diske yaz
         Debug.Log("💾 Saved → " + Application.persistentDataPath + "/YAZ-LAB/MainSave.json");
     }
 
@@ -83,77 +89,93 @@ public class PlayerSaveData : MonoBehaviour
     // ============================================================
     public void LoadGame()
     {
-        // Dosya yolunu kontrol etmek için kullandığınız yol.
-        string savePath = Path.Combine(Application.persistentDataPath, "YAZ-LAB", "MainSave.json");
-
-        Debug.Log("📂 Dosya yolu kontrol ediliyor: " + savePath);
-
-        // 1️⃣ SaveFile objesinin bellekte var olduğundan emin ol (New Game veya ilk başlangıç için)
         EnsureSaveFileExists();
-
-        // 2️⃣ SaveFile'ı yeniden bağla (önceki instance null olabilir)
         if (saveFile == null)
         {
-            Debug.Log("💡 SaveFile null, disktekini yeniden yüklüyorum...");
-
-            var setupData = new SaveFileSetupData
-            {
-                fileName = "MainSave",
-                saveLocation = SaveLocation.DataPath,
-                filePath = "YAZ-LAB/MainSave", // 🎯 KRİTİK DÜZELTME: Dosya kontrolü ile eşleşmeli
-                fileType = FileType.Json,
-                encryptionMethod = EncryptionMethod.None,
-                addToStorage = true
-            };
-
-            saveFile = new SaveFile(setupData, true);
-
-            if (!SaveStorage.instance.ContainsKey("MainSave"))
-                SaveStorage.instance.AddSave(saveFile);
+            Debug.LogError("LoadGame: saveFile null!");
+            return;
         }
 
-        // 3️⃣ Verileri gerçekten disktekinden oku (Dosya var olduğu için)
         saveFile.Load();
 
-        // 4️⃣ Pozisyon, can, mermi vs uygula
-        if (saveFile.HasData("PlayerX") && saveFile.HasData("PlayerY") && saveFile.HasData("PlayerZ"))
+        // --- POSITION ---
+        if (saveFile.HasData("PlayerX"))
         {
             float x = saveFile.GetData<float>("PlayerX");
             float y = saveFile.GetData<float>("PlayerY");
             float z = saveFile.GetData<float>("PlayerZ");
             transform.position = new Vector3(x, y, z);
         }
-        else
-        {
-            // Dosya var ama veri eksik/bozuk. Yine de sıfırla.
-            Debug.LogWarning("⚠️ Kayıt dosyası bulundu ancak pozisyon verileri eksik. Sıfırlanıyor.");
-            ResetToStartPoint();
-            return;
-        }
 
-        // Diğer verileri yükle (Aynı kalır)
+        // --- HEALTH ---
         if (playerHealth != null && saveFile.HasData("PlayerHealth"))
             playerHealth.currentHealth = saveFile.GetData<float>("PlayerHealth");
 
-        if (ammoDisplay != null)
+        // --- WEAPON AMMO ---
+        if (weaponAmmo != null)
         {
             if (saveFile.HasData("CurrentAmmo"))
-                ammoDisplay.currentAmmo = saveFile.GetData<int>("CurrentAmmo");
-            if (saveFile.HasData("Magazines"))
-                ammoDisplay.currentMagazine = saveFile.GetData<int>("Magazines"); // 💡 değişken adı düzeltildi
+                if (saveFile.HasData("CurrentAmmo"))
+                {
+                    int savedCurrent = saveFile.GetData<int>("CurrentAmmo");
+                    weaponAmmo.MarkAsLoadedFromSave(savedCurrent);
+                }
 
-            ammoDisplay.UpdateAmmoUI(); // artık public erişimli
+            if (saveFile.HasData("ClipSize"))
+                typeof(WeaponAmmo)
+                    .GetField("ClipSize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(weaponAmmo, saveFile.GetData<int>("ClipSize"));
         }
 
-        Debug.Log("✅ Continue ile kayıt başarıyla yüklendi!");
+        // --- INVENTORY DATA ---
+        if (weaponAmmo != null && weaponAmmo.playerInventoryData != null)
+        {
+            var inv = weaponAmmo.playerInventoryData;
+
+            if (saveFile.HasData("InventoryAmmo"))
+            {
+                int savedAmmo = saveFile.GetData<int>("InventoryAmmo");
+                typeof(InventoryData)
+                    .GetField("ammoCount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(inv, savedAmmo);
+            }
+
+            if (saveFile.HasData("InventoryHealthKits"))
+            {
+                int savedKits = saveFile.GetData<int>("InventoryHealthKits");
+                typeof(InventoryData)
+                    .GetField("healthKits", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(inv, savedKits);
+            }
+
+            if (saveFile.HasData("InventoryHasKey"))
+            {
+                bool savedKey = saveFile.GetData<bool>("InventoryHasKey");
+                typeof(InventoryData)
+                    .GetField("hasKey", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(inv, savedKey);
+            }
+
+            // Event'leri tetikle ki UI hemen güncellensin
+            inv.ForceUpdateEvents();
+        }
+
+        // --- UI UPDATE ---
+        if (ammoDisplay != null && weaponAmmo != null)
+        {
+            ammoDisplay.currentAmmo = weaponAmmo.Current;
+            ammoDisplay.maxAmmo = weaponAmmo.Clip;
+            ammoDisplay.UpdateAmmoUI();
+        }
+
+        Debug.Log("✅ Kayıt başarıyla yüklendi!");
     }
 
     // ============================================================
-    // ----------------------- SAVEFILE OLUŞTURUCU ------------------
+    // ----------------------- SAVEFILE OLUŞTURUCU ----------------
     // ============================================================
     private void EnsureSaveFileExists()
     {
-        // SaveFile nesnesi zaten varsa yeniden oluşturmaya gerek yok
         if (saveFile != null && saveFile.fileName == "MainSave")
         {
             if (!SaveStorage.instance.ContainsKey("MainSave"))
@@ -165,40 +187,15 @@ public class PlayerSaveData : MonoBehaviour
         {
             fileName = "MainSave",
             saveLocation = SaveLocation.DataPath,
-            filePath = "YAZ-LAB/MainSave", // 🎯 KRİTİK AYAR: Doğru klasör yolu
+            filePath = "YAZ-LAB/MainSave",
             fileType = FileType.Json,
             encryptionMethod = EncryptionMethod.None,
             addToStorage = true
         };
 
-        // false ile yeni bir dosya oluşturur (diske yazmadan önce hafızada tutar)
         saveFile = new SaveFile(setupData, false);
 
         if (!SaveStorage.instance.ContainsKey("MainSave"))
             SaveStorage.instance.AddSave(saveFile);
-
-        Debug.Log("✅ SaveFile objesi hafızada oluşturuldu ve SaveStorage'a eklendi.");
-    }
-
-    // ============================================================
-    // ----------------------- UTILITIES ---------------------------
-    // ============================================================
-    private void ResetToStartPoint()
-    {
-        if (startPoint != null)
-        {
-            transform.position = startPoint.position;
-            Debug.Log("↩ Oyuncu başlangıç noktasına döndü.");
-        }
-
-        if (playerHealth != null)
-            playerHealth.currentHealth = playerHealth.maxHealth;
-
-        if (ammoDisplay != null)
-        {
-            ammoDisplay.currentAmmo = ammoDisplay.maxAmmo;
-            ammoDisplay.currentMagazine = 4; // revolver için 4 şarjör
-            ammoDisplay.UpdateAmmoUI();
-        }
     }
 }

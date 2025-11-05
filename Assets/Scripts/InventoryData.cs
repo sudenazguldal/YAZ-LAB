@@ -75,4 +75,11 @@ public class InventoryData : ScriptableObject
     public int Ammo => ammoCount;
     public int HealthKits => healthKits;
     public bool HasKey => hasKey;
+
+    public void ForceUpdateEvents()
+    {
+        OnAmmoChange?.Invoke(ammoCount);
+        OnHealthKitChange?.Invoke(healthKits);
+        OnKeyChange?.Invoke(hasKey);
+    }
 }

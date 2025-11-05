@@ -5,84 +5,76 @@ using System.Collections;
 
 public class RevolverAmmoDisplay : MonoBehaviour
 {
+    [Header("References")]
+    public WeaponAmmo weaponAmmo;
+    public InventoryData playerInventoryData;
+
     [Header("UI References")]
     public TMP_Text ammoText;
     public Image reloadRing;
-    public Image gunIcon;
 
     [Header("Ammo Settings")]
-    public int currentAmmo = 6;
-    public int maxAmmo = 6;
+    public int currentAmmo = 6;   // 🔹 eklendi
+    public int maxAmmo = 6;       // 🔹 eklendi
     public int currentMagazine = 4;
 
     [Header("Ring Rotation Settings")]
-    [Range(0f, 1f)] public float ringFillAmount = 0.75f;
-    public float rotationPerReload = 90f;   // 90° dönüş
-    public float rotationSpeed = 2f;        // 🔽 biraz daha yavaş
-    private float baseRotation = 0f;
+    public float rotationPerReload = 90f;
+    public float rotationSpeed = 2f;
+    private float baseRotation;
     private Coroutine rotationCoroutine;
 
     void Start()
     {
         if (reloadRing != null)
-            reloadRing.fillAmount = ringFillAmount;
+            baseRotation = reloadRing.rectTransform.localEulerAngles.z;
 
-        baseRotation = reloadRing.rectTransform.localEulerAngles.z;
+        UpdateAmmoUI();
+    }
+    void Update()
+    {
+        //  Her frame WeaponAmmo verisini kontrol et
+        if (weaponAmmo != null)
+        {
+            currentAmmo = weaponAmmo.Current;   // WeaponAmmo’dan oku
+            maxAmmo = weaponAmmo.Clip;
+        }
+
         UpdateAmmoUI();
     }
 
-    void Update()
+    public void UpdateAmmoUI()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-            Fire();
+        if (ammoText == null) return;
 
-        if (Input.GetKeyDown(KeyCode.R))
-            Reload();
-    }
+        int totalAmmo = playerInventoryData != null ? playerInventoryData.Ammo : 0;
 
-    public void Fire()
-    {
-        if (currentAmmo > 0)
-        {
-            currentAmmo--;
-            UpdateAmmoUI();
-        }
+        // 🔹 Şarjör / Toplam
+        ammoText.text = $"{currentAmmo} / {totalAmmo}";
+
     }
 
     public void Reload()
     {
-        if (currentAmmo == maxAmmo || currentMagazine <= 0)
-            return;
-
-        currentMagazine--;
-        currentAmmo = maxAmmo;
-
         if (rotationCoroutine != null)
             StopCoroutine(rotationCoroutine);
-
         rotationCoroutine = StartCoroutine(RotateRingSmooth());
-        UpdateAmmoUI();
     }
 
     private IEnumerator RotateRingSmooth()
     {
         float targetRotation = baseRotation - rotationPerReload;
-        float startRotation = baseRotation;
         float elapsed = 0f;
-
-        // 1️⃣ Daha yavaş ileri dönüş (yaklaşık 0.3 sn)
         while (elapsed < 0.3f)
         {
             elapsed += Time.deltaTime * rotationSpeed;
             float t = Mathf.SmoothStep(0, 1, elapsed / 0.3f);
-            float z = Mathf.Lerp(startRotation, targetRotation, t);
+            float z = Mathf.Lerp(baseRotation, targetRotation, t);
             reloadRing.rectTransform.localRotation = Quaternion.Euler(0, 0, z);
             yield return null;
         }
+        yield return new WaitForSeconds(0.15f);
 
-        yield return new WaitForSeconds(0.15f); // biraz bekleme
-
-        // 2️⃣ Daha yumuşak geri dönüş (yaklaşık 0.4 sn)
         elapsed = 0f;
         while (elapsed < 0.4f)
         {
@@ -92,14 +84,10 @@ public class RevolverAmmoDisplay : MonoBehaviour
             reloadRing.rectTransform.localRotation = Quaternion.Euler(0, 0, z);
             yield return null;
         }
-
         reloadRing.rectTransform.localRotation = Quaternion.Euler(0, 0, baseRotation);
-        rotationCoroutine = null;
     }
 
-    public void UpdateAmmoUI()
-    {
-        if (ammoText != null)
-            ammoText.text = $"{currentMagazine} / {currentAmmo}";
-    }
+    // UI kendi ammo değerlerini saklamaya devam ediyor ama
+    // artık WeaponAmmo tarafından sürekli güncelleniyor
+   
 }
