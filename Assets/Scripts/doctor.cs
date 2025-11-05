@@ -44,7 +44,7 @@ public class doctor : MonoBehaviour
         }
     }
 
-    // 🔥 Kapıdan geçince çağrılacak fonksiyon
+    //  Kapıdan geçince çağrılacak fonksiyon
     public void ActivateChase(Transform target)
     {
         player = target;

@@ -7,19 +7,24 @@ public class PressKeyOpenDoor : MonoBehaviour
     [Header("UI & References")]
     public GameObject instructionUI;     // “Press E to open” yazısı
     public Animator doorAnimator;        // Kapı animatörü (her kapıya özgü)
-    public string animationName ; // Oynatılacak animasyon ismi
+    public string animationName; // Oynatılacak animasyon ismi
     public GameObject triggerZone;       // Trigger objesi (isteğe bağlı)
     public AudioSource DoorOpenSound;
 
     private bool canOpen = false;
 
     [Header("Extra For SideDoor")]
-    public bool isSideDoor = false;      
-    public Transform walkTargetPoint;    
+    public bool isSideDoor = false;
+    public Transform walkTargetPoint;
     public float walkSpeed = 2.5f;
-    public doctor targetEnemy;         
+    public doctor targetEnemy;
     private bool isWalking = false;
     private Transform player;
+
+    public bool MainDoor = false;
+
+
+    public EnemySpawner spawner;
 
     void Start()
     {
@@ -84,9 +89,9 @@ public class PressKeyOpenDoor : MonoBehaviour
         {
             doorAnimator.Play(animationName);
         }
-        if (DoorOpenSound != null) 
+        if (DoorOpenSound != null)
         {
-            DoorOpenSound.Play(); 
+            DoorOpenSound.Play();
         }
 
         if (instructionUI != null)
@@ -95,10 +100,16 @@ public class PressKeyOpenDoor : MonoBehaviour
         if (triggerZone != null)
             triggerZone.SetActive(false);
 
-        
-        
+
+
 
         canOpen = false;
+
+        if (MainDoor && spawner != null)
+        {
+            spawner.SpawnAllEnemies();
+        }
+
         if (isSideDoor && targetEnemy != null)
         {
             Debug.Log($"SideDoor açıldı! {targetEnemy.name} çağırılıyor...");

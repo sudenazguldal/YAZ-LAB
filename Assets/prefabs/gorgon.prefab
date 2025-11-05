@@ -728,13 +728,14 @@ GameObject:
   - component: {fileID: 5292105573081876871}
   - component: {fileID: 4361893154610671806}
   - component: {fileID: 5898071570801696357}
+  - component: {fileID: 7902910342029994153}
   m_Layer: 7
   m_Name: gorgon
-  m_TagString: enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7202478503985738287
 Transform:
   m_ObjectHideFlags: 0
@@ -816,16 +817,16 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.6
-  m_Speed: 2
+  m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 1.2
+  m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: -0.05
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &5898071570801696357
@@ -844,7 +845,7 @@ MonoBehaviour:
   patrolPoints: []
   detectRange: 10
   stopRange: 3
-  idleDuration: 3
+  idleDuration: 0
   attackCooldown: 0
   WeapeonPrefab: {fileID: 5158492366889485678, guid: 25b8c90b2ebb6b34a8f4bc5989ae462d, type: 3}
   throwPoint: {fileID: 7376309241318799754}
@@ -853,6 +854,30 @@ MonoBehaviour:
   animator: {fileID: 8538220365019072302}
   runBoolName: isrun
   attackBoolName: isattack
+--- !u!114 &7902910342029994153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847148997874690335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 184753fc6b68a0a4fbfa65be1e485a80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  destroyDelay: 6
+  dieTriggerName: isdie
+  animator: {fileID: 8538220365019072302}
+  isDead: 0
 --- !u!1 &1876847026498876315
 GameObject:
   m_ObjectHideFlags: 0

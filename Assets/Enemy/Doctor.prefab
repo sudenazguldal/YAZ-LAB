@@ -1118,9 +1118,9 @@ GameObject:
   - component: {fileID: 5475157330584662024}
   - component: {fileID: 685311581113859265}
   - component: {fileID: 2195786628389927993}
-  - component: {fileID: 3917804384495239744}
   - component: {fileID: 5604843073698962987}
   - component: {fileID: 3246543092302205662}
+  - component: {fileID: 3640732712174602738}
   m_Layer: 0
   m_Name: Doctor
   m_TagString: Untagged
@@ -1198,23 +1198,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3917804384495239744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2871482292403706344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d8ef757bbec3e04eab099a8c597bc04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  moveSpeed: 1
-  stoppingDistance: 2
-  animator: {fileID: 685311581113859265}
-  walkBoolName: isWalk
 --- !u!136 &5604843073698962987
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1259,9 +1242,26 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   destroyDelay: 6
-  animator: {fileID: 685311581113859265}
   dieTriggerName: isdie
+  animator: {fileID: 685311581113859265}
   isDead: 0
+--- !u!114 &3640732712174602738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2871482292403706344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d8ef757bbec3e04eab099a8c597bc04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  moveSpeed: 3.5
+  stoppingDistance: 2
+  animator: {fileID: 685311581113859265}
+  walkBoolName: isWalk
 --- !u!1 &3244849269922644132
 GameObject:
   m_ObjectHideFlags: 0
