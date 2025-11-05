@@ -2,8 +2,7 @@
 using System.IO;
 using UnityEngine;
 using static Esper.ESave.SaveFileSetupData;
-using Esper.ESave.Encryption;   
-
+using Esper.ESave.Encryption;
 
 public class PlayerSaveData : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class PlayerSaveData : MonoBehaviour
     public Transform startPoint;
 
     public PlayerHealth playerHealth;
-    public AmmoDisplay ammoDisplay;
+    public RevolverAmmoDisplay ammoDisplay;
     private SaveFile saveFile;
 
     void Start()
@@ -23,7 +22,7 @@ public class PlayerSaveData : MonoBehaviour
             return;
         }
 
-        // 🎯 1. ADIM: SaveFile objesinin bellekte (storage'da) olduğundan emin ol
+        // @ 1. ADIM: SaveFile objesinin bellekte (storage'da) olduğundan emin ol
         // Bu, New Game sonrası ilk save'in çalışması için kritiktir.
         EnsureSaveFileExists();
 
@@ -70,13 +69,13 @@ public class PlayerSaveData : MonoBehaviour
         if (ammoDisplay != null)
         {
             saveFile.AddOrUpdateData("CurrentAmmo", ammoDisplay.currentAmmo);
-            saveFile.AddOrUpdateData("Magazines", ammoDisplay.magazines);
+            saveFile.AddOrUpdateData("Magazines", ammoDisplay.currentMagazine); // 💡 currentMagazine alanına uyumlu hale getirildi
         }
 
         saveFile.AddOrUpdateData("SceneName", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
         saveFile.Save(true); // diske yaz
-        Debug.Log("Saved → " + Application.persistentDataPath + "/MainSave.json");
+        Debug.Log("💾 Saved → " + Application.persistentDataPath + "/YAZ-LAB/MainSave.json");
     }
 
     // ============================================================
@@ -87,7 +86,7 @@ public class PlayerSaveData : MonoBehaviour
         // Dosya yolunu kontrol etmek için kullandığınız yol.
         string savePath = Path.Combine(Application.persistentDataPath, "YAZ-LAB", "MainSave.json");
 
-        Debug.Log(" Dosya yolu kontrol ediliyor: " + savePath);
+        Debug.Log("📂 Dosya yolu kontrol ediliyor: " + savePath);
 
         // 1️⃣ SaveFile objesinin bellekte var olduğundan emin ol (New Game veya ilk başlangıç için)
         EnsureSaveFileExists();
@@ -95,13 +94,13 @@ public class PlayerSaveData : MonoBehaviour
         // 2️⃣ SaveFile'ı yeniden bağla (önceki instance null olabilir)
         if (saveFile == null)
         {
-            Debug.Log(" SaveFile null, disktekini yeniden yüklüyorum...");
+            Debug.Log("💡 SaveFile null, disktekini yeniden yüklüyorum...");
 
             var setupData = new SaveFileSetupData
             {
                 fileName = "MainSave",
                 saveLocation = SaveLocation.DataPath,
-                filePath = "YAZ-LAB/MainSave", // 🎯 KRİTİK DÜZELTME: Dosya kontrolü ile eşleşmeli
+                filePath = "YAZ-LAB/MainSave", //  KRİTİK DÜZELTME: Dosya kontrolü ile eşleşmeli
                 fileType = FileType.Json,
                 encryptionMethod = EncryptionMethod.None,
                 addToStorage = true
@@ -127,7 +126,7 @@ public class PlayerSaveData : MonoBehaviour
         else
         {
             // Dosya var ama veri eksik/bozuk. Yine de sıfırla.
-            Debug.LogWarning("Kayıt dosyası bulundu ancak pozisyon verileri eksik. Sıfırlanıyor.");
+            Debug.LogWarning(" Kayıt dosyası bulundu ancak pozisyon verileri eksik. Sıfırlanıyor.");
             ResetToStartPoint();
             return;
         }
@@ -141,16 +140,14 @@ public class PlayerSaveData : MonoBehaviour
             if (saveFile.HasData("CurrentAmmo"))
                 ammoDisplay.currentAmmo = saveFile.GetData<int>("CurrentAmmo");
             if (saveFile.HasData("Magazines"))
-                ammoDisplay.magazines = saveFile.GetData<int>("Magazines");
+                ammoDisplay.currentMagazine = saveFile.GetData<int>("Magazines"); // 💡 değişken adı düzeltildi
 
-            ammoDisplay.UpdateAmmoUI();
+            ammoDisplay.UpdateAmmoUI(); // artık public erişimli
         }
 
-        Debug.Log("📂 Continue ile kayıt başarıyla yüklendi!");
+        Debug.Log("✅ Continue ile kayıt başarıyla yüklendi!");
     }
 
-
-    // Yeni eklenecek metot!
     // ============================================================
     // ----------------------- SAVEFILE OLUŞTURUCU ------------------
     // ============================================================
@@ -182,6 +179,7 @@ public class PlayerSaveData : MonoBehaviour
 
         Debug.Log("✅ SaveFile objesi hafızada oluşturuldu ve SaveStorage'a eklendi.");
     }
+
     // ============================================================
     // ----------------------- UTILITIES ---------------------------
     // ============================================================
@@ -190,7 +188,7 @@ public class PlayerSaveData : MonoBehaviour
         if (startPoint != null)
         {
             transform.position = startPoint.position;
-            Debug.Log("↩Oyuncu başlangıç noktasına döndü.");
+            Debug.Log("↩ Oyuncu başlangıç noktasına döndü.");
         }
 
         if (playerHealth != null)
@@ -199,7 +197,7 @@ public class PlayerSaveData : MonoBehaviour
         if (ammoDisplay != null)
         {
             ammoDisplay.currentAmmo = ammoDisplay.maxAmmo;
-            ammoDisplay.magazines = 3;
+            ammoDisplay.currentMagazine = 4; // revolver için 4 şarjör
             ammoDisplay.UpdateAmmoUI();
         }
     }
