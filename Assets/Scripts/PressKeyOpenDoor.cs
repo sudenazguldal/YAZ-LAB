@@ -21,6 +21,9 @@ public class PressKeyOpenDoor : MonoBehaviour
     private bool isWalking = false;
     private Transform player;
 
+    public bool MainDoor = false;
+    public EnemySpawner spawner;
+
     void Start()
     {
         if (instructionUI != null)
@@ -99,6 +102,12 @@ public class PressKeyOpenDoor : MonoBehaviour
         
 
         canOpen = false;
+
+        if(MainDoor && spawner != null)
+        {
+            spawner.SpawnAllEnemies();
+        }
+
         if (isSideDoor && targetEnemy != null)
         {
             Debug.Log($"SideDoor açıldı! {targetEnemy.name} çağırılıyor...");

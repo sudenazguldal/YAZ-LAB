@@ -8,6 +8,7 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private float damage = 25f;
     [SerializeField] private LayerMask aimColliderLayerMask = default; // Gerekirse
 
+
     [Header("VFX")]
     [SerializeField] private Transform spawnBulletPosition;
     [SerializeField] private GameObject vfxMuzzleFlash;
