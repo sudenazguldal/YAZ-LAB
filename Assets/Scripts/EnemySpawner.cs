@@ -22,7 +22,6 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         HealthEnemy.OnEnemyDeath += HandleEnemyDeath;
-        SpawnAllEnemies();
     }
 
     void OnDestroy()
@@ -30,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
         HealthEnemy.OnEnemyDeath -= HandleEnemyDeath;
     }
 
-    private void SpawnAllEnemies()
+    public void SpawnAllEnemies()
     {
         if (enemyPrefabs.Length != spawnPoints.Length)
             Debug.LogWarning("Enemy prefab sayısı ile spawn point sayısı eşit değil!");
@@ -75,7 +74,7 @@ public class EnemySpawner : MonoBehaviour
         GameObject newEnemy = Instantiate(enemyPrefabs[index], point.position, point.rotation);
         currentEnemies[index] = newEnemy;
 
-        // 🔹 Yeni doğan düşmana aynı patrol noktalarını ata
+        // Yeni doğan düşmana aynı patrol noktalarını ata
         enemy1 script = newEnemy.GetComponent<enemy1>();
         if (script != null && patrolRoutes != null && index < patrolRoutes.Length)
         {

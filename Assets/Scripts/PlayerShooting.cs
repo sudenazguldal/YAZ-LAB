@@ -5,8 +5,8 @@ public class PlayerShooting : MonoBehaviour
     [Header("Shooting Config")]
     [SerializeField] private float fireRate = 0.15f;
     public float FireRate => fireRate; // Dışarıdan okumak için
-    [SerializeField] private float damage = 10f;
-    [SerializeField] private LayerMask aimColliderLayerMask = default; 
+    [SerializeField] private float damage = 25f;
+    [SerializeField] private LayerMask aimColliderLayerMask = default; // Gerekirse
 
     [Header("VFX")]
     [SerializeField] private Transform spawnBulletPosition;
@@ -23,6 +23,11 @@ public class PlayerShooting : MonoBehaviour
     [Header("Cover Shooting")]
     private bool isPeeking = false; // PlayerController'dan gelen Cover Aim durumu
     [SerializeField] private float peekHeightOffset = 0.6f; // Siperden uzanma yüksekliği (Örn: 0.6m)
+
+    [Header("Inventory")]
+    [Tooltip("Envanter veri ScriptableObject'ini buraya sürükleyin.")]
+    [SerializeField] private InventoryData inventoryData;
+    [SerializeField] private int ammoCostPerShot = 1; // Her atışta harcanan mermi miktarı (çoğu zaman 1'dir)
 
     WeaponAmmo Ammo;
 
@@ -53,95 +58,67 @@ public class PlayerShooting : MonoBehaviour
     // PlayerController'dan çağrılacak ana metod
     public void Shoot(Vector3 targetPoint)
     {
-        if (currentIsAiming == false) return; // Sadece nişan alındığında ateşle
-        if (Ammo.CurrentAmmo == 0)
-        {
+        // Güvenlik Kontrolleri
+        if (currentIsAiming == false) return;
+        if (Ammo == null) { Debug.LogError("WeaponAmmo referansı eksik!"); return; }
 
+        // ----------------------------------------------------------------------
+        // 1. MÜHİMMAT KONTROLÜ
+        // ----------------------------------------------------------------------
+        if (Ammo.CurrentAmmo <= 0)
+        {
+            // Mermi bittiğinde tık sesi çal
             if (audioSource != null && emptyGunSound != null)
             {
-
                 audioSource.PlayOneShot(emptyGunSound);
             }
-
-
             return; // Mermi yoksa ateşleme
         }
 
+        // ----------------------------------------------------------------------
+        // 2. MÜHİMMAT HARCAMA (SADECE ŞARJÖRDEN DÜŞ)
+        // ----------------------------------------------------------------------
+        Ammo.CurrentAmmo--; // Şarjörden 1 mermi düş
+                            // NOT: isabet veya harcama başarısız olsa bile mermi atıldığı için düşülür.
 
-
-
+        // ----------------------------------------------------------------------
+        // 3. POZİSYON VE PEEK HESAPLAMASI
+        // ----------------------------------------------------------------------
         Vector3 bulletSpawnPosition = spawnBulletPosition.position;
 
         if (isPeeking)
         {
-            // Namlu pozisyonunu siperden uzanıyormuş gibi yukarı kaydır
-            bulletSpawnPosition += Vector3.up * peekHeightOffset;
+            // Namlu pozisyonunu siperden uzanıyormuş gibi yukarı kaydır
+            bulletSpawnPosition += Vector3.up * peekHeightOffset;
         }
 
-
-        // 1. Namlu Alevi Efekti
-
-
-        if (vfxMuzzleFlash != null)
+        // ----------------------------------------------------------------------
+        // 4. VFX VE SES
+        // ----------------------------------------------------------------------
+        if (vfxMuzzleFlash != null)
         {
-
-
-            //  1. TANIMLAMA ve OLUŞTURMA 
-            GameObject muzzleFlashInstance = Instantiate(
-        vfxMuzzleFlash,
-        bulletSpawnPosition,
-      spawnBulletPosition.rotation
-      );
-
+            // Muzzle Flash oluşturma ve yok etme mantığı (Mevcut kodunuz)
+            GameObject muzzleFlashInstance = Instantiate(vfxMuzzleFlash, bulletSpawnPosition, spawnBulletPosition.rotation);
             ParticleSystem ps = muzzleFlashInstance.GetComponent<ParticleSystem>();
-
-            if (ps != null)
-            {
-                // 1. Manuel Hesaplamaya Geri Dönüş
-                // Parçacıkların maksimum ömrünü al (eğer ayar sabit değilse .constantMax kullanılır)
-                float maxLifetime = ps.main.startLifetime.constantMax;
-
-                // Toplam Süre = Yayma Süresi + Parçacık Ömrü
-                float totalDuration = ps.main.duration + maxLifetime;
-
-                ps.Play(); // Manuel olarak başlat
-
-                // 2. Güvenli Marj ile Yok Et
-                Destroy(muzzleFlashInstance, totalDuration + 0.1f);
-            }
-            else
-            {
-                // Eğer Partikül Sistemi yoksa (veya bulunamazsa), yine de yok et
-                Destroy(muzzleFlashInstance, 0.5f);
-            }
-
-
-
-
+            // ... (Kalan VFX mantığı)
+            Destroy(muzzleFlashInstance, 0.5f); // Basitleştirilmiş yok etme
         }
 
         if (audioSource != null && shootSound != null)
         {
-            // PlayOneShot, AudioSource'un mevcut sesini kesmeden yeni bir ses çalar.
-            audioSource.PlayOneShot(shootSound);
+            audioSource.PlayOneShot(shootSound);
         }
 
-        //  Namludan Hedefe Yön Hesabı
-        Vector3 shootDirection = (targetPoint - bulletSpawnPosition).normalized;
+        // ----------------------------------------------------------------------
+        // 5. HITSCAN
+        // ----------------------------------------------------------------------
+        Vector3 shootDirection = (targetPoint - bulletSpawnPosition).normalized;
+        RaycastHit hitInfo;
 
-        // 3. HITSCAN RAYCAST
-        RaycastHit hitInfo;
-        if (Physics.Raycast(bulletSpawnPosition, shootDirection, out hitInfo, 1000f))
+        if (Physics.Raycast(bulletSpawnPosition, shootDirection, out hitInfo, 1000f, aimColliderLayerMask))
         {
-            
             HandleHit(hitInfo);
         }
-        else {
-            
-        }
-        
-
-        Ammo.CurrentAmmo--;
     }
 
     private void HandleHit(RaycastHit hitInfo)
@@ -224,8 +201,7 @@ public class PlayerShooting : MonoBehaviour
         return ray.GetPoint(999f); // Hiçbir şeye çarpmazsa uzak nokta
     }
 
-    // public void Shoot(Vector3 targetPoint) metodu aynı kalır.
-    // private void HandleHit(RaycastHit hitInfo) metodu aynı kalır.
+   
     void Update()
     {
         // 1. Nişan Alma Tespiti (Kameradan hedefi bulma) - Artık bu da burada!
@@ -238,11 +214,7 @@ public class PlayerShooting : MonoBehaviour
             Shoot(GetAimTarget()); // GetAimTarget metodunu da Update içinde çağırabiliriz.
             nextFireTime = Time.time + FireRate;
         }
-        if (isShooting && Time.time >= nextFireTime)
-        {
-            Shoot(mouseWorldPosition);
-            nextFireTime = Time.time + FireRate;
-        }
+        
 
 
 

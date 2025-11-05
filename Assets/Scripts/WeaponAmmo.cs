@@ -1,15 +1,19 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class WeaponAmmo : MonoBehaviour
 {
     [Header("Ammo ")]
     [SerializeField] private int ClipSize;
-    [SerializeField] private int ExtraAmmo;
+    
     [SerializeField] public int CurrentAmmo;
 
+    [Header("Management")]
+    [SerializeField] private InventoryData playerInventoryData;
+
     [Header("Audio")]
-    [SerializeField] private AudioSource audioSource; // Atýþ sesini çalacak AudioSource bileþeni
+    [SerializeField] private AudioSource audioSource; // AtÄ±ÅŸ sesini Ã§alacak AudioSource bileÅŸeni
     [SerializeField] private AudioClip ReloadSound;
+    bool reloadOccurred;
     void Start()
     {
         CurrentAmmo = ClipSize;
@@ -21,42 +25,49 @@ public class WeaponAmmo : MonoBehaviour
     }
     public void Reload()
     {
-        // Yeniden doldurma iþlemi gerçekleþip gerçekleþmediðini kontrol eden bayrak
-        bool reloadOccurred = false;
+        if (playerInventoryData == null) return;
 
-        // Þu anki klipte kaç mermilik boþluk var?
+        // Åžu anki klipte kaÃ§ mermilik boÅŸluk var?
         int ammoNeeded = ClipSize - CurrentAmmo;
 
-        // Eðer zaten tam doluysa veya ekstra mermi yoksa, ses çalmayacaðýz
-        if (ammoNeeded <= 0 || ExtraAmmo <= 0)
+        // SO'da ne kadar mermi var?
+        int ammoAvailable = playerInventoryData.Ammo;
+
+        // YÃ¼kleme olup olmadÄ±ÄŸÄ±nÄ± kontrol etmek iÃ§in bayrak (flag)
+        bool reloadOccurred = false; // TanÄ±mlÄ± deÄŸilse, bunu metodun baÅŸÄ±nda tanÄ±mlayÄ±n.
+
+        // 1. YÃ¼kleme gereksizse veya mermi yoksa Ã§Ä±k
+        if (ammoNeeded <= 0 || ammoAvailable <= 0)
         {
-            return; // Ýþlem yok, metottan çýk
+            return;
         }
 
-        // Ekstra mühimmat, klipsi tamamen doldurmaya yetiyor mu?
-        if (ExtraAmmo >= ammoNeeded)
+        // 2. Envanterden alÄ±nacak maksimum mÃ¼himmat miktarÄ±nÄ± belirle
+        int ammoToTake = Mathf.Min(ammoNeeded, ammoAvailable);
+
+        // 3. MÃ¼himmat Ã§ekiliyorsa (ammoToTake > 0)
+        if (ammoToTake > 0)
         {
-            // Klipsi tamamen doldur.
-            ExtraAmmo -= ammoNeeded;
-            CurrentAmmo = ClipSize;
-            reloadOccurred = true;
-        }
-        // Ekstra mühimmat var ama klipsi tam doldurmaya yetmiyor.
-        else // (ExtraAmmo > 0 && ExtraAmmo < ammoNeeded)
-        {
-            // Tüm ekstra mühimmatý CurrentAmmo'ya ekle.
-            CurrentAmmo += ExtraAmmo;
-            ExtraAmmo = 0;
+            // ðŸ”¹ 4. KRÄ°TÄ°K DÃœZELTME: Mermiyi SADECE BÄ°R KEZ Ã‡IKAR!
+            playerInventoryData.RemoveAmmo(ammoToTake);
+
+            // 5. SilahÄ±n ÅŸarjÃ¶rÃ¼ne ekle
+            CurrentAmmo += ammoToTake;
+
+            // YÃ¼kleme gerÃ§ekleÅŸti bayraÄŸÄ±nÄ± ayarla
             reloadOccurred = true;
         }
 
-        // Eðer baþarýlý bir doldurma iþlemi gerçekleþtiyse sesi çal.
+        // 6. Ses Ã§alma mantÄ±ÄŸÄ±
         if (reloadOccurred)
         {
-            // Ses çalma iþlemini buraya ekleyin:
-            // AudioClip'i AudioSource bileþeninde bir defalýk (OneShot) olarak çalar.
-            audioSource.PlayOneShot(ReloadSound);
+            if (audioSource != null && ReloadSound != null)
+            {
+                audioSource.PlayOneShot(ReloadSound);
+            }
         }
+        // NOT: EÄŸer reloadOccurred metot iÃ§inde tanÄ±mlÄ± deÄŸilse, public bool reloadOccurred = false;
+        // ÅŸeklinde metodun baÅŸÄ±nda tanÄ±mladÄ±ÄŸÄ±nÄ±zdan emin olun.
     }
 
 

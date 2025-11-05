@@ -21,9 +21,11 @@ public class HealthEnemy : MonoBehaviour
 
     [Header("Death")]
     public float destroyDelay = 6f;
+    [SerializeField]
+    private string dieTriggerName = "isdie";
 
     public Animator animator;
-    public string dieTriggerName = "isdie";
+    
 
     public bool isDead = false;
 
@@ -84,11 +86,13 @@ public class HealthEnemy : MonoBehaviour
             if (col != null)
                 col.enabled = false;
         }
-        onDeath?.Invoke();
-        OnEnemyDeath?.Invoke(this);
+        
 
         if (animator != null)
             animator.SetTrigger(dieTriggerName);
+        
+        onDeath?.Invoke();
+        OnEnemyDeath?.Invoke(this);
 
         Destroy(gameObject, destroyDelay);
     }
