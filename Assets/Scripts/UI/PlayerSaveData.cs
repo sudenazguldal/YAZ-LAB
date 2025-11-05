@@ -100,7 +100,7 @@ public class PlayerSaveData : MonoBehaviour
             {
                 fileName = "MainSave",
                 saveLocation = SaveLocation.DataPath,
-                filePath = "YAZ-LAB/MainSave", //  KRİTİK DÜZELTME: Dosya kontrolü ile eşleşmeli
+                filePath = "YAZ-LAB/MainSave", // 🎯 KRİTİK DÜZELTME: Dosya kontrolü ile eşleşmeli
                 fileType = FileType.Json,
                 encryptionMethod = EncryptionMethod.None,
                 addToStorage = true
@@ -126,7 +126,7 @@ public class PlayerSaveData : MonoBehaviour
         else
         {
             // Dosya var ama veri eksik/bozuk. Yine de sıfırla.
-            Debug.LogWarning(" Kayıt dosyası bulundu ancak pozisyon verileri eksik. Sıfırlanıyor.");
+            Debug.LogWarning("⚠️ Kayıt dosyası bulundu ancak pozisyon verileri eksik. Sıfırlanıyor.");
             ResetToStartPoint();
             return;
         }

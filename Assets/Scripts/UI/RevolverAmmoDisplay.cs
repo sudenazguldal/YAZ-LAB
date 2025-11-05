@@ -6,19 +6,19 @@ using System.Collections;
 public class RevolverAmmoDisplay : MonoBehaviour
 {
     [Header("UI References")]
-    public TMP_Text ammoText;        // "4 / 6"
-    public Image reloadRing;         // Dönüş yapan halka
-    public Image gunIcon;            // Revolver ikonu
+    public TMP_Text ammoText;
+    public Image reloadRing;
+    public Image gunIcon;
 
     [Header("Ammo Settings")]
-    public int currentAmmo = 6;      // Her şarjördeki mermi
+    public int currentAmmo = 6;
     public int maxAmmo = 6;
-    public int currentMagazine = 4;  // Toplam şarjör sayısı
+    public int currentMagazine = 4;
 
     [Header("Ring Rotation Settings")]
     [Range(0f, 1f)] public float ringFillAmount = 0.75f;
-    public float rotationPerReload = 90f;
-    public float rotationSpeed = 2f;         // Dönüş hızı
+    public float rotationPerReload = 90f;   // 90° dönüş
+    public float rotationSpeed = 2f;        // 🔽 biraz daha yavaş
     private float baseRotation = 0f;
     private Coroutine rotationCoroutine;
 
