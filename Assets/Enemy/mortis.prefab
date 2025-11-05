@@ -266,7 +266,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4615886734921068, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.34
+      value: -0.36
       objectReference: {fileID: 0}
     - target: {fileID: 4615886734921068, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
       propertyPath: m_LocalPosition.z
@@ -308,9 +308,21 @@ PrefabInstance:
       propertyPath: patrolPoints.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3505596340113601487, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
+      propertyPath: m_Height
+      value: 2.0874
+      objectReference: {fileID: 0}
+    - target: {fileID: 3505596340113601487, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
+      propertyPath: m_Center.y
+      value: 0.97293806
+      objectReference: {fileID: 0}
     - target: {fileID: 4457702364619086727, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
       propertyPath: m_Height
       value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4457702364619086727, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
+      propertyPath: m_BaseOffset
+      value: -0.05
       objectReference: {fileID: 0}
     - target: {fileID: 6717627760184909142, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
       propertyPath: m_Layer

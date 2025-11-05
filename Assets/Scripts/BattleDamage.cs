@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BattleDamage : MonoBehaviour
 {
-    public float damage = 20f;
+    public float damage = 5f;
     public float lifetime = 3f;
 
     private void Start()
@@ -14,7 +14,7 @@ public class BattleDamage : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            HealthEnemy playerHealth = other.GetComponent<HealthEnemy>();
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
 
             if (playerHealth != null)
             {
