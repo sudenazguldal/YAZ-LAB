@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class HealthUI : MonoBehaviour
 {
-    public PlayerHealth playerHealth;
+    public HealthComponent playerHealth;
     public TextMeshProUGUI healthText;
     public Image heartFillImage;
 

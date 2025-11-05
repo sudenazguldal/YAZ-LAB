@@ -14,7 +14,7 @@ public class BoneDamage : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            HealthEnemy playerHealth = other.GetComponent<HealthEnemy>();
+            HealthComponent playerHealth = other.GetComponent<HealthComponent>();
 
             if (playerHealth != null)
             {
