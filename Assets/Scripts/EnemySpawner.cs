@@ -22,6 +22,7 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         HealthEnemy.OnEnemyDeath += HandleEnemyDeath;
+        SpawnAllEnemies();
     }
 
     void OnDestroy()
@@ -29,7 +30,7 @@ public class EnemySpawner : MonoBehaviour
         HealthEnemy.OnEnemyDeath -= HandleEnemyDeath;
     }
 
-    public void SpawnAllEnemies()
+    private void SpawnAllEnemies()
     {
         if (enemyPrefabs.Length != spawnPoints.Length)
             Debug.LogWarning("Enemy prefab sayısı ile spawn point sayısı eşit değil!");

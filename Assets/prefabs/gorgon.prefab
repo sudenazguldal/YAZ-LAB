@@ -728,8 +728,6 @@ GameObject:
   - component: {fileID: 5292105573081876871}
   - component: {fileID: 4361893154610671806}
   - component: {fileID: 5898071570801696357}
-  - component: {fileID: 9215365456224344800}
-  - component: {fileID: 6987653908828826915}
   m_Layer: 7
   m_Name: gorgon
   m_TagString: enemy
@@ -818,16 +816,16 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.6
-  m_Speed: 3.5
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 1.2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: -0.05
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &5898071570801696357
@@ -846,7 +844,7 @@ MonoBehaviour:
   patrolPoints: []
   detectRange: 10
   stopRange: 3
-  idleDuration: 0
+  idleDuration: 3
   attackCooldown: 0
   WeapeonPrefab: {fileID: 5158492366889485678, guid: 25b8c90b2ebb6b34a8f4bc5989ae462d, type: 3}
   throwPoint: {fileID: 7376309241318799754}
@@ -855,53 +853,6 @@ MonoBehaviour:
   animator: {fileID: 8538220365019072302}
   runBoolName: isrun
   attackBoolName: isattack
---- !u!136 &9215365456224344800
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1847148997874690335}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2.1036143
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.90291107, z: 0}
---- !u!114 &6987653908828826915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1847148997874690335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 184753fc6b68a0a4fbfa65be1e485a80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
-  onDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  onHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  destroyDelay: 6
-  animator: {fileID: 8538220365019072302}
-  dieTriggerName: isdie
-  isDead: 0
 --- !u!1 &1876847026498876315
 GameObject:
   m_ObjectHideFlags: 0

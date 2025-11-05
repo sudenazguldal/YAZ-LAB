@@ -16,7 +16,7 @@ public class enemy1 : MonoBehaviour
 
     [Header("Ranges & Timing")]
     public float detectRange;
-    public float stopRange;
+    public float stopRange ;
     public float idleDuration;
     private float idleTimer = 0f;
     public float attackCooldown = 0.7f;
