@@ -57,6 +57,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     private float lastGroundedTime;
 
+    private PickupItem nearItem = null;
+
 
 
 
@@ -161,6 +163,36 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             shootingHandler.HandleShootInput(ctx.ReadValueAsButton());
         }
     }
+
+    public void SetNearItem(PickupItem item)
+    {
+        // PickupItem yaklaştığında/uzaklaştığında referansı günceller.
+        nearItem = item;
+    }
+
+    public void OnInteract(InputAction.CallbackContext ctx)
+    {
+        // Sadece tuşa basıldığında (down) çalışsın
+        if (!ctx.performed) return;
+
+        // Eğer yakınımızda bir öge varsa
+        if (nearItem != null)
+        {
+            // Toplama işlemini InventoryCollector'a delege et
+            InventoryCollector collector = GetComponent<InventoryCollector>();
+
+            if (collector != null)
+            {
+                // PickupItem üzerindeki Collect metodunu çağırıyoruz.
+                nearItem.Collect(collector);
+
+                // İşlem bittiği için referansı sıfırla
+                SetNearItem(null);
+            }
+        }
+
+    }
+
     private PlayerStance CheckCoverType()
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
