@@ -75,7 +75,7 @@ public class AimCameraController : MonoBehaviour
         //hangi cihazi kullandigini anlamak icin
         if (Mouse.current != null && Mouse.current.delta.IsActuated())
         {
-            look *= mouseSensitivity;
+            look *= mouseSensitivity * SettingsMenu.MouseSensitivity;
             //genelde gridiler buyuk oldugu icin sensivty ile carpiyor
         }
 

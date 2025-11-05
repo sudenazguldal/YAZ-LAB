@@ -1,7 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
-using System;
+using System.Collections.Generic;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -12,116 +12,125 @@ public class SettingsMenu : MonoBehaviour
     public Slider sfxSlider;
 
     [Header("Graphics Settings")]
-    public Dropdown qualityDropdown;
     public Toggle fullscreenToggle;
-    
-    [Header("Control Settings")]
-    public Slider sensitivitySlider;
+    public List<QualityButtonUI> QualityButtons;
 
+    [Header("Control Settings")]
+    public Slider aimSensitivitySlider;
     public static float MouseSensitivity = 1f;
+
+    [Header("UI References")]
+    public GameObject SettingsPanel;
+    public GameObject CanvasMainMenu;
+
+    private int pendingQualityLevel;
+    private bool pendingFullscreen;
+    private float pendingMouseSens;
+
+    private int savedQualityLevel;
+    private bool savedFullscreen;
+    private float savedMouseSens;
 
     void Start()
     {
+        // ----- Load Saved -----
+        savedQualityLevel = PlayerPrefs.GetInt("QualityLevel", QualitySettings.GetQualityLevel());
+        savedFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+        savedMouseSens = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
 
-        qualityDropdown.ClearOptions();
-        qualityDropdown.AddOptions(new System.Collections.Generic.List<string>(QualitySettings.names));
-        int q = PlayerPrefs.GetInt("QualityLevel", QualitySettings.GetQualityLevel());
-        qualityDropdown.value = q;
-        SetQuality(q);
+        // ----- Apply Saved -----
+        pendingQualityLevel = savedQualityLevel;
+        pendingFullscreen = savedFullscreen;
+        pendingMouseSens = savedMouseSens;
 
-        // Kaydedilmi� ayar varsa y�kle
-        if (PlayerPrefs.HasKey("MasterVol"))
-        {
-            LoadVolume();
-        }
-        else
-        {
-            SetMasterVolume(masterSlider.value);
-            SetMusicVolume(musicSlider.value);
-            SetSFXVolume(sfxSlider.value);
-        }
+        fullscreenToggle.isOn = savedFullscreen;
+        aimSensitivitySlider.value = savedMouseSens;
+        UpdateQualityButtonVisuals(savedQualityLevel);
 
-        if (PlayerPrefs.HasKey("QualityLevel"))
-        {
-            qualityDropdown.value = PlayerPrefs.GetInt("QualityLevel");
-            SetQuality(qualityDropdown.value);
-        }
-        if (PlayerPrefs.HasKey("Fullscreen"))
-        {
-            bool fs = PlayerPrefs.GetInt("Fullscreen") == 1;
-            fullscreenToggle.isOn = fs;
-            SetFullscreen(fs);
-        }
+        MouseSensitivity = savedMouseSens;
 
-        if (PlayerPrefs.HasKey("MouseSensitivity"))
-        {
-            float sens = PlayerPrefs.GetFloat("MouseSensitivity");
-            sensitivitySlider.value = sens;
-            SetMouseSensitivity(sens);
-        }
+        foreach (var button in QualityButtons)
+            button.OnButtonClicked += OnQualityButtonClicked;
     }
 
-    public void SetMasterVolume(float value)
+    // =====================================================
+    // GRAPHICS
+    // =====================================================
+    private void OnQualityButtonClicked(QualityButtonUI clickedButton)
     {
-        audioMixer.SetFloat("MasterVol", Mathf.Log10(value) * 20);
-        PlayerPrefs.SetFloat("MasterVol", value);
+        foreach (var btn in QualityButtons)
+            btn.SetActive(false);
+        clickedButton.SetActive(true);
+        SetQuality(clickedButton.QualityIndex);
     }
 
-    public void SetMusicVolume(float value)
+    private void UpdateQualityButtonVisuals(int activeIndex)
     {
-        audioMixer.SetFloat("MusicVol", Mathf.Log10(value) * 20);
-        PlayerPrefs.SetFloat("MusicVol", value);
+        foreach (var btn in QualityButtons)
+            btn.SetActive(btn.QualityIndex == activeIndex);
     }
 
-    public void SetSFXVolume(float value)
-    {
-        audioMixer.SetFloat("SFXVol", Mathf.Log10(value) * 20);
-        PlayerPrefs.SetFloat("SFXVol", value);
-    }
+    public void SetQuality(int index) => pendingQualityLevel = index;
+    public void SetFullscreen(bool isFullscreen) => pendingFullscreen = isFullscreen;
 
-    void LoadVolume()
-    {
-        float master = PlayerPrefs.GetFloat("MasterVol");
-        float music = PlayerPrefs.GetFloat("MusicVol");
-        float sfx = PlayerPrefs.GetFloat("SFXVol");
-
-        masterSlider.value = master;
-        musicSlider.value = music;
-        sfxSlider.value = sfx;
-
-        SetMasterVolume(master);
-        SetMusicVolume(music);
-        SetSFXVolume(sfx);
-    }
-
-    public void SetQuality(int index)
-    {
-        QualitySettings.SetQualityLevel(index);
-        PlayerPrefs.SetInt("QualityLevel", index);
-    }
-
-    public void SetFullscreen(bool isFullscreen)
-    {
-        Screen.fullScreen = isFullscreen;
-        PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
-    }
-
+    // =====================================================
+    // SENSITIVITY
+    // =====================================================
     public void SetMouseSensitivity(float value)
     {
+        pendingMouseSens = value;
         MouseSensitivity = value;
-        PlayerPrefs.SetFloat("MouseSensitivity", value);
     }
 
+    // =====================================================
+    // APPLY
+    // =====================================================
     public void ApplyChanges()
     {
+        QualitySettings.SetQualityLevel(pendingQualityLevel);
+        Screen.fullScreen = pendingFullscreen;
+        MouseSensitivity = pendingMouseSens;
+
+        PlayerPrefs.SetInt("QualityLevel", pendingQualityLevel);
+        PlayerPrefs.SetInt("Fullscreen", pendingFullscreen ? 1 : 0);
+        PlayerPrefs.SetFloat("MouseSensitivity", MouseSensitivity);
         PlayerPrefs.Save();
-        Debug.Log("Settings Applied!");
+
+        savedQualityLevel = pendingQualityLevel;
+        savedFullscreen = pendingFullscreen;
+        savedMouseSens = pendingMouseSens;
+
+        Debug.Log($"✅ Ayarlar kaydedildi! Sensitivity={MouseSensitivity}");
     }
 
+    // =====================================================
+    // BACK TO MAIN MENU
+    // =====================================================
     public void BackToMainMenu()
     {
-        Debug.Log("Back to main menu");
-        // SceneManager.LoadScene("MainMenu"); // veya paneli kapat
-    }
+        bool changed =
+            pendingQualityLevel != savedQualityLevel ||
+            pendingFullscreen != savedFullscreen ||
+            Mathf.Abs(pendingMouseSens - savedMouseSens) > 0.001f;
 
+        if (changed)
+        {
+            QualitySettings.SetQualityLevel(savedQualityLevel);
+            Screen.fullScreen = savedFullscreen;
+            MouseSensitivity = savedMouseSens;
+
+            fullscreenToggle.isOn = savedFullscreen;
+            aimSensitivitySlider.value = savedMouseSens;
+            UpdateQualityButtonVisuals(savedQualityLevel);
+
+            Debug.Log("🔄 Değişiklikler geri alındı.");
+        }
+
+        if (SettingsPanel != null)
+            SettingsPanel.SetActive(false);
+        if (CanvasMainMenu != null)
+            CanvasMainMenu.SetActive(true);
+
+        Debug.Log("↩️ Ana menüye dönüldü.");
+    }
 }
