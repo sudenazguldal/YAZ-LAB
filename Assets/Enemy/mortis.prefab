@@ -312,6 +312,10 @@ PrefabInstance:
       propertyPath: m_Height
       value: 1.2
       objectReference: {fileID: 0}
+    - target: {fileID: 4457702364619086727, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
+      propertyPath: m_BaseOffset
+      value: -0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 6717627760184909142, guid: 773d21b665a278541ae517d2cf706d63, type: 3}
       propertyPath: m_Layer
       value: 7

@@ -1,16 +1,23 @@
+
+
 using UnityEngine;
+using TMPro; // UI için
+using UnityEngine.UI; // Gerekli olabilir
 
 public class HealthComponent : MonoBehaviour
 {
-    //  GÜNCELLENDÝ: Max Health'i ayarlayabilmek için SerializeField ekleyelim.
-    [SerializeField] private float maxHealth = 100f;
-    private float currentHealth; // Canýn deðerini bu alanda tutalým.
+    // --- VERÝ VE UI ---
+    [SerializeField] public float maxHealth = 100f;
+    public float currentHealth;
 
-    // ----------------------------------------------------------------
-    //  EKLEME 1: Envanterin okumasý için Gerekli Public Property'ler (CS1061 Fix)
+    // UI Referansý (PlayerHealth'ten taþýndý)
+    public TextMeshProUGUI healthText;
+
     // -----------------------------------------------------------------
-    public float MaxHealth => maxHealth;      // InventoryCollector buradan okuyacak
-    public float CurrentHealth => currentHealth; // InventoryCollector buradan okuyacak
+    // EKLEME 1: Public Property'ler (InventoryCollector ve Envanter için)
+    // -----------------------------------------------------------------
+    public float MaxHealth => maxHealth;
+    public float CurrentHealth => currentHealth;
     // -----------------------------------------------------------------
 
     void Awake()
@@ -18,31 +25,55 @@ public class HealthComponent : MonoBehaviour
         currentHealth = maxHealth;
     }
 
+    // PlayerHealth.cs'ten taþýndý
+    void Start()
+    {
+        UpdateHealthUI();
+    }
+
+    // PlayerHealth.cs'ten taþýndý (Test Input'larý)
+    void Update()
+    {
+    }
+
+    // -----------------------------------------------------------------
+    // TEMEL METOTLAR (UI Güncellemelerini ekledik)
+    // -----------------------------------------------------------------
+
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        currentHealth = Mathf.Max(currentHealth, 0); // Canýn sýfýrýn altýna düþmesini engelle
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log($"Hasar Aldý: -{amount} | Mevcut Can: {currentHealth}");
+
+        UpdateHealthUI(); //  UI'ý güncelle
+        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); //  Dýþ UI'ý güncelle (Varsayýlan olarak)
+
         if (currentHealth <= 0)
         {
             Die();
         }
     }
 
-    // -----------------------------------------------------------------
-    //  EKLEME 2: Can Kiti Kullaným Metodu (CS1061 Fix)
-    // -----------------------------------------------------------------
     public void Heal(float amount)
     {
-        // Caný iyileþtir ve MaxHealth'i aþmasýný engelle
-        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        Debug.Log($"Can iyileþtirildi. Yeni Can: {currentHealth}");
-        // Buraya ilerde can çubuðu güncelleme mantýðý eklenebilir.
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        Debug.Log($"Ýyileþti: +{amount} | Mevcut Can: {currentHealth}");
+
+        UpdateHealthUI(); // UI'ý güncelle
+        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); // Dýþ UI'ý güncelle
     }
-    // -----------------------------------------------------------------
+
+    void UpdateHealthUI()
+    {
+        if (healthText != null)
+            healthText.text = Mathf.CeilToInt(currentHealth).ToString();
+    }
 
     private void Die()
     {
-        
-        Destroy(gameObject);
+        Debug.Log("Player öldü!");
+        // ... (Ölüm mantýðý)
+        // Destroy(gameObject); // Eðer player ölünce yok edilecekse
     }
 }

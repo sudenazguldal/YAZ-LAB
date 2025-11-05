@@ -728,7 +728,8 @@ GameObject:
   - component: {fileID: 5292105573081876871}
   - component: {fileID: 4361893154610671806}
   - component: {fileID: 5898071570801696357}
-  - component: {fileID: 7902910342029994153}
+  - component: {fileID: 9215365456224344800}
+  - component: {fileID: 6987653908828826915}
   m_Layer: 7
   m_Name: gorgon
   m_TagString: Untagged
