@@ -1,11 +1,14 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
+    public float restartDelay = 5f;
+    private const string MainMenuSceneName = "MainMenuScene";
 
     public TextMeshProUGUI healthText; 
 
@@ -56,5 +59,14 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Player died!");
         // Ölüm animasyonu, ekran, sahne reset gibi iþlemler
+        Invoke("LoadMainMenu", restartDelay);
+    }
+    private void LoadMainMenu()
+    {
+        // Sahneyi ismine göre yükler
+        SceneManager.LoadScene(MainMenuSceneName);
+
+        // Eðer menünüz 0. indeksli sahne ise:
+        // SceneManager.LoadScene(0);
     }
 }
