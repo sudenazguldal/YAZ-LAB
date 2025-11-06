@@ -358,6 +358,10 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthText: {fileID: 0}
+  damageVignetteImage: {fileID: 0}
+  flashDuration: 1
+  maxAlpha: 1
+  damageColor: {r: 0.5622641, g: 0.049861126, b: 0.049861126, a: 1}
 --- !u!1 &4009749510579685953
 GameObject:
   m_ObjectHideFlags: 0
