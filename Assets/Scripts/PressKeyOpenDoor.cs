@@ -31,8 +31,15 @@ public class PressKeyOpenDoor : MonoBehaviour
     [Header("Inventory & UI References")]
     [SerializeField] private InventoryData inventoryData; // Proje penceresindeki SO dosyası buraya sürüklenecek
     [SerializeField] private UIManager uiManager;        // Canvas'a takılı UIManager buraya sürüklenecek
+
+    [Header("Audio Transition - Main Door")]
+    [Tooltip("Ağlama sesini çalacak AudioSource (Evin İçinden Gelen)")]
+    public AudioSource CryingAudioSource;
+    [Tooltip("Tempolu müziği çalacak AudioSource (Global)")]
+    public AudioSource TempoMusicSource;
     
-    
+
+
 
     public bool MainDoor = false;
 
@@ -57,6 +64,8 @@ public class PressKeyOpenDoor : MonoBehaviour
             if (instructionUI != null)
                 instructionUI.SetActive(true);
             canOpen = true;
+
+            
         }
     }
 
@@ -132,11 +141,16 @@ public class PressKeyOpenDoor : MonoBehaviour
 
                 
                 // 2. Diyalog Mesajını Başlatma (Gecikmeli)
-                string dialogMessage = "Kilitli. Belki etrafta anahtarını bulabilirim.";
+                string dialogMessage = "Kilitli... Tabii ki kilitli. Biliyordum... Beni yine buraya getireceğini biliyordum. 'O gece' yarım kalan hesabı bitirmenin vakti geldi, Doktor. O anahtarı bulacağım.";
                 float dialogDelay = 0.5f; //  Yarım saniye (500 milisaniye) gecikme
 
                 // Coroutine'i başlat
                 StartCoroutine(ShowDialogueDelayed(dialogMessage, dialogDelay));
+
+                if (uiManager != null)
+                {
+                    uiManager.SetObjective("Anahtarı bul.");
+                }
             }
         }
         else
@@ -158,19 +172,17 @@ public class PressKeyOpenDoor : MonoBehaviour
 
             if (isSideDoor && SideDoorOpenSound != null)
             {
-                // Side Door ise özel sesi kullan
                 clipToPlay = SideDoorOpenSound;
             }
             else if (DefaultOpenSound != null)
             {
-                // Normal kapı veya SideDoor'a özel ses atanmamışsa varsayılanı kullan
                 clipToPlay = DefaultOpenSound;
             }
 
             if (clipToPlay != null)
             {
-                DoorOpenSound.clip = clipToPlay;
-                DoorOpenSound.Play();
+                DoorSoundSource.clip = clipToPlay; 
+                DoorSoundSource.Play();
             }
         }
 
@@ -180,25 +192,69 @@ public class PressKeyOpenDoor : MonoBehaviour
         if (triggerZone != null)
             triggerZone.SetActive(false);
 
-
-
-
         canOpen = false;
 
-        if (MainDoor && spawner != null)
+        
+        if (MainDoor)
         {
-            spawner.SpawnAllEnemies();
+            //  Zombileri Spawn Et
+            if (spawner != null)
+            {
+                spawner.SpawnAllEnemies(); 
+            }
+
+            // 2. SES GEÇİŞİ
+            if (CryingAudioSource != null && CryingAudioSource.isPlaying)
+            {
+                CryingAudioSource.Stop();
+                Debug.Log("Ana Kapı açıldı: Ağlama sesi durduruldu.");
+            }
+
+            if (TempoMusicSource != null)
+            {
+                TempoMusicSource.loop = true;
+                TempoMusicSource.Play();
+                Debug.Log("Ana Kapı açıldı: Tempolu müzik başladı.");
+            }
+
+            if (uiManager != null)
+            {
+                // 1. Anlık Panik Diyaloğu (Alt-Orta)
+                uiManager.ShowDialogue("Yine başlıyor... Olamaz, yine o geceki gibi! Kütüphaneye ulaşmam lazım. Her şeyin cevabı orda olmalı... Yan kapıdan!");
+
+                // 2. Kalıcı Görev Metni (Sol Üst)
+                uiManager.SetObjective("Yan kapıdan kütüphaneye ulaş.");
+            }
         }
 
-        if (isSideDoor && targetEnemy != null)
+        // --- SideDoor Kontrolü (Ayrı) ---
+        if (isSideDoor) // ⬅️ Eğer açılan kapı SideDoor ise
         {
-            Debug.Log($"SideDoor açıldı! {targetEnemy.name} çağırılıyor...");
-            targetEnemy.ActivateChase(GameObject.FindGameObjectWithTag("Player").transform);
-        }
-        else
-        {
-            Debug.LogWarning(" targetEnemy atanmamış veya SideDoor false!");
-        }
+            //  YENİ EKLENTİ: Tempolu müziği durdur
+            if (TempoMusicSource != null && TempoMusicSource.isPlaying)
+            {
+                TempoMusicSource.Stop();
+                Debug.Log("SideDoor açıldı: Tempolu müzik durduruldu.");
 
+
+            }
+
+            if (uiManager != null)
+            {
+                // 1. Anlık Panik Diyaloğu (Alt-Orta)
+                uiManager.ShowDialogue("Sonunda... Kütüphane. O gece olan her şeyin cevabı bu odada olmalı. Biliyorum.");
+            }
+
+                // Kalan SideDoor mantığı (Düşmanı aktive etme)
+                if (targetEnemy != null)
+            {
+                Debug.Log($"SideDoor açıldı! {targetEnemy.name} çağırılıyor...");
+                targetEnemy.ActivateChase(GameObject.FindGameObjectWithTag("Player").transform);
+            }
+            else
+            {
+                Debug.LogWarning("SideDoor açıldı ama targetEnemy atanmamış!");
+            }
+        }
     }
 }

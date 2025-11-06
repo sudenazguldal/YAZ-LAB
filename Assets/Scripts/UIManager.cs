@@ -20,7 +20,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dialogueText; //  YENÝ ALAN: Diyalog Text
     [SerializeField] private float dialogueDuration = 4.0f; // Konuþma daha uzun kalmalý
 
-    
+    [Header("3. Objective (Kalýcý Görev Metni)")]
+    [SerializeField] private TextMeshProUGUI objectiveText;
+
+
 
     void Start()
     {
@@ -30,6 +33,11 @@ public class UIManager : MonoBehaviour
         {
             dialogueText.text = "";
             dialogueText.gameObject.SetActive(false);
+        }
+
+        if (objectiveText != null)
+        {
+            objectiveText.gameObject.SetActive(false); // Baþlangýçta gizli
         }
     }
 
@@ -77,6 +85,23 @@ public class UIManager : MonoBehaviour
         if (notificationText != null)
         {
             notificationText.gameObject.SetActive(false);
+        }
+    }
+
+    public void SetObjective(string message)
+    {
+        if (objectiveText == null) return;
+
+        if (string.IsNullOrEmpty(message))
+        {
+            // Mesaj boþsa görevi gizle
+            objectiveText.gameObject.SetActive(false);
+        }
+        else
+        {
+            // Mesaj varsa göster
+            objectiveText.text = $"GÖREV: {message}";
+            objectiveText.gameObject.SetActive(true);
         }
     }
 }
