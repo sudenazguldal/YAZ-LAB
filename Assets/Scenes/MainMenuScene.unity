@@ -1343,7 +1343,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 399a4c48e97c86e4cb349a5044969931, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 72e24363bc11cf94aa3dbca5760f72e0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2756,7 +2756,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 77c0f49455f8abe44963f99511b90a23, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d47186b16f805cb469ceb5ef8e121252, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3260,6 +3260,7 @@ MonoBehaviour:
   CanvasMainMenu: {fileID: 697525592}
   CanvasSettings: {fileID: 1293225114}
   SettingsPanel: {fileID: 437070306}
+  ContinueButton: {fileID: 225656469}
 --- !u!1 &703714145
 GameObject:
   m_ObjectHideFlags: 0
@@ -4841,7 +4842,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b45475413d73f1a408e94a06f448dc0e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d41f61162a554954bb7f5a18fa52d18c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4916,7 +4917,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3bf61291c7a87864496dab19ec7fb10a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ca7ee919132538f4f8646f7f1aa90760, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7945,7 +7946,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e79c23db5181e0c44b0dd2c0484e3a2f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dd93e3306122e794c91eaa50debc23cf, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
