@@ -1,16 +1,14 @@
-
-
 using UnityEngine;
 using TMPro; // UI için
 using UnityEngine.UI; // Gerekli olabilir
 
 public class HealthComponent : MonoBehaviour
 {
-    // --- VERÝ VE UI ---
+    // --- VER? VE UI ---
     [SerializeField] public float maxHealth = 100f;
     public float currentHealth;
 
-    // UI Referansý (PlayerHealth'ten taþýndý)
+    // UI Referans? (PlayerHealth'ten ta??nd?)
     public TextMeshProUGUI healthText;
 
     // -----------------------------------------------------------------
@@ -25,13 +23,13 @@ public class HealthComponent : MonoBehaviour
         currentHealth = maxHealth;
     }
 
-    // PlayerHealth.cs'ten taþýndý
+    // PlayerHealth.cs'ten ta??nd?
     void Start()
     {
         UpdateHealthUI();
     }
 
-    // PlayerHealth.cs'ten taþýndý (Test Input'larý)
+    // PlayerHealth.cs'ten ta??nd? (Test Input'lar?)
     void Update()
     {
     }
@@ -44,10 +42,10 @@ public class HealthComponent : MonoBehaviour
     {
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        Debug.Log($"Hasar Aldý: -{amount} | Mevcut Can: {currentHealth}");
+        Debug.Log($"Hasar Ald?: -{amount} | Mevcut Can: {currentHealth}");
 
-        UpdateHealthUI(); //  UI'ý güncelle
-        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); //  Dýþ UI'ý güncelle (Varsayýlan olarak)
+        UpdateHealthUI(); //  UI'? güncelle
+        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); //  D?? UI'? güncelle (Varsay?lan olarak)
 
         if (currentHealth <= 0)
         {
@@ -58,10 +56,10 @@ public class HealthComponent : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        Debug.Log($"Ýyileþti: +{amount} | Mevcut Can: {currentHealth}");
+        Debug.Log($"?yile?ti: +{amount} | Mevcut Can: {currentHealth}");
 
-        UpdateHealthUI(); // UI'ý güncelle
-        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); // Dýþ UI'ý güncelle
+        UpdateHealthUI(); // UI'? güncelle
+        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); // D?? UI'? güncelle
     }
 
     void UpdateHealthUI()
@@ -70,10 +68,10 @@ public class HealthComponent : MonoBehaviour
             healthText.text = Mathf.CeilToInt(currentHealth).ToString();
     }
 
-    private void Die()
+    public void Die()
     {
         Debug.Log("Player öldü!");
-        // ... (Ölüm mantýðý)
-        // Destroy(gameObject); // Eðer player ölünce yok edilecekse
+        // ... (Ölüm mant???)
+        // Destroy(gameObject); // E?er player ölünce yok edilecekse
     }
 }
