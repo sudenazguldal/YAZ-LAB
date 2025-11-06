@@ -218,6 +218,8 @@ public class enemy1 : MonoBehaviour
     {
         currentState = newState;
         idleTimer = 0f;
+        if (agent != null)
+            agent.isStopped = false;
     }
 
 
@@ -226,9 +228,9 @@ public class enemy1 : MonoBehaviour
         if (WeapeonPrefab == null || throwPoint == null || player == null)
             return;
 
-        float currentDistance = Vector3.Distance(transform.position, player.position);
-        if (currentDistance > stopRange)
-            return;
+        //float currentDistance = Vector3.Distance(transform.position, player.position);
+        //if (currentDistance > stopRange)
+        //    return;
 
         GameObject bone = Instantiate(WeapeonPrefab, throwPoint.position, throwPoint.rotation);
         Vector3 direction = (player.position + Vector3.up - throwPoint.position).normalized;
@@ -249,7 +251,8 @@ public class enemy1 : MonoBehaviour
     {
         animator.SetBool(attackBoolName, false);
         lastAttackTime = Time.time;
-
+        if (agent != null)
+            agent.isStopped = false;
         // Oyuncu hala menzildeyse tekrar saldırabilir
         if (distance <= stopRange)
         {

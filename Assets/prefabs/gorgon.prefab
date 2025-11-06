@@ -847,7 +847,7 @@ MonoBehaviour:
   detectRange: 10
   stopRange: 3
   idleDuration: 0
-  attackCooldown: 0
+  attackCooldown: 0.7
   WeapeonPrefab: {fileID: 5158492366889485678, guid: 25b8c90b2ebb6b34a8f4bc5989ae462d, type: 3}
   throwPoint: {fileID: 7376309241318799754}
   throwForce: 10

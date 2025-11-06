@@ -23,6 +23,7 @@ public class PressKeyOpenDoor : MonoBehaviour
 
     public bool MainDoor = false;
 
+    private bool isDoorOpen = false;
 
     public EnemySpawner spawner;
 
@@ -52,6 +53,17 @@ public class PressKeyOpenDoor : MonoBehaviour
             canOpen = true;
         }
     }
+  /*  private void OnTriggerStay(Collider other)
+    {
+
+        if (other.CompareTag("Player"))
+        {
+            if (!isWalking)
+            {
+                isWalking = true;
+            }
+        }
+    }*/
 
     void OnTriggerExit(Collider other)
     {

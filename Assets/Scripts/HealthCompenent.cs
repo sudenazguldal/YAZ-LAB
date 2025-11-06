@@ -1,7 +1,7 @@
-using UnityEngine;
-using TMPro; // UI i�in
+﻿using UnityEngine;
+using TMPro; // UI için
 using UnityEngine.UI; // Gerekli olabilir
-
+using System.Collections;
 public class HealthComponent : MonoBehaviour
 {
     // --- VER? VE UI ---
@@ -12,11 +12,16 @@ public class HealthComponent : MonoBehaviour
     public TextMeshProUGUI healthText;
 
     // -----------------------------------------------------------------
-    // EKLEME 1: Public Property'ler (InventoryCollector ve Envanter i�in)
+    // EKLEME 1: Public Property'ler (InventoryCollector ve Envanter için)
     // -----------------------------------------------------------------
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     // -----------------------------------------------------------------
+
+    private string IsDieTrigger = "isdie";
+    public GameManager gameManager;
+    [SerializeField]
+    private Animator animator;
 
     void Awake()
     {
@@ -26,6 +31,10 @@ public class HealthComponent : MonoBehaviour
     // PlayerHealth.cs'ten ta??nd?
     void Start()
     {
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+        if (gameManager == null)
+            gameManager = FindObjectOfType<GameManager>();
         UpdateHealthUI();
     }
 
@@ -35,7 +44,7 @@ public class HealthComponent : MonoBehaviour
     }
 
     // -----------------------------------------------------------------
-    // TEMEL METOTLAR (UI G�ncellemelerini ekledik)
+    // TEMEL METOTLAR (UI Güncellemelerini ekledik)
     // -----------------------------------------------------------------
 
     public void TakeDamage(float amount)
@@ -44,8 +53,8 @@ public class HealthComponent : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log($"Hasar Ald?: -{amount} | Mevcut Can: {currentHealth}");
 
-        UpdateHealthUI(); //  UI'? g�ncelle
-        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); //  D?? UI'? g�ncelle (Varsay?lan olarak)
+        UpdateHealthUI(); //  UI'? güncelle
+        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); //  D?? UI'? güncelle (Varsay?lan olarak)
 
         if (currentHealth <= 0)
         {
@@ -58,8 +67,8 @@ public class HealthComponent : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log($"?yile?ti: +{amount} | Mevcut Can: {currentHealth}");
 
-        UpdateHealthUI(); // UI'? g�ncelle
-        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); // D?? UI'? g�ncelle
+        UpdateHealthUI(); // UI'? güncelle
+        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); // D?? UI'? güncelle
     }
 
     void UpdateHealthUI()
@@ -70,8 +79,29 @@ public class HealthComponent : MonoBehaviour
 
     public void Die()
     {
-        Debug.Log("Player �ld�!");
-        // ... (�l�m mant???)
-        // Destroy(gameObject); // E?er player �l�nce yok edilecekse
+        Debug.Log("Player öldü!");
+
+        // 1️⃣ Ölüm animasyonunu tetikle
+        if (animator != null)
+            animator.SetTrigger(IsDieTrigger);
+
+        // 2️⃣ Ölüm animasyonu bittikten sonra Lose çağır
+        StartCoroutine(DeathSequence());
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        // Ölüm animasyonu süresi kadar bekle (örneğin 2.5 saniye)
+        yield return new WaitForSeconds(3.5f);
+
+        // GameManager'ı bul
+        if (gameManager == null)
+            gameManager = FindObjectOfType<GameManager>();
+
+        // Lose paneli göster
+        if (gameManager != null)
+            gameManager.PlayerLose();
+        else
+            Debug.LogError(" GameManager sahnede bulunamadı!");
     }
 }
