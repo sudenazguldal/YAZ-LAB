@@ -39,6 +39,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField] private float coverDetectionRange = 1.0f; // Ne kadar yakından siper alınabilir
     [SerializeField] private float coverDetectionHeight = 1.5f;
 
+    [Header("Footsteps")]
+    [SerializeField] private AudioSource footstepSource;
+    [SerializeField] private AudioClip[] walkFootstepSounds; //  YENİ: Yürüme sesleri dizisi
+    [SerializeField] private AudioClip[] runFootstepSounds;  //  YENİ: Koşma sesleri dizisi
+
+    [Header("Footstep Timing")]
+    [SerializeField] private float walkTimeBetweenSteps = 0.45f; // Yürüme aralığı
+    [SerializeField] private float runTimeBetweenSteps = 0.25f;  //  YENİ: Koşma aralığı (Daha hızlı)
+    [SerializeField] private float speedThreshold = 0.05f;
+
+    private float stepTimer;
 
 
 
@@ -334,7 +345,30 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
         }
     }
+    void PlayFootstepSound()
+    {
+        // Hangi dizinin kullanılacağını belirle
+        AudioClip[] currentSoundArray;
 
+        // isSprinting değişkeniniz OnSprint metodunda True olarak ayarlanıyordu.
+        if (isSprinting) // 💡 Kontrol: Koşuyor muyuz?
+        {
+            currentSoundArray = runFootstepSounds;
+        }
+        else
+        {
+            currentSoundArray = walkFootstepSounds;
+        }
+
+        if (currentSoundArray.Length == 0 || footstepSource == null || !controller.isGrounded) return;
+        if (footstepSource.isPlaying) return;
+
+        // Rastgele bir ses klibi seç
+        AudioClip clip = currentSoundArray[UnityEngine.Random.Range(0, currentSoundArray.Length)];
+
+        // Sesi çal
+        footstepSource.PlayOneShot(clip);
+    }
 
 
     public void OnAim(InputAction.CallbackContext ctx)
@@ -508,6 +542,44 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             );
 
             pitchTarget.localPosition = currentPitchPos;
+        }
+
+        #endregion
+
+
+        #region Footstep Logic
+        // 1. Karakterin Yatay Hızını Hesaplama
+        Vector3 horizontalVelocity = new Vector3(controller.velocity.x, 0, controller.velocity.z);
+
+        // 2. Karakter hareket ediyor mu?
+        bool isMoving = controller.isGrounded && horizontalVelocity.sqrMagnitude > speedThreshold * speedThreshold;
+
+        // 3. Adım Sesleri
+        if (isMoving)
+        {
+            // 💡 KRİTİK DEĞİŞİKLİK: Adım süresini hıza göre belirle
+            float targetTimeBetweenSteps = isSprinting ? runTimeBetweenSteps : walkTimeBetweenSteps;
+
+            stepTimer -= Time.deltaTime;
+
+            if (stepTimer <= 0)
+            {
+                PlayFootstepSound();
+
+                // Zamanlayıcıyı bir sonraki adım için sıfırla
+                stepTimer += targetTimeBetweenSteps; // (Eski kalan sürenin üzerine ekle)
+
+                // Eğer stepTimer çok geride kaldıysa (oyun takıldıysa), sadece hedef süreye ayarla.
+                if (stepTimer < 0)
+                {
+                    stepTimer = targetTimeBetweenSteps;
+                }
+            }
+        }
+        else
+        {
+            // Hareket etmiyorsa zamanlayıcıyı resetle
+            stepTimer = walkTimeBetweenSteps;
         }
 
         #endregion

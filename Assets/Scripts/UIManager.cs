@@ -1,39 +1,75 @@
+
+
 using UnityEngine;
-using TMPro; 
+using TMPro;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
-    //  UNITY EDITOR'DA BURAYA BÝR TMP TEXT ALANI BAÐLAYIN
-    [Header("Toplama Mesajlarý")]
+    // ----------------------------------------------------
+    // BÖLGE 1: SAÐ ÜST BÝLDÝRÝM (Kýsa Süreli)
+    // ----------------------------------------------------
+    [Header("1. Notification (Sað Üst Bildirim)")]
     [SerializeField] private TextMeshProUGUI notificationText;
     [SerializeField] private float displayDuration = 2.0f;
 
-    // Mesajlarý sýrayla göstermek için bir Kuyruk (Queue) kullanýlabilir
-    // Ancak basitlik için sadece tek mesaj gösterelim.
+    // ----------------------------------------------------
+    // BÖLGE 2: ALT ORTA DÝYALOG/ÝÇ KONUÞMA (Karakter Konuþmasý)
+    // ----------------------------------------------------
+    [Header("2. Dialogue (Alt Orta Konuþma)")]
+    [SerializeField] private TextMeshProUGUI dialogueText; //  YENÝ ALAN: Diyalog Text
+    [SerializeField] private float dialogueDuration = 4.0f; // Konuþma daha uzun kalmalý
+
+    
 
     void Start()
     {
-        if (notificationText != null)
+        // ... (NotificationText sýfýrlama mantýðý)
+
+        if (dialogueText != null)
         {
-            notificationText.text = ""; // Baþlangýçta boþ olsun
-            notificationText.gameObject.SetActive(false); // Baþlangýçta gizli olsun
+            dialogueText.text = "";
+            dialogueText.gameObject.SetActive(false);
         }
     }
 
-   
+    // ----------------------------------------------------
+    // METOT 1: BÝLDÝRÝM (Mermi/Kit Toplandý)
+    // ----------------------------------------------------
     public void ShowNotification(string message, Color color)
     {
+        // ... (Mevcut Notification kodu ayný kalýr)
+        // ... (CancelInvoke, text ayarý, Invoke("HideNotification", duration) vb.)
         if (notificationText == null) return;
-
-        // Eski mesajý sýfýrla (eðer hala gösteriliyorsa)
         CancelInvoke("HideNotification");
-
         notificationText.color = color;
         notificationText.text = message;
         notificationText.gameObject.SetActive(true);
-
-        // Belirtilen süre sonunda mesajý gizle
         Invoke("HideNotification", displayDuration);
+    }
+
+    // ----------------------------------------------------
+    // METOT 2: DÝYALOG/ÝÇ KONUÞMA (Karakter Konuþmasý/Kapý Kilitli)
+    // ----------------------------------------------------
+    public void ShowDialogue(string message)
+    {
+        if (dialogueText == null) return;
+
+        CancelInvoke("HideDialogue");
+
+        dialogueText.text = message;
+        dialogueText.gameObject.SetActive(true);
+        // Diyaloglar beyaz renkte (varsayýlan) kalabilir.
+
+        Invoke("HideDialogue", dialogueDuration);
+    }
+
+    private void HideDialogue()
+    {
+        if (dialogueText != null)
+        {
+            dialogueText.gameObject.SetActive(false);
+        }
     }
 
     private void HideNotification()

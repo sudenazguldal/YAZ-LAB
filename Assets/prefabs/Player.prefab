@@ -74,9 +74,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1063781399753526725}
   - component: {fileID: 4884773155492580083}
+  - component: {fileID: 8442707977853456738}
+  - component: {fileID: 3516080028107425186}
+  - component: {fileID: 3786043832305101308}
   - component: {fileID: 8202258882975951141}
   - component: {fileID: 3589622070581107418}
   - component: {fileID: 3542957246060539371}
+  - component: {fileID: 990104891197740647}
+  - component: {fileID: 8902001440968065249}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -147,6 +152,58 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8442707977853456738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246408792358963749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba6c7343451e4e9499dd7ada7f5454fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponAmmo: {fileID: 5426009275384777967}
+  playerInventoryData: {fileID: 11400000, guid: 8a95d65168ee1cc439da406bc9d9a31b, type: 2}
+  ammoText: {fileID: 0}
+  reloadRing: {fileID: 0}
+  currentAmmo: 6
+  maxAmmo: 6
+  currentMagazine: 4
+  rotationPerReload: 90
+  rotationSpeed: 2
+--- !u!114 &3516080028107425186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246408792358963749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99f8cb90d74b3c94a8f5777af309fb43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPoint: {fileID: 0}
+  playerHealth: {fileID: 8902001440968065249}
+  weaponAmmo: {fileID: 5426009275384777967}
+  ammoDisplay: {fileID: 0}
+--- !u!114 &3786043832305101308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246408792358963749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a258987e9e60af42811bee646bf74cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: {fileID: 8902001440968065249}
+  healthText: {fileID: 0}
+  heartFillImage: {fileID: 0}
 --- !u!143 &8202258882975951141
 CharacterController:
   m_ObjectHideFlags: 0
@@ -196,12 +253,42 @@ MonoBehaviour:
   gravity: -19.62
   groundedSnap: -2
   coyoteTime: 0.1
-  crouchSpeedMultiplier: 0.5
   standHeight: 1.8
   crouchHeight: 1.2
   standCenterY: 0.9
   crouchCenterY: 0.6
   crouchTransitionSpeed: 12
+  coverLayerMask:
+    serializedVersion: 2
+    m_Bits: 65
+  coverDetectionRange: 1
+  coverDetectionHeight: 1.5
+  footstepSource: {fileID: 0}
+  walkFootstepSounds:
+  - {fileID: 8300000, guid: 9ea11a2d13d536e4e8441a0f5895995c, type: 3}
+  - {fileID: 8300000, guid: 1deb201b8bf8f89479323a74e421150b, type: 3}
+  - {fileID: 8300000, guid: ac6649006dbee9e4685752e124111da7, type: 3}
+  - {fileID: 8300000, guid: f42914d98b070f741b2feee96a2988ee, type: 3}
+  - {fileID: 8300000, guid: feb62160ad1f8334ab037017b843d162, type: 3}
+  - {fileID: 8300000, guid: 001f691d110d55648871a03f446ffa08, type: 3}
+  - {fileID: 8300000, guid: 6478d7fb30f301b4fa8f74d5d1dad094, type: 3}
+  - {fileID: 8300000, guid: f1547ad8fbfa4f24d83e5a445aee860d, type: 3}
+  - {fileID: 8300000, guid: 47832b56ccba5bc408b1d5aac1871746, type: 3}
+  - {fileID: 8300000, guid: 3d132da7af60f1145a3deb6a8bc42a08, type: 3}
+  runFootstepSounds:
+  - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
+  - {fileID: 8300000, guid: 1deb201b8bf8f89479323a74e421150b, type: 3}
+  - {fileID: 8300000, guid: 7c518e8469a403b4c981664ecb28a79a, type: 3}
+  - {fileID: 8300000, guid: 1f2844efbf7abf647ba3d75d510f823a, type: 3}
+  - {fileID: 8300000, guid: fa95ebee958fb0e41a42a832aab767eb, type: 3}
+  - {fileID: 8300000, guid: 0cfeb72dea261a54cb7672590d2d1656, type: 3}
+  - {fileID: 8300000, guid: 924e3e09c67130946a6d7b666e8b8b68, type: 3}
+  - {fileID: 8300000, guid: 6da235e2573048249bcbe608f984ff48, type: 3}
+  - {fileID: 8300000, guid: fdc05ea2699023143ba7e93533cc5a0b, type: 3}
+  - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
+  walkTimeBetweenSteps: 0.65
+  runTimeBetweenSteps: 0.25
+  speedThreshold: 0.005
   currentStance: 0
   isAiming: 0
 --- !u!114 &3542957246060539371
@@ -217,18 +304,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate: 0.15
-  damage: 10
+  damage: 25
   aimColliderLayerMask:
     serializedVersion: 2
-    m_Bits: 119
+    m_Bits: 247
   spawnBulletPosition: {fileID: 4812546206621752833}
   vfxMuzzleFlash: {fileID: 1198663731479534, guid: b46264f9e12caed4cb53e7c2ad64aa54, type: 3}
   vfxHitTarget: {fileID: 1026642433091512, guid: ed67c2cb8e3a7fb418c6fbb1b001dce2, type: 3}
   vfxHitOthers: {fileID: 1643851402782444, guid: 4f703a1da613efc43b08b1d2bdcfd49f, type: 3}
   audioSource: {fileID: 0}
   shootSound: {fileID: 8300000, guid: 4d6281aa604094f04839cffa502096c0, type: 3}
-  hitTargetSound: {fileID: 0}
-  hitOthersSound: {fileID: 8300000, guid: 616758222d84f6f47b8b9dd6a3e5d3b8, type: 3}
+  hitTargetSound: {fileID: 8300000, guid: 3cbaa2b47ad83374ab3aab4ee7b28c68, type: 3}
+  hitOthersSound: {fileID: 0}
+  emptyGunSound: {fileID: 8300000, guid: 0c187ee2790c74c4e9985aa1ee1a12d5, type: 3}
+  peekHeightOffset: 0.6
+  inventoryData: {fileID: 11400000, guid: 8a95d65168ee1cc439da406bc9d9a31b, type: 2}
+  ammoCostPerShot: 1
+--- !u!114 &990104891197740647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246408792358963749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1048d0f8659e73440af8131ebe41d3fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryData: {fileID: 11400000, guid: 8a95d65168ee1cc439da406bc9d9a31b, type: 2}
+  playerShooting: {fileID: 3542957246060539371}
+  playerHealth: {fileID: 8902001440968065249}
+  useHealthKitKey: 104
+  healAmount: 30
+  uiManager: {fileID: 0}
+  audioSource: {fileID: 0}
+  ammoPickupSound: {fileID: 8300000, guid: 8b57eb454408ce749ba4f860a342717b, type: 3}
+  healthKitPickupSound: {fileID: 8300000, guid: 8b57eb454408ce749ba4f860a342717b, type: 3}
+  keyPickupSound: {fileID: 8300000, guid: 8b57eb454408ce749ba4f860a342717b, type: 3}
+  healUseSound: {fileID: 8300000, guid: b6e807cb5255557408189bbcef39e322, type: 3}
+--- !u!114 &8902001440968065249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246408792358963749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df6bf19b25927174faf4f8e3e1dc41c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  healthText: {fileID: 0}
 --- !u!1 &4009749510579685953
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,8 +463,8 @@ MonoBehaviour:
         transform: {fileID: 0}
         weight: 0
     m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -180
-    m_MaxLimit: 180
+    m_MinLimit: -20
+    m_MaxLimit: 10
     m_AimAxis: 4
     m_UpAxis: 2
     m_WorldUpType: 0
@@ -482,8 +611,8 @@ MonoBehaviour:
         transform: {fileID: 0}
         weight: 0
     m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -180
-    m_MaxLimit: 180
+    m_MinLimit: -20
+    m_MaxLimit: 10
     m_AimAxis: 0
     m_UpAxis: 3
     m_WorldUpType: 0
@@ -614,8 +743,8 @@ MonoBehaviour:
         transform: {fileID: 0}
         weight: 0
     m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -180
-    m_MaxLimit: 180
+    m_MinLimit: -45
+    m_MaxLimit: 20
     m_AimAxis: 3
     m_UpAxis: 1
     m_WorldUpType: 0
@@ -837,6 +966,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 474100, guid: adad89669382b0743a2c2f162c9601b0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 9595392, guid: adad89669382b0743a2c2f162c9601b0, type: 3}
       propertyPath: m_Controller
       value: 
@@ -1023,8 +1156,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ClipSize: 6
-  ExtraAmmo: 24
   CurrentAmmo: 0
+  playerInventoryData: {fileID: 11400000, guid: 8a95d65168ee1cc439da406bc9d9a31b, type: 2}
+  audioSource: {fileID: 0}
+  ReloadSound: {fileID: 8300000, guid: d11521a6da1988b418f83d65676829f8, type: 3}
 --- !u!4 &7979291774852272663 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4602452234407014, guid: 1b77448d596a62a43a33594db50d10a2, type: 3}

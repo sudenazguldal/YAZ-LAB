@@ -1,26 +1,21 @@
-// InventoryHUDDisplay.cs
+// InventoryHUDDisplay.cs (Sadece Can Kiti Sayacý için)
+
 using UnityEngine;
 using TMPro;
 
 public class InventoryHUDDisplay : MonoBehaviour
 {
+    //  Health Kit Sayacý için Kalýcý Referans
     [SerializeField] private InventoryData inventoryData;
-
-    //  HEALTH KIT GÖSTERÝMÝ ÝÇÝN ALAN
-    [Header("Health Kit Display")]
-    [SerializeField] private TextMeshProUGUI healthKitTextComponent;
-
-    //  YENÝ ALAN: ANAHTAR GÖSTERÝMÝ ÝÇÝN
-    [Header("Key Status Display")]
-    [SerializeField] private TextMeshProUGUI keyStatusTextComponent;
+    private TextMeshProUGUI textComponent; // Bu script'in takýlý olduðu Text bileþeni
 
     void Awake()
     {
-        // Baþlangýç deðerlerini al
-        if (inventoryData != null)
+        textComponent = GetComponent<TextMeshProUGUI>();
+        if (inventoryData != null && textComponent != null)
         {
+            // Baþlangýçta güncel veriyi çek
             UpdateHealthKitDisplay(inventoryData.HealthKits);
-            UpdateKeyDisplay(inventoryData.HasKey); // Baþlangýç Anahtar durumunu göster
         }
     }
 
@@ -28,8 +23,8 @@ public class InventoryHUDDisplay : MonoBehaviour
     {
         if (inventoryData != null)
         {
+            // KRÝTÝK ABONELÝK
             inventoryData.OnHealthKitChange += UpdateHealthKitDisplay;
-            inventoryData.OnKeyChange += UpdateKeyDisplay; //  Anahtar Event'ine abone ol
         }
     }
 
@@ -38,28 +33,18 @@ public class InventoryHUDDisplay : MonoBehaviour
         if (inventoryData != null)
         {
             inventoryData.OnHealthKitChange -= UpdateHealthKitDisplay;
-            inventoryData.OnKeyChange -= UpdateKeyDisplay; //  Aboneliði iptal et
         }
     }
 
     private void UpdateHealthKitDisplay(int newCount)
     {
-        if (healthKitTextComponent != null)
+        if (textComponent != null)
         {
-            healthKitTextComponent.text = $"Health Kits: {newCount}";
-        }
-    }
+            //  KALICI GÖSTERÝM: Yeni sayý 0 bile olsa gösterimde kalýr.
+            textComponent.text = $"Health Kit = {newCount}";
 
-   
-    private void UpdateKeyDisplay(bool hasKey)
-    {
-        if (keyStatusTextComponent != null)
-        {
-            string status = hasKey ? "VAR" : "YOK";
-            keyStatusTextComponent.text = $"Key: {status}";
-
-            // Eðer isterseniz, anahtar toplanýnca metin rengini deðiþtirebilirsiniz.
-            keyStatusTextComponent.color = hasKey ? Color.yellow : Color.white;
+            // Eðer isterseniz, 0 olunca gizleyebilirsiniz
+          //  textComponent.gameObject.SetActive(newCount > 0);
         }
     }
 }

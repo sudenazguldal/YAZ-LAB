@@ -47,7 +47,7 @@ public class HealthComponent : MonoBehaviour
         Debug.Log($"Hasar Aldý: -{amount} | Mevcut Can: {currentHealth}");
 
         UpdateHealthUI(); //  UI'ý güncelle
-        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); //  Dýþ UI'ý güncelle (Varsayýlan olarak)
+        FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); //  Dýþ UI'ý güncelle (Varsayýlan olarak)
 
         if (currentHealth <= 0)
         {
@@ -61,7 +61,7 @@ public class HealthComponent : MonoBehaviour
         Debug.Log($"Ýyileþti: +{amount} | Mevcut Can: {currentHealth}");
 
         UpdateHealthUI(); // UI'ý güncelle
-        FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth); // Dýþ UI'ý güncelle
+        FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); // Dýþ UI'ý güncelle
     }
 
     void UpdateHealthUI()

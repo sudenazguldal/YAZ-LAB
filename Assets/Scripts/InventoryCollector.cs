@@ -23,7 +23,14 @@ public class InventoryCollector : MonoBehaviour
     [SerializeField] private float healAmount = 25f; // Kullanılan kitin iyileştirme miktarı
 
     [Header("UI Feedback")]
-    [SerializeField] private UIManager uiManager; 
+    [SerializeField] private UIManager uiManager;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource; // Toplama sesini çalacak AudioSource
+    [SerializeField] private AudioClip ammoPickupSound; // Mermi toplama sesi
+    [SerializeField] private AudioClip healthKitPickupSound; // Can kiti toplama sesi
+    [SerializeField] private AudioClip keyPickupSound; // Anahtar toplama sesi
+    [SerializeField] private AudioClip healUseSound; // Can kiti kullanma sesi
 
     // ----------------------------------------------------
     // UNITY YAŞAM DÖNGÜSÜ
@@ -76,24 +83,31 @@ public class InventoryCollector : MonoBehaviour
     }
 
 
-    
+
 
     // ----------------------------------------------------
     // 1. ÖĞE TOPLAMA METOTLARI (PickupItem'ın çağırdığı metotlar)
     // ----------------------------------------------------
 
-    
+    private void PlayPickupSound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
 
     public void CollectAmmo(int amount)
     {
         if (inventoryData != null)
         {
             inventoryData.AddAmmo(amount);
+            PlayPickupSound(ammoPickupSound);
 
             if (uiManager != null)
             {
-                string message = $"+{amount} AMMO ({inventoryData.Ammo} Total)";
-                uiManager.ShowNotification(message, Color.yellow);
+                string message = $"+{amount} Kurşun Alındı ";
+                uiManager.ShowNotification(message, Color.red);
             }
         }
     }
@@ -103,12 +117,13 @@ public class InventoryCollector : MonoBehaviour
         if (inventoryData != null)
         {
             inventoryData.AddHealthKit();
+            PlayPickupSound(healthKitPickupSound);
 
             if (uiManager != null)
             {
                 // Mesajı InventoryData'dan okunan yeni sayı ile göster
-                string message = $"+1 HEALTH KIT ({inventoryData.HealthKits} Total)";
-                uiManager.ShowNotification(message, Color.green);
+                string message = $"+1 health Kit Alındı ";
+                uiManager.ShowNotification(message, Color.yellow);
             }
         }
     }
@@ -120,10 +135,11 @@ public class InventoryCollector : MonoBehaviour
         if (inventoryData != null)
         {
             inventoryData.SetKey(true);
+            inventoryData.SetKey(true);
 
             if (uiManager != null)
             {
-                string message = $"key picked)";
+                string message = $"Anahtar Alındı";
                 uiManager.ShowNotification(message, Color.yellow);
             }
         }
@@ -176,6 +192,7 @@ public class InventoryCollector : MonoBehaviour
 
         // 2. Canı İyileştir
         playerHealth.Heal(healAmount); // HealthComponent'te Heal metodu olmalı
+        PlayPickupSound(healUseSound);
 
         Debug.Log($"Can kiti kullanıldı. İyileşen: {healAmount}");
     }

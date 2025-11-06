@@ -11,6 +11,13 @@ public class PressKeyOpenDoor : MonoBehaviour
     public GameObject triggerZone;       // Trigger objesi (isteğe bağlı)
     public AudioSource DoorOpenSound;
 
+    [Header("Door Sounds")]
+    public AudioSource DoorSoundSource; // Sesin çalınacağı AudioSource bileşeni
+    public AudioClip DefaultOpenSound;  // Normal kapılar için ses (Eski DoorOpenSound'un clip'i)
+    public AudioClip SideDoorOpenSound; // ⬅️ SideDoor için özel ses
+
+    public AudioClip lockSound;
+
     private bool canOpen = false;
 
     [Header("Extra For SideDoor")]
@@ -21,7 +28,15 @@ public class PressKeyOpenDoor : MonoBehaviour
     private bool isWalking = false;
     private Transform player;
 
+    [Header("Inventory & UI References")]
+    [SerializeField] private InventoryData inventoryData; // Proje penceresindeki SO dosyası buraya sürüklenecek
+    [SerializeField] private UIManager uiManager;        // Canvas'a takılı UIManager buraya sürüklenecek
+    
+    
+
     public bool MainDoor = false;
+
+
 
 
     public EnemySpawner spawner;
@@ -32,15 +47,7 @@ public class PressKeyOpenDoor : MonoBehaviour
             instructionUI.SetActive(false);
     }
 
-    /*void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            if (instructionUI != null)
-                instructionUI.SetActive(true);
-            canOpen = true;
-        }
-    }*/
+    
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -64,7 +71,7 @@ public class PressKeyOpenDoor : MonoBehaviour
     {
         if (canOpen && Input.GetKeyDown(KeyCode.E))
         {
-            OpenDoor();
+            TryOpenDoor(); // ⬅️ OpenDoor yerine TryOpenDoor metodunu çağıralım
         }
         //Eğer SideDoor ise player'ı hedef noktaya doğru yürüt
         if (isWalking && player != null && walkTargetPoint != null)
@@ -82,6 +89,62 @@ public class PressKeyOpenDoor : MonoBehaviour
             }
         }
     }
+    //  YENİ COROUTINE: Diyalogu gecikmeli olarak gösterir
+    private IEnumerator ShowDialogueDelayed(string message, float delay)
+    {
+        // Yarım saniye (veya belirlediğiniz süre) bekler
+        yield return new WaitForSeconds(delay);
+
+        // Gecikmeden sonra diyalog metodunu çağırır.
+        if (uiManager != null)
+        {
+            uiManager.ShowDialogue(message);
+        }
+    }
+
+    void TryOpenDoor()
+    {
+        if (isSideDoor)
+        {
+            if (inventoryData != null && inventoryData.HasKey)
+            {
+                // Anahtar VAR
+                OpenDoor();
+                inventoryData.SetKey(false);
+                if (uiManager != null)
+                {
+                    uiManager.ShowNotification("Kapı anahtarla açıldı!", Color.green);
+                }
+            }
+            else
+            {
+                
+
+                // 1. Kilit Sesi Çalma
+                if (lockSound != null && DoorSoundSource != null)
+                {
+                    // Mevcut sesi durdur (gerekirse)
+                    DoorSoundSource.Stop();
+                    // Yeni klibi yükle ve hemen çal
+                    DoorSoundSource.clip = lockSound;
+                    DoorSoundSource.Play();
+                }
+
+                
+                // 2. Diyalog Mesajını Başlatma (Gecikmeli)
+                string dialogMessage = "Kilitli. Belki etrafta anahtarını bulabilirim.";
+                float dialogDelay = 0.5f; //  Yarım saniye (500 milisaniye) gecikme
+
+                // Coroutine'i başlat
+                StartCoroutine(ShowDialogueDelayed(dialogMessage, dialogDelay));
+            }
+        }
+        else
+        {
+            // SideDoor değilse (Normal Kapı / Main Door) direkt aç
+            OpenDoor();
+        }
+    }
 
     void OpenDoor()
     {
@@ -91,7 +154,24 @@ public class PressKeyOpenDoor : MonoBehaviour
         }
         if (DoorOpenSound != null)
         {
-            DoorOpenSound.Play();
+            AudioClip clipToPlay = null;
+
+            if (isSideDoor && SideDoorOpenSound != null)
+            {
+                // Side Door ise özel sesi kullan
+                clipToPlay = SideDoorOpenSound;
+            }
+            else if (DefaultOpenSound != null)
+            {
+                // Normal kapı veya SideDoor'a özel ses atanmamışsa varsayılanı kullan
+                clipToPlay = DefaultOpenSound;
+            }
+
+            if (clipToPlay != null)
+            {
+                DoorOpenSound.clip = clipToPlay;
+                DoorOpenSound.Play();
+            }
         }
 
         if (instructionUI != null)
