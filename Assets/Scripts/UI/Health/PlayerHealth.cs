@@ -37,6 +37,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    [System.Obsolete]
     public void Heal(float healAmount)
     {
         currentHealth += healAmount;
