@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using System.Collections.Generic;
+using TMPro;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -31,6 +32,12 @@ public class SettingsMenu : MonoBehaviour
     private bool savedFullscreen;
     private float savedMouseSens;
 
+    public TMP_Dropdown crosshairDropdown;
+    public CrosshairController crosshairController;
+
+    private int pendingCrosshairIndex;
+    private int savedCrosshairIndex;
+
     void Start()
     {
         // ----- Load Saved -----
@@ -51,6 +58,11 @@ public class SettingsMenu : MonoBehaviour
 
         foreach (var button in QualityButtons)
             button.OnButtonClicked += OnQualityButtonClicked;
+
+        savedCrosshairIndex = PlayerPrefs.GetInt("SelectedCrosshair", 0);
+        pendingCrosshairIndex = savedCrosshairIndex;
+        crosshairDropdown.value = savedCrosshairIndex;
+        crosshairDropdown.onValueChanged.AddListener(OnCrosshairChanged);
     }
 
     // =====================================================
@@ -82,6 +94,11 @@ public class SettingsMenu : MonoBehaviour
         MouseSensitivity = value;
     }
 
+    private void OnCrosshairChanged(int index)
+    {
+        pendingCrosshairIndex = index;
+    }
+
     // =====================================================
     // APPLY
     // =====================================================
@@ -94,13 +111,22 @@ public class SettingsMenu : MonoBehaviour
         PlayerPrefs.SetInt("QualityLevel", pendingQualityLevel);
         PlayerPrefs.SetInt("Fullscreen", pendingFullscreen ? 1 : 0);
         PlayerPrefs.SetFloat("MouseSensitivity", MouseSensitivity);
+        // 🔹 Crosshair seçimini uygula
+        PlayerPrefs.SetInt("SelectedCrosshair", pendingCrosshairIndex);
+        PlayerPrefs.Save();
+
+        // CrosshairController sahnede açıksa (örneğin Settings sahnesinde test ediyorsan)
+        if (crosshairController != null)
+            crosshairController.UpdateCrosshair(pendingCrosshairIndex);
+
+        savedCrosshairIndex = pendingCrosshairIndex;
         PlayerPrefs.Save();
 
         savedQualityLevel = pendingQualityLevel;
         savedFullscreen = pendingFullscreen;
         savedMouseSens = pendingMouseSens;
 
-        Debug.Log($"✅ Ayarlar kaydedildi! Sensitivity={MouseSensitivity}");
+        Debug.Log($"Ayarlar kaydedildi! Sensitivity={MouseSensitivity}");
     }
 
     // =====================================================

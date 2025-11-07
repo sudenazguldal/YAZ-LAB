@@ -11,6 +11,9 @@ public class WorldCrosshairController : MonoBehaviour
     //hemen hemen her şeyle çarpışabilir demek layerlarla ayarlayabiliyorsun hangisinde çıksın diye
     //sadece enemy layerı yapabilirsin
 
+    [SerializeField] private bool showWhenAiming = true;
+    private bool isAiming = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -25,6 +28,15 @@ public class WorldCrosshairController : MonoBehaviour
     //lateUpdate olma sebebi update de genel hareket hesaplanıyor. 
     //tüm bu hesaplamalar bitince lateupdate çalışıp cursoru yine sayfanın ortasına ayarlıyor
     {
+        // Sağ tık (Fire2) basılıysa nişan alınıyor
+        isAiming = Input.GetButton("Fire2");
+
+        // Eğer sadece nişan alınırken gösterilecekse:
+        if (showWhenAiming)
+        {
+            crosshairUI.gameObject.SetActive(isAiming);
+        }
+
         Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
         //ekranın tam orta koordinatları alınıyor
         Ray ray = aimCamera.ScreenPointToRay(screenCenter);
