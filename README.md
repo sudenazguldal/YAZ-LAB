@@ -4,8 +4,12 @@ Geliştirilen oyun, oyuncuya temel TPS deneyimini sunarken; kamera, hareket, ani
 Grafikler low-poly tarzında seçilmiş ve performans odaklı bir yapı benimsenmiştir.
 
 ### Oyuncu (Player) Mekanikleri
-Oyuncu karakteri, Third Person Controller altyapısına sahiptir. Hareket sistemi WASD tuşlarıyla yürüyüş ve koşma kontrolünü sağlar. C tuşu toggle ile, Left Ctrl tuşu ise basılı tutularak geçici siper alma/dinamik eğilme gerçekleştirilebilir. Kamera sistemi, Third Person ve Aim Camera arasında geçiş yapabilen  dinamik bir Camera Switcher yapısına sahiptir.
-Ateş etme (shooting) mekanikleri aktif olup, nişan alma sırasında kamera dinamik olarak yakınlaşır. Avatar Mask ve Blend Tree yapılarını kullanan gelişmiş animasyon sistemi sayesinde karakterin yürüme, nişan alma, crouch,siper alma ve ateş etme hareketleri arasında akıcı geçişler sağlanmıştır.
+Oyuncu karakteri, Third Person Controller altyapısına sahiptir. 
++Hareket sistemi WASD tuşlarıyla yürüyüş ve koşma kontrolünü sağlar, Animator Controller içerisinde olan layerlar ve rigler ile gerçekçi bir hissiyat oluşturur.
++C tuşu toggle ile, Left Ctrl tuşu ise basılı tutularak geçici siper alma/crouch gerçekleştirilebilir. Siper alma ve Crouch birbirine bağlıdır. Karakterin önünde cover alabilceği bir nesne varsa cover alır yoksa croucha geçer. Eğer cover sırasında cover aldığı nesneden uzaklaşırsa otomatik olarak crouch pozisyonuna döner. Visibiltysi bu durum geçişlerine göre değişir.
++Kamera sistemi, Third Person ve Aim Camera arasında geçiş yapabilen  dinamik bir Camera Switcher yapısına sahiptir.
++Ateş etme (shooting) mekanikleri aktif olup, nişan alma sırasında kamera dinamik olarak yakınlaşır ve over the shoulder hissiyatı sağlanır. Eğer karakter eğim durumda değilse(Camera da AimCam de) karakter ateş edemez. 
++Avatar Mask ve Blend Tree yapılarını kullanan gelişmiş animasyon sistemi sayesinde karakterin yürüme, nişan alma, crouch,siper alma ve ateş etme hareketleri arasında akıcı geçişler sağlanmıştır.
 
 ### Düşman (NPC) Yapay Zekâsı
 Düşman karakterleri, NavMesh Agent tabanlı bir navigasyon sistemi ile oyuncuyu tespit eder ve takip eder. Düşman davranışları; Idle, Patrol, Walk, Attack ve Death durumları arasında geçiş yapan bir Finite State Machine (FSM) yapısıyla kontrol edilmektedir.
@@ -22,6 +26,8 @@ Kullanıcı arayüzü, oyuncuya oyun içi bilgileri sade ve okunabilir biçimde 
 + Kayıt Sistemi (Save/Load): Oyunun ilerleyişi kaydedilebilir ve yeniden yüklenebilir.
 + Eşya Toplama Sistemi: Oyuncu belirli nesneleri toplayabilir, saklayabilir ve kullanabilir.
 + Crosshair Seçimi: Oyuncu nişangah tasarımını kendi tercihlerine göre değiştirebilir.
++ Notification sistemi ile toplanan malzemeyi bildirim olarak gösterir.
++ Objective ile oyuncunun yapması gereken görevleri gösterir ve oyuncunun hikayede kaybolmasını engeller.
 
 
 ## Geliştirme Ortamı
