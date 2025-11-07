@@ -81,7 +81,7 @@ Diyalog başlar:
 Doktor: “İnanılmaz. Bütün kusursuz yaratıklarımın arasından sıyrılıp yine geldin. Sen bu deneyin en inatçı çarpıklığısın.”
 Oyuncu: “Deney bitti, Doktor. Yarım kalan ne varsa bu gece sona erecek.”
 
-Diyalog bitince “Delirme Anı (Delirium)” başlar: ekran titreşir, sesler boğulur, kalp atışı sesi duyulur. Oyuncu, Doktor’a nişan almak zorundadır.
+Diyalog bitince “Delirme Anı (Delirium)” başlar: ekran titreşir, sesler boğulur, ağlama sesi duyulur. Oyuncu, Doktor’a nişan almak zorundadır.
 
 ### 4. Çözüm (Resolution) – Son Atış
 
