@@ -1,30 +1,35 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using UnityEngine.UI; 
 using System.Collections;
 
 public class HealthComponent : MonoBehaviour
 {
-    [Header("VERİ VE UI")]
+    [Header("VERÄ° VE UI")]
     
     [SerializeField] public float maxHealth = 100f;
     public float currentHealth;
 
-    // UI Referansı (PlayerHealth'ten taşındı)
+    // UI ReferansÄ± (PlayerHealth'ten taÅŸÄ±ndÄ±)
     public TextMeshProUGUI healthText;
 
     [Header("Damage Feedback")]
-    [SerializeField] private Image damageVignetteImage; //  Yeni: Ekranı kırmızı yapan UI resmi
-    [SerializeField] private float flashDuration = 2.5f; // Kırmızı görüntünün ne kadar süreceği
+    [SerializeField] private Image damageVignetteImage; //  Yeni: EkranÄ± kÄ±rmÄ±zÄ± yapan UI resmi
+    [SerializeField] private float flashDuration = 2.5f; // KÄ±rmÄ±zÄ± gÃ¶rÃ¼ntÃ¼nÃ¼n ne kadar sÃ¼receÄŸi
     
   
-    [SerializeField] private float maxAlpha = 1f;     // Maksimum şeffaflık (Opacity)
+    [SerializeField] private float maxAlpha = 1f;     // Maksimum ÅŸeffaflÄ±k (Opacity)
 
     
     [SerializeField] private Color damageColor = Color.red;
 
+    private string IsDieTrigger = "isdie";
+    public GameManager gameManager;
+    [SerializeField]
+    private Animator animator;
+
     // -----------------------------------------------------------------
-    // EKLEME 1: Public Property'ler (InventoryCollector ve Envanter için)
+    // EKLEME 1: Public Property'ler (InventoryCollector ve Envanter iÃ§in)
     // -----------------------------------------------------------------
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
@@ -35,23 +40,29 @@ public class HealthComponent : MonoBehaviour
         currentHealth = maxHealth;
     }
 
-    // PlayerHealth.cs'ten taşındı
+    // PlayerHealth.cs'ten taÅŸÄ±ndÄ±
     void Start()
     {
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+        if (gameManager == null)
+            gameManager = FindObjectOfType<GameManager>();
         UpdateHealthUI();
     }
 
-    // PlayerHealth.cs'ten taşındı (Test Input'ları)
+    // PlayerHealth.cs'ten taÅŸÄ±ndÄ± (Test Input'larÄ±)
     void Update()
     {
     }
 
     // -----------------------------------------------------------------
-    // TEMEL METOTLAR (UI Güncellemelerini ekledik)
+    // TEMEL METOTLAR (UI GÃ¼ncellemelerini ekledik)
     // -----------------------------------------------------------------
 
     public void TakeDamage(float amount)
     {
+        if (currentHealth <= 0)
+            return; // Zaten Ã¶lÃ¼ ise hasar alma
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
@@ -60,7 +71,7 @@ public class HealthComponent : MonoBehaviour
             StopAllCoroutines();
             StartCoroutine(FlashDamageVignette(amount));
         }
-        Debug.Log($"Hasar Aldı: -{amount} | Mevcut Can: {currentHealth}");
+        Debug.Log($"Hasar AldÄ±: -{amount} | Mevcut Can: {currentHealth}");
 
         UpdateHealthUI(); 
         FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); 
@@ -76,33 +87,33 @@ public class HealthComponent : MonoBehaviour
         float normalizedDamage = damageTaken / currentMaxHealth;
         float targetAlpha = Mathf.Min(normalizedDamage * 2f, maxAlpha);
 
-        //  FADE-IN KISMI: Alpha değerini anında maksimuma set et
+        //  FADE-IN KISMI: Alpha deÄŸerini anÄ±nda maksimuma set et
         Color flashColor = damageColor;
         flashColor.a = targetAlpha;
         damageVignetteImage.color = flashColor;
 
         // ----------------------------------------------------
-        // YAVAŞ FADE OUT BAŞLANGICI
+        // YAVAÅ FADE OUT BAÅLANGICI
         // ----------------------------------------------------
 
         float timer = 0f;
-        // flashDuration artık SADECE sönme süresini temsil eder (1.5 saniye)
+        // flashDuration artÄ±k SADECE sÃ¶nme sÃ¼resini temsil eder (1.5 saniye)
         while (timer < flashDuration)
         {
             timer += Time.deltaTime;
 
-            // Alpha değerini targetAlpha'dan (maksimum) 0'a doğru yavaşça Lerp et.
-            // Timer'ı toplam süreye oranlayarak yavaşlatırız.
+            // Alpha deÄŸerini targetAlpha'dan (maksimum) 0'a doÄŸru yavaÅŸÃ§a Lerp et.
+            // Timer'Ä± toplam sÃ¼reye oranlayarak yavaÅŸlatÄ±rÄ±z.
             float currentAlpha = Mathf.Lerp(targetAlpha, 0f, timer / flashDuration);
 
-            // Alpha'yı uygula
+            // Alpha'yÄ± uygula
             flashColor.a = currentAlpha;
             damageVignetteImage.color = flashColor;
 
             yield return null;
         }
 
-        // 3. Bitir: Tamamen şeffaf yap
+        // 3. Bitir: Tamamen ÅŸeffaf yap
         flashColor.a = 0f;
         damageVignetteImage.color = flashColor;
     }
@@ -110,10 +121,10 @@ public class HealthComponent : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        Debug.Log($"İyileşti: +{amount} | Mevcut Can: {currentHealth}");
+        Debug.Log($"Ä°yileÅŸti: +{amount} | Mevcut Can: {currentHealth}");
 
-        UpdateHealthUI(); // UI'ı güncelle
-        FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); // Dış UI'ı güncelle
+        UpdateHealthUI(); // UI'Ä± gÃ¼ncelle
+        FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); // DÄ±ÅŸ UI'Ä± gÃ¼ncelle
     }
 
     void UpdateHealthUI()
@@ -122,10 +133,31 @@ public class HealthComponent : MonoBehaviour
             healthText.text = Mathf.CeilToInt(currentHealth).ToString();
     }
 
-    private void Die()
+    public void Die()
     {
-        Debug.Log("Player öldü!");
-        // ... (Ölüm mantığı)
-        // Destroy(gameObject); // Eğer player ölünce yok edilecekse
+        Debug.Log("Player Ã¶ldÃ¼!");
+
+        // 1ï¸âƒ£ Ã–lÃ¼m animasyonunu tetikle
+        if (animator != null)
+            animator.SetTrigger(IsDieTrigger);
+
+        // 2ï¸âƒ£ Ã–lÃ¼m animasyonu bittikten sonra Lose Ã§aÄŸÄ±r
+        StartCoroutine(DeathSequence());
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        // Ã–lÃ¼m animasyonu sÃ¼resi kadar bekle (Ã¶rneÄŸin 2.5 saniye)
+        yield return new WaitForSeconds(3.5f);
+
+        // GameManager'Ä± bul
+        if (gameManager == null)
+            gameManager = FindObjectOfType<GameManager>();
+
+        // Lose paneli gÃ¶ster
+        if (gameManager != null)
+            gameManager.PlayerLose();
+        else
+            Debug.LogError(" GameManager sahnede bulunamadÄ±!");
     }
 }
