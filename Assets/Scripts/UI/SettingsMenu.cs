@@ -51,7 +51,7 @@ public class SettingsMenu : MonoBehaviour
         float masterVol = PlayerPrefs.GetFloat("MasterVol", 0f);
         float musicVol = PlayerPrefs.GetFloat("MusicVol", 0f);
         float sfxVol = PlayerPrefs.GetFloat("SFXVol", 0f);
-
+        
         audioMixer.SetFloat("MasterVol", masterVol);
         audioMixer.SetFloat("MusicVol", musicVol);
         audioMixer.SetFloat("SFXVol", sfxVol);
@@ -165,7 +165,7 @@ public class SettingsMenu : MonoBehaviour
             audioMixer.SetFloat("SFXVol", sfxVol);
             PlayerPrefs.SetFloat("SFXVol", sfxVol);
         }
-
+        
         // Grafik & kontrol ayarlarını uygula
         QualitySettings.SetQualityLevel(pendingQualityLevel);
         Screen.fullScreen = pendingFullscreen;

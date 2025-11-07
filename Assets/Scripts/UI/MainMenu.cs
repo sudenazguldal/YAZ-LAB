@@ -15,7 +15,6 @@ public class MainMenu : MonoBehaviour
         //  Oyun her zaman ana menüden başlasın
         if (CanvasMainMenu != null) CanvasMainMenu.SetActive(true);
         if (CanvasSettings != null) CanvasSettings.SetActive(false);
-        
     }
 
     public void ContinueGame()
