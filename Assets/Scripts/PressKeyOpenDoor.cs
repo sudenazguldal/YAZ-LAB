@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PressKeyOpenDoor : MonoBehaviour
-{
+{   
+    [HideInInspector] public bool isOpened = false;
     [Header("UI & References")]
     public GameObject instructionUI;     // “Press E to open” yazısı
     public Animator doorAnimator;        // Kapı animatörü (her kapıya özgü)
@@ -39,14 +40,14 @@ public class PressKeyOpenDoor : MonoBehaviour
     public AudioSource LibraryTheme;
 
 
-
-
+   
     public bool MainDoor = false;
 
-
-
+    private bool isDoorOpen = false;
 
     public EnemySpawner spawner;
+
+   
 
     void Start()
     {
@@ -201,6 +202,12 @@ public class PressKeyOpenDoor : MonoBehaviour
             if (spawner != null)
             {
                 spawner.SpawnAllEnemies(); 
+            }
+            var saveData = FindObjectOfType<PlayerSaveData>();
+            if (saveData != null)
+            {
+                saveData.enemiesSpawned = true;
+                Debug.Log(" enemiesSpawned TRUE yapıldı!");
             }
 
             // 2. SES GEÇİŞİ

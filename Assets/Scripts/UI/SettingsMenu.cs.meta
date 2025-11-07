@@ -1,18 +1,2 @@
 fileFormatVersion: 2
 guid: 8b496aeb1a8cf7f4ca72f14c3ee07ba2
-MonoImporter:
-  externalObjects: {}
-  serializedVersion: 2
-  defaultReferences:
-  - audioMixer: {instanceID: 0}
-  - masterSlider: {instanceID: 0}
-  - musicSlider: {instanceID: 0}
-  - sfxSlider: {instanceID: 0}
-  - qualityDropdown: {instanceID: 0}
-  - fullscreenToggle: {instanceID: 0}
-  - sensitivitySlider: {instanceID: 0}
-  executionOrder: 0
-  icon: {instanceID: 0}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 

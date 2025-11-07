@@ -1,7 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using UnityEditor.ShaderGraph;
+using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -31,12 +34,31 @@ public class SettingsMenu : MonoBehaviour
     private bool savedFullscreen;
     private float savedMouseSens;
 
+    public TMP_Dropdown crosshairDropdown;
+    public CrosshairController crosshairController;
+
+    private int pendingCrosshairIndex;
+    private int savedCrosshairIndex;
+
     void Start()
     {
         // ----- Load Saved -----
         savedQualityLevel = PlayerPrefs.GetInt("QualityLevel", QualitySettings.GetQualityLevel());
         savedFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
         savedMouseSens = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
+
+        // 🎧 ----- Voice -----
+        float masterVol = PlayerPrefs.GetFloat("MasterVol", 0f);
+        float musicVol = PlayerPrefs.GetFloat("MusicVol", 0f);
+        float sfxVol = PlayerPrefs.GetFloat("SFXVol", 0f);
+        
+        audioMixer.SetFloat("MasterVol", masterVol);
+        audioMixer.SetFloat("MusicVol", musicVol);
+        audioMixer.SetFloat("SFXVol", sfxVol);
+
+        if (masterSlider != null) masterSlider.value = Mathf.InverseLerp(-80f, 0f, masterVol);
+        if (musicSlider != null) musicSlider.value = Mathf.InverseLerp(-80f, 0f, musicVol);
+        if (sfxSlider != null) sfxSlider.value = Mathf.InverseLerp(-80f, 0f, sfxVol);
 
         // ----- Apply Saved -----
         pendingQualityLevel = savedQualityLevel;
@@ -51,7 +73,37 @@ public class SettingsMenu : MonoBehaviour
 
         foreach (var button in QualityButtons)
             button.OnButtonClicked += OnQualityButtonClicked;
+
+        savedCrosshairIndex = PlayerPrefs.GetInt("SelectedCrosshair", 0);
+        pendingCrosshairIndex = savedCrosshairIndex;
+        crosshairDropdown.value = savedCrosshairIndex;
+        crosshairDropdown.onValueChanged.AddListener(OnCrosshairChanged);
     }
+
+    // =====================================================
+    //  AUDIO
+    // =====================================================
+    public void SetMasterVolume(float value)
+    {
+        float volume = Mathf.Lerp(-20f, 0f, value);
+        audioMixer.SetFloat("MasterVol", volume);
+        PlayerPrefs.SetFloat("MasterVol", volume);
+    }
+
+    public void SetMusicVolume(float value)
+    {
+        float volume = Mathf.Lerp(-20f, 0f, value);
+        audioMixer.SetFloat("MusicVol", volume);
+        PlayerPrefs.SetFloat("MusicVol", volume);
+    }
+
+    public void SetSFXVolume(float value)
+    {
+        float volume = Mathf.Lerp(-20f, 0f, value);
+        audioMixer.SetFloat("SFXVol", volume);
+        PlayerPrefs.SetFloat("SFXVol", volume);
+    }
+
 
     // =====================================================
     // GRAPHICS
@@ -82,11 +134,39 @@ public class SettingsMenu : MonoBehaviour
         MouseSensitivity = value;
     }
 
+    private void OnCrosshairChanged(int index)
+    {
+        pendingCrosshairIndex = index;
+    }
+
     // =====================================================
     // APPLY
     // =====================================================
     public void ApplyChanges()
     {
+        // Ses ayarlarını kaydet
+        if (masterSlider != null)
+        {
+            float masterVol = Mathf.Lerp(-30f, 0f, masterSlider.value); // -30 yerine -80 istersen eski sistem
+            audioMixer.SetFloat("MasterVol", masterVol);
+            PlayerPrefs.SetFloat("MasterVol", masterVol);
+        }
+
+        if (musicSlider != null)
+        {
+            float musicVol = Mathf.Lerp(-30f, 0f, musicSlider.value);
+            audioMixer.SetFloat("MusicVol", musicVol);
+            PlayerPrefs.SetFloat("MusicVol", musicVol);
+        }
+
+        if (sfxSlider != null)
+        {
+            float sfxVol = Mathf.Lerp(-30f, 0f, sfxSlider.value);
+            audioMixer.SetFloat("SFXVol", sfxVol);
+            PlayerPrefs.SetFloat("SFXVol", sfxVol);
+        }
+        
+        // Grafik & kontrol ayarlarını uygula
         QualitySettings.SetQualityLevel(pendingQualityLevel);
         Screen.fullScreen = pendingFullscreen;
         MouseSensitivity = pendingMouseSens;
@@ -94,13 +174,25 @@ public class SettingsMenu : MonoBehaviour
         PlayerPrefs.SetInt("QualityLevel", pendingQualityLevel);
         PlayerPrefs.SetInt("Fullscreen", pendingFullscreen ? 1 : 0);
         PlayerPrefs.SetFloat("MouseSensitivity", MouseSensitivity);
+        // 🔹 Crosshair seçimini uygula
+        PlayerPrefs.SetInt("SelectedCrosshair", pendingCrosshairIndex);
+        PlayerPrefs.Save();
+
+        // CrosshairController sahnede açıksa (örneğin Settings sahnesinde test ediyorsan)
+        if (crosshairController != null)
+            crosshairController.UpdateCrosshair(pendingCrosshairIndex);
+
+        savedCrosshairIndex = pendingCrosshairIndex;
+        PlayerPrefs.Save();
+
+        // 💾 Diske yaz
         PlayerPrefs.Save();
 
         savedQualityLevel = pendingQualityLevel;
         savedFullscreen = pendingFullscreen;
         savedMouseSens = pendingMouseSens;
 
-        Debug.Log($"✅ Ayarlar kaydedildi! Sensitivity={MouseSensitivity}");
+        Debug.Log($"Ayarlar kaydedildi! Sensitivity={MouseSensitivity}");
     }
 
     // =====================================================
@@ -123,7 +215,7 @@ public class SettingsMenu : MonoBehaviour
             aimSensitivitySlider.value = savedMouseSens;
             UpdateQualityButtonVisuals(savedQualityLevel);
 
-            Debug.Log("🔄 Değişiklikler geri alındı.");
+            Debug.Log(" Değişiklikler geri alındı.");
         }
 
         if (SettingsPanel != null)
@@ -131,6 +223,6 @@ public class SettingsMenu : MonoBehaviour
         if (CanvasMainMenu != null)
             CanvasMainMenu.SetActive(true);
 
-        Debug.Log("↩️ Ana menüye dönüldü.");
+        Debug.Log(" Ana menüye dönüldü.");
     }
 }
