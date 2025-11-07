@@ -2366,7 +2366,7 @@ MonoBehaviour:
       m_Image: {fileID: 21300000, guid: dc7eb94056b536a4a9f810db7b171332, type: 3}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
     - m_Text: Dashed circle
-      m_Image: {fileID: 21300000, guid: dc7eb94056b536a4a9f810db7b171332, type: 3}
+      m_Image: {fileID: 21300000, guid: dcd5aae0341bd0642858735fe7fdc429, type: 3}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
     - m_Text: Dashed circle
       m_Image: {fileID: 21300000, guid: 56f433345b1faa64eb50cdb197d34f71, type: 3}

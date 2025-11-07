@@ -138,12 +138,12 @@ public class PressKeyOpenDoor : MonoBehaviour
         {
             spawner.SpawnAllEnemies();
 
-            // ✅ enemiesSpawned true yap
+            //  enemiesSpawned true yap
             var saveData = FindObjectOfType<PlayerSaveData>();
             if (saveData != null)
             {
                 saveData.enemiesSpawned = true;
-                Debug.Log("💾 enemiesSpawned TRUE yapıldı!");
+                Debug.Log(" enemiesSpawned TRUE yapıldı!");
             }
         }
 
