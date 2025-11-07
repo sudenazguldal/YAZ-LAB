@@ -35,11 +35,11 @@ public class PlayerSaveData : MonoBehaviour
         string savePath = Path.Combine(Application.persistentDataPath, "YAZ-LAB", "MainSave.json");
         if (File.Exists(savePath))
         {
-            Debug.Log("Önceki kayıt bulundu, eski save yükleniyor...");
+            
         }
         else
         {
-            Debug.Log("Kayıt bulunamadı, yeni oyun başlatılıyor...");
+            
             enemiesSpawned = false; // sıfırdan başla
         }
     }
@@ -50,7 +50,7 @@ public class PlayerSaveData : MonoBehaviour
       
         if (SaveStorage.instance == null)
         {
-            Debug.LogError("SaveStorage sahnede bulunamadı!");
+           
             return;
         }
 
@@ -200,7 +200,7 @@ public class PlayerSaveData : MonoBehaviour
             ApplyLoadedData();
         }
 
-        Debug.Log("Kayıt başarıyla yüklendi!");
+        
     }
 
   

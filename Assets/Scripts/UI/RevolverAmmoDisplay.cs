@@ -14,8 +14,8 @@ public class RevolverAmmoDisplay : MonoBehaviour
     public Image reloadRing;
 
     [Header("Ammo Settings")]
-    public int currentAmmo = 6;   // 🔹 eklendi
-    public int maxAmmo = 6;       // 🔹 eklendi
+    public int currentAmmo = 6;   
+    public int maxAmmo = 6;      
     public int currentMagazine = 4;
 
     [Header("Ring Rotation Settings")]
@@ -49,7 +49,7 @@ public class RevolverAmmoDisplay : MonoBehaviour
 
         int totalAmmo = playerInventoryData != null ? playerInventoryData.Ammo : 0;
 
-        // 🔹 Şarjör / Toplam
+        
         ammoText.text = $"{currentAmmo} / {totalAmmo}";
 
     }

@@ -1,4 +1,3 @@
-// InventoryHUDDisplay.cs (Sadece Can Kiti Sayacý için)
 
 using UnityEngine;
 using TMPro;

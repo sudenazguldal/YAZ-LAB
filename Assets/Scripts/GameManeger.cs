@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement; // Sahne yüklemek için
-using System.Collections;         //IEnumerator için
+using UnityEngine.SceneManagement; 
+using System.Collections;       
 
 public class GameManager : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
             return;
 
         StartCoroutine(EndGameSequence(winPanel));
-        Debug.Log("Oyun bitti! Kazanma sırası başlatıldı.");
+        
         // Oyun durdurulsun
         Time.timeScale = 0f;
 
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
             return;
 
         StartCoroutine(EndGameSequence(losePanel));
-        Debug.Log("Oyun bitti! Kaybetme sırası başlatıldı.");
+       
 
         // Oyun durdurulsun
         Time.timeScale = 0f;
@@ -53,29 +53,12 @@ public class GameManager : MonoBehaviour
     }
 
 
-    /*private IEnumerator EndGameSequence(GameObject panelToActivate)
-    {
-        isGameOver = true;
-        Time.timeScale = 0f;
-
-        // 2. Paneli Aktif Et
-        if (panelToActivate != null)
-        {
-            panelToActivate.SetActive(true);
-
-            yield return new WaitForSecondsRealtime(panelDisplayTime);
-
-            Time.timeScale = 1f; //oyunu çöz.
-
-            SceneManager.LoadScene(MainMenuSceneName);
-        }
-    }*/
+   
 
     private IEnumerator EndGameSequence(GameObject panelToActivate)
     {
         isGameOver = true;
 
-        // 🎯 Sadece player ve düşmanları durdur
         
 
         if (panelToActivate != null)
@@ -83,7 +66,7 @@ public class GameManager : MonoBehaviour
             panelToActivate.SetActive(true);
         }
 
-        // ✅ EventSystem çalışmaya devam etsin
+
         UnityEngine.EventSystems.EventSystem.current.enabled = true;
 
         yield break;

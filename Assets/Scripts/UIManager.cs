@@ -13,7 +13,8 @@ public class UIManager : MonoBehaviour
 
     [Header("2. Dialogue ")]
     [SerializeField] private TextMeshProUGUI dialogueText; 
-    [SerializeField] private float dialogueDuration = 6.0f; 
+    [SerializeField] private float dialogueDuration = 6.0f;
+    [SerializeField] private Color playerDialogueColor = Color.white;
 
     [Header("3. Objective ")]
     [SerializeField] private TextMeshProUGUI objectiveText;
@@ -70,14 +71,29 @@ public class UIManager : MonoBehaviour
  
     public void ShowDialogue(string message)
     {
+        ShowDialogue(message, playerDialogueColor);
+    }
+
+    public void ShowDialogue(string message, Color color)
+    {
         if (dialogueText == null) return;
 
+        
         CancelInvoke("HideDialogue");
 
+        // Eðer mesaj boþsa (null), metni hemen gizle ve çýk
+        if (string.IsNullOrEmpty(message))
+        {
+            HideDialogue();
+            return;
+        }
+
+        // Renk ve Metni Ayarla
+        dialogueText.color = color;
         dialogueText.text = message;
         dialogueText.gameObject.SetActive(true);
-      
 
+        
         Invoke("HideDialogue", dialogueDuration);
     }
 

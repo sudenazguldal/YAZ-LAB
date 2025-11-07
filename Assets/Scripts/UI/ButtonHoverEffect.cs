@@ -7,7 +7,7 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [Header("Hover Settings")]
     public float scaleAmount = 1.2f;
     public float scaleSpeed = 6f;
-    public Color normalColor = new Color(0.5f, 0.5f, 0.5f); // #808080
+    public Color normalColor = new Color(0.5f, 0.5f, 0.5f); 
     public Color hoverColor = Color.white;
 
     private Vector3 originalScale;

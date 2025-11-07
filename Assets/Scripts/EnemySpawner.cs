@@ -9,15 +9,15 @@ public class PatrolRoute
 
 public class EnemySpawner : MonoBehaviour
 {
-    public PlayerSaveData playerSaveData; // Save sistemine referans
+    public PlayerSaveData playerSaveData; 
 
     [Header("Spawn Settings")]
-    public GameObject[] enemyPrefabs;   // 🔹 Doğacak düşmanlar (Warden, Gorgon, Mortis...)
-    public Transform[] spawnPoints;     // 🔹 Spawn noktaları
+    public GameObject[] enemyPrefabs;   
+    public Transform[] spawnPoints;   
     public float respawnDelay = 10f;
 
-    [Header("Patrol Routes (Her düşmana özel devriye noktaları)")]
-    public PatrolRoute[] patrolRoutes;  // 🔹 Her düşmanın kendi rotası (A-B gibi)
+    [Header("Patrol Routes ")]
+    public PatrolRoute[] patrolRoutes; 
 
     private GameObject[] currentEnemies;
 
@@ -34,7 +34,11 @@ public class EnemySpawner : MonoBehaviour
     public void SpawnAllEnemies()
     {
         if (enemyPrefabs.Length != spawnPoints.Length)
-            Debug.LogWarning("Enemy prefab sayısı ile spawn point sayısı eşit değil!");
+        {
+            
+            return;
+        }
+
 
         currentEnemies = new GameObject[enemyPrefabs.Length];
 
@@ -47,7 +51,7 @@ public class EnemySpawner : MonoBehaviour
             currentEnemies[i] = newEnemy;
             OnEnemySpawned(newEnemy);
 
-            // 🔹 enemy1 scriptini bul ve rotasını ata
+            //  enemy1 scriptini bul ve rotasını ata
             enemy1 script = newEnemy.GetComponent<enemy1>();
             if (script != null && patrolRoutes != null && i < patrolRoutes.Length)
             {
@@ -95,7 +99,7 @@ public class EnemySpawner : MonoBehaviour
             if (health != null && !playerSaveData.zombies.Contains(health))
             {
                 playerSaveData.zombies.Add(health);
-                Debug.Log($"Yeni zombi kaydedildi: {newEnemy.name}");
+               
             }
         }
     }

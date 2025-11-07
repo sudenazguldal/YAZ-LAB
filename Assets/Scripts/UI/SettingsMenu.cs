@@ -47,7 +47,7 @@ public class SettingsMenu : MonoBehaviour
         savedFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
         savedMouseSens = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
 
-        // 🎧 ----- Voice -----
+        //  ----- Voice -----
         float masterVol = PlayerPrefs.GetFloat("MasterVol", 0f);
         float musicVol = PlayerPrefs.GetFloat("MusicVol", 0f);
         float sfxVol = PlayerPrefs.GetFloat("SFXVol", 0f);
@@ -80,9 +80,7 @@ public class SettingsMenu : MonoBehaviour
         crosshairDropdown.onValueChanged.AddListener(OnCrosshairChanged);
     }
 
-    // =====================================================
-    //  AUDIO
-    // =====================================================
+   
     public void SetMasterVolume(float value)
     {
         float volume = Mathf.Lerp(-20f, 0f, value);
@@ -105,9 +103,7 @@ public class SettingsMenu : MonoBehaviour
     }
 
 
-    // =====================================================
-    // GRAPHICS
-    // =====================================================
+ 
     private void OnQualityButtonClicked(QualityButtonUI clickedButton)
     {
         foreach (var btn in QualityButtons)
@@ -125,9 +121,7 @@ public class SettingsMenu : MonoBehaviour
     public void SetQuality(int index) => pendingQualityLevel = index;
     public void SetFullscreen(bool isFullscreen) => pendingFullscreen = isFullscreen;
 
-    // =====================================================
-    // SENSITIVITY
-    // =====================================================
+   
     public void SetMouseSensitivity(float value)
     {
         pendingMouseSens = value;
@@ -139,9 +133,7 @@ public class SettingsMenu : MonoBehaviour
         pendingCrosshairIndex = index;
     }
 
-    // =====================================================
-    // APPLY
-    // =====================================================
+ 
     public void ApplyChanges()
     {
         // Ses ayarlarını kaydet
@@ -174,7 +166,7 @@ public class SettingsMenu : MonoBehaviour
         PlayerPrefs.SetInt("QualityLevel", pendingQualityLevel);
         PlayerPrefs.SetInt("Fullscreen", pendingFullscreen ? 1 : 0);
         PlayerPrefs.SetFloat("MouseSensitivity", MouseSensitivity);
-        // 🔹 Crosshair seçimini uygula
+        //  Crosshair seçimini uygula
         PlayerPrefs.SetInt("SelectedCrosshair", pendingCrosshairIndex);
         PlayerPrefs.Save();
 
@@ -185,7 +177,7 @@ public class SettingsMenu : MonoBehaviour
         savedCrosshairIndex = pendingCrosshairIndex;
         PlayerPrefs.Save();
 
-        // 💾 Diske yaz
+        //  Diske yaz
         PlayerPrefs.Save();
 
         savedQualityLevel = pendingQualityLevel;
@@ -195,9 +187,7 @@ public class SettingsMenu : MonoBehaviour
         Debug.Log($"Ayarlar kaydedildi! Sensitivity={MouseSensitivity}");
     }
 
-    // =====================================================
-    // BACK TO MAIN MENU
-    // =====================================================
+ 
     public void BackToMainMenu()
     {
         bool changed =
@@ -215,7 +205,7 @@ public class SettingsMenu : MonoBehaviour
             aimSensitivitySlider.value = savedMouseSens;
             UpdateQualityButtonVisuals(savedQualityLevel);
 
-            Debug.Log(" Değişiklikler geri alındı.");
+           
         }
 
         if (SettingsPanel != null)
@@ -223,6 +213,6 @@ public class SettingsMenu : MonoBehaviour
         if (CanvasMainMenu != null)
             CanvasMainMenu.SetActive(true);
 
-        Debug.Log(" Ana menüye dönüldü.");
+        
     }
 }

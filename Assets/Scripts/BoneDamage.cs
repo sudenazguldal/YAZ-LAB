@@ -18,7 +18,7 @@ public class BoneDamage : MonoBehaviour
 
             if (playerHealth != null)
             {
-                Debug.Log($"Kemik, {other.name} (Oyuncu)'ya çarptý ve {damage} hasar verdi!");
+               
                 playerHealth.TakeDamage(damage);
             }
         }

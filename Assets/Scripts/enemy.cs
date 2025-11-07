@@ -91,30 +91,30 @@ public class enemy1 : MonoBehaviour
 
     public void ActivateChase(Transform targetTransform)
     {
-        // 1. Dışarıdan gelen hedefi (oyuncu) kendi hedef değişkenimize atıyoruz.
+        //  Dışarıdan gelen hedefi (oyuncu) kendi hedef değişkenimize atıyoruz
         if (targetTransform != null)
         {
             player = targetTransform;
         }
 
-        // 2. Düşman hayattaysa (ölmediyse) devam et.
+        //  Düşman hayattaysa ölmediyse devam et
         if (healthEnemy == null || !healthEnemy.isDead)
         {
-            // 3. Oyuncuya olan mesafeye bakarak hangi duruma geçeceğine karar ver.
+            //  Oyuncuya olan mesafeye bakarak hangi duruma geçeceğine karar ver
             float dist = Vector3.Distance(transform.position, player.position);
 
             if (dist <= stopRange)
             {
-                // Eğer oyuncu saldırı menzilindeyse hemen saldır.
+                // Eğer oyuncu saldırı menzilindeyse hemen saldır
                 ChangeState(EnemyState.Attack);
             }
             else
             {
-                // Eğer menzilde değilse, oyuncunun yanına doğru koşmaya başla.
+                // Eğer menzilde değilse, oyuncunun yanına doğru koşmaya başla
                 ChangeState(EnemyState.Chase);
             }
 
-            // NavMeshAgent'ın hareketi durdurulmuşsa, tekrar başlat.
+            // NavMeshAgent'ın hareketi durdurulmuşsa tekrar başlat
             if (agent != null && agent.enabled)
             {
                 agent.isStopped = false;
@@ -228,9 +228,7 @@ public class enemy1 : MonoBehaviour
         if (WeapeonPrefab == null || throwPoint == null || player == null)
             return;
 
-        //float currentDistance = Vector3.Distance(transform.position, player.position);
-        //if (currentDistance > stopRange)
-        //    return;
+       
 
         GameObject bone = Instantiate(WeapeonPrefab, throwPoint.position, throwPoint.rotation);
         Vector3 direction = (player.position + Vector3.up - throwPoint.position).normalized;
@@ -277,11 +275,11 @@ public class enemy1 : MonoBehaviour
             if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5f, NavMesh.AllAreas))
             {
                 agent.Warp(hit.position);
-                Debug.Log($"{name}: NavMesh'e warp yapıldı -> {hit.position}");
+               
             }
             else
             {
-                Debug.LogError($"{name}: Yakında NavMesh bulunamadı!");
+                
                 agent.enabled = false;
             }
         }

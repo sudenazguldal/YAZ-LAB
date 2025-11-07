@@ -12,6 +12,9 @@ public class FinalConfrontation : MonoBehaviour
     [SerializeField] private CameraSwitcher cameraSwitcher;
     [Header("Diyalog ve Zamanlama")]
     [SerializeField] private float dialogueDelay = 6.5f;
+    [Header("Diyalog Renkleri")]
+    [SerializeField] private Color doctorColor = Color.red; 
+    [SerializeField] private Color playerColor = Color.white; 
     [Header("Delirium Audio")]
     [SerializeField] private AudioSource heartbeatSource;
     [SerializeField] private AudioLowPassFilter mainAudioFilter;
@@ -64,30 +67,30 @@ public class FinalConfrontation : MonoBehaviour
 
         //DÝYALOGLAR 
         if (doctorScript != null) doctorScript.SetTalking(true);
-        uiManager.ShowDialogue("Ýnanýlmaz... Onca kusursuz yaratýmým arasýndan yine sen kaldýn. Yýllar geçti, ama hâlâ o gecenin hatasýný telafi edemedim.");
+        uiManager.ShowDialogue("Ýnanýlmaz... Onca kusursuz yaratýmým arasýndan yine sen kaldýn. Yýllar geçti, ama hâlâ o gecenin hatasýný telafi edemedim.", doctorColor);
         yield return new WaitForSeconds(dialogueDelay);
         if (doctorScript != null) doctorScript.SetTalking(false);
 
 
         if (doctorScript != null) doctorScript.SetTalking(true);
-        uiManager.ShowDialogue("Sen… benim tek baþarýsýzlýðým, ama ayný zamanda en büyük merakýmsýn.");
+        uiManager.ShowDialogue("Sen… benim tek baþarýsýzlýðým, ama ayný zamanda en büyük merakýmsýn." , doctorColor);
         yield return new WaitForSeconds(dialogueDelay);
         if (doctorScript != null) doctorScript.SetTalking(false);
 
         
-        uiManager.ShowDialogue("Baþarýsýzlýk mý diyorsun? O gece beni parçaladýn, Doktor. Ýnsanlýðýmý senin laboratuvarýnda býraktým.");
+        uiManager.ShowDialogue("Baþarýsýzlýk mý diyorsun? O gece beni bitirdin, Doktor. Ýnsanlýðýmý senin laboratuvarýnda býraktým.", playerColor);
         yield return new WaitForSeconds(dialogueDelay);
 
-        uiManager.ShowDialogue("Ama sen hâlâ ayný takýntýdasýn - kusursuzluk. Bu gece, senin deneyin bitiyor.");
+        uiManager.ShowDialogue("Ama sen hâlâ ayný takýntýdasýn - kusursuzluk. Bu gece, senin deneyin bitiyor." , playerColor);
         yield return new WaitForSeconds(dialogueDelay);
 
         if (doctorScript != null) doctorScript.SetTalking(true);
-        uiManager.ShowDialogue("Ah, yanýlýyorsun. Sen hâlâ deneyin bir parçasýsýn. Kaçtýðýný sandýn ama her adýmýn, her nefesin...");
+        uiManager.ShowDialogue("Ah, yanýlýyorsun. Sen hâlâ deneyin bir parçasýsýn. Kaçtýðýný sandýn ama her adýmýn, her nefesin..." , doctorColor);
         yield return new WaitForSeconds(dialogueDelay);
         if (doctorScript != null) doctorScript.SetTalking(false);
 
         if (doctorScript != null) doctorScript.SetTalking(true);
-        uiManager.ShowDialogue("Hepsi gözlem altýndaydý. Bu gece sadece bir son deðil — sonuç raporu.");
+        uiManager.ShowDialogue("Hepsi gözlem altýndaydý. Bu gece sadece bir son deðil — sonuç raporu.", doctorColor);
         yield return new WaitForSeconds(dialogueDelay);
         if (doctorScript != null) doctorScript.SetTalking(false);
 

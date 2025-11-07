@@ -6,26 +6,26 @@ public class SceneChanger : MonoBehaviour
 {
     public void ExitToMainMenu()
     {
-        Debug.Log("Ana menüye dönülüyor...");
+       
         StartCoroutine(LoadMainMenuAsync());
     }
 
     private IEnumerator LoadMainMenuAsync()
     {
-        // 1️⃣ Oyunu normal hızına döndür
+        //  Oyunu normal hızına döndür
         Time.timeScale = 1f;
 
-        // 2️⃣ Cursor aktif
+        // 2 Cursor aktif
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 3️⃣ Asenkron sahne yükleme başlat
+        // 3 Asenkron sahne yükleme başlat
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MainMenuScene");
 
-        // 4️⃣ Sahne yüklenene kadar bekle (Realtime!)
+        //  Sahne yüklenene kadar bekle 
         while (!asyncLoad.isDone)
         {
-            yield return null; // bir frame bekle
+            yield return null; 
         }
     }
 }

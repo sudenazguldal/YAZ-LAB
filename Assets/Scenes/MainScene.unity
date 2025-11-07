@@ -1002,7 +1002,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1099993332}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11102251, y: -0.015827356, z: 0.0017683506, w: 0.9936903}
+  m_LocalRotation: {x: 0.111028165, y: -0.012253358, z: 0.0013690367, w: 0.9937408}
   m_LocalPosition: {x: -7.2060003, y: 2.1388233, z: 17.025133}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1159,19 +1159,19 @@ PrefabInstance:
       objectReference: {fileID: 1014979905}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9936903
+      value: 0.9937408
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.1110225
+      value: 0.11102814
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.015827356
+      value: -0.012253356
       objectReference: {fileID: 0}
     - target: {fileID: 6926259889767566781, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0017683504
+      value: 0.0013690365
       objectReference: {fileID: 0}
     - target: {fileID: 7731734846971872422, guid: 7ee9a71ee253c404da4ee60403c5850d, type: 3}
       propertyPath: aimPos
@@ -1732,14 +1732,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1925882206}
     - target: {fileID: 1208490833166993687, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
-      propertyPath: uiManager
-      value: 
-      objectReference: {fileID: 1242685985}
-    - target: {fileID: 1208490833166993687, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
-      propertyPath: inventoryData
-      value: 
-      objectReference: {fileID: 11400000, guid: 8a95d65168ee1cc439da406bc9d9a31b, type: 2}
-    - target: {fileID: 1208490833166993687, guid: d0452de17ae3d7140a7efb55958bc4f8, type: 3}
       propertyPath: TempoMusicSource
       value: 
       objectReference: {fileID: 234028205}
@@ -2293,9 +2285,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2872396065375118641, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -16.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 2872396065375118641, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3270965513438067539, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
       propertyPath: m_Name
       value: SpawnPoint_warden
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939492337202573265, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939492337202573265, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857318132450860945, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857318132450860945, guid: 2968f070ad89dbe47bad2a0e43634222, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2419,6 +2435,18 @@ PrefabInstance:
       propertyPath: doctorHealth
       value: 
       objectReference: {fileID: 7404572877927564585}
+    - target: {fileID: 5316085213679450784, guid: 181c162bb16814f41841c2369e674b62, type: 3}
+      propertyPath: doctorColor.b
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316085213679450784, guid: 181c162bb16814f41841c2369e674b62, type: 3}
+      propertyPath: doctorColor.g
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316085213679450784, guid: 181c162bb16814f41841c2369e674b62, type: 3}
+      propertyPath: doctorColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5316085213679450784, guid: 181c162bb16814f41841c2369e674b62, type: 3}
       propertyPath: cameraSwitcher
       value: 

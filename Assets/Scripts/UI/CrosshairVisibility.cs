@@ -8,12 +8,12 @@ public class CrosshairVisibilityUI : MonoBehaviour
     void Start()
     {
         crosshairImage = GetComponent<Image>();
-        crosshairImage.enabled = false; // 
+        crosshairImage.enabled = false; 
     }
 
     void Update()
     {
-        bool isAiming = Input.GetButton("Fire2"); // 
+        bool isAiming = Input.GetButton("Fire2");
         crosshairImage.enabled = isAiming;
     }
 }

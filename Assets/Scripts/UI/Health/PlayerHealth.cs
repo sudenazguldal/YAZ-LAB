@@ -52,7 +52,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Player died!");
+       
         // Ölüm animasyonu, ekran, sahne reset gibi vs
     }
 }

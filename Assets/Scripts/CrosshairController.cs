@@ -6,7 +6,7 @@ public class CrosshairController : MonoBehaviour
     [Header("References")]
     public Image crosshairImage;
 
-    public Sprite[] crosshairSprites; // Dot, Circle, Cross, X, Knob
+    public Sprite[] crosshairSprites; 
 
     private int currentIndex;
 
