@@ -4,8 +4,8 @@ Geliştirilen oyun, oyuncuya temel TPS deneyimini sunarken; kamera, hareket, ani
 Grafikler low-poly tarzında seçilmiş ve performans odaklı bir yapı benimsenmiştir.
 
 ### Oyuncu (Player) Mekanikleri
-Oyuncu karakteri, Third Person Controller altyapısına sahiptir. Hareket sistemi WASD tuşlarıyla yürüyüş ve koşma kontrolünü sağlar. C tuşu ile oturma, Left Ctrl ile basılı tutularak geçici siper alma/dinamik eğilme gerçekleştirilebilir. Kamera sistemi, Third Person ve Aim Camera arasında geçiş yapabilen Camera Switcher yapısına sahiptir.
-Ateş etme (shooting) mekanikleri aktif olup, nişan alma sırasında kamera dinamik olarak yakınlaşır. Avatar Mask ve Blend Tree yapılarını kullanan gelişmiş animasyon sistemi sayesinde karakterin yürüme, nişan alma, siper alma ve ateş etme hareketleri arasında akıcı geçişler sağlanmıştır.
+Oyuncu karakteri, Third Person Controller altyapısına sahiptir. Hareket sistemi WASD tuşlarıyla yürüyüş ve koşma kontrolünü sağlar. C tuşu toggle ile, Left Ctrl tuşu ise basılı tutularak geçici siper alma/dinamik eğilme gerçekleştirilebilir. Kamera sistemi, Third Person ve Aim Camera arasında geçiş yapabilen  dinamik bir Camera Switcher yapısına sahiptir.
+Ateş etme (shooting) mekanikleri aktif olup, nişan alma sırasında kamera dinamik olarak yakınlaşır. Avatar Mask ve Blend Tree yapılarını kullanan gelişmiş animasyon sistemi sayesinde karakterin yürüme, nişan alma, crouch,siper alma ve ateş etme hareketleri arasında akıcı geçişler sağlanmıştır.
 
 ### Düşman (NPC) Yapay Zekâsı
 Düşman karakterleri, NavMesh Agent tabanlı bir navigasyon sistemi ile oyuncuyu tespit eder ve takip eder. Düşman davranışları; Idle, Patrol, Walk, Attack ve Death durumları arasında geçiş yapan bir Finite State Machine (FSM) yapısıyla kontrol edilmektedir.
