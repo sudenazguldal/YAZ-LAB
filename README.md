@@ -92,6 +92,7 @@ Diyalog bitince “Delirme Anı (Delirium)” başlar: ekran titreşir, sesler b
 ##  Sistem Blok Diyagramı
 
 Aşağıda *Project: Macula* oyununda kullanılan temel sistem bileşenleri ve aralarındaki ilişki gösterilmektedir:
+![Blok Diyagramı](https://github.com/sudenazguldal/YAZ-LAB/commit/3e734042b426cecf38f33202d616103f321cbb3c)
 
 
 ##  Karşılaşılan Zorluklar ve Çözümler
@@ -108,4 +109,7 @@ Projemizde bu sistem henüz uygulanmamıştır; havuz mantığı kullanılarak r
 + Settings kısımındaki ses sliderleri için başta aralık olarak -80dB 0dB aldım. Fakat ses henüz %75'teyken 0'landığı için desibeli -20'ye çekmeye karar verdim. İyi bir karardı.
 * ### MERGE
 ## Literatür Taraması 
++ Modern video oyunlarında "Settings" menüsü yalnızca temel ses ve görüntü ayarlarını içermekle kalmaz; aynı zamanda oyuncu deneyimini kişiselleştirmeye yönelik erişilebilirlik, kontrol ve arayüz özelleştirme seçeneklerini de sunar. Özellikle Resident Evil 2 Remake gibi AAA yapımlar, kullanıcıların oyun içi zorluk seviyesinden nişangah görünümüne kadar birçok detayı düzenlemesine olanak tanımaktadır.
++ Oyun geliştirme literatüründe, sık tekrar eden nesnelerin (örneğin düşmanlar veya mermiler) sürekli oluşturulup silinmesi performans kaybına yol açabilir. Bu nedenle "Object Pooling" (nesne havuzu) yöntemi, var olan nesneleri yeniden kullanarak Garbage Collector yükünü azaltmak için önerilmektedir.
+Projemizde bu sistem henüz uygulanmamıştır; havuz mantığı kullanılarak respawn işlemleri daha verimli hale getirilebilir.
 
