@@ -106,13 +106,11 @@ public class FinalConfrontation : MonoBehaviour
         // 6. DOKTOR'UN ÖLÜMÜNÜ DÝNLE
         if (doctorHealth != null)
         {
-            doctorHealth.onDeath.AddListener(EndGame);
+            //doctorHealth.onDeath.AddListener(EndGame);
         }
     }
 
-    /// <summary>
-    /// Doktor öldüðünde çaðrýlýr (Oyun Bitiþi)
-    /// </summary>
+    
     private void EndGame()
     {
         Debug.Log("DOKTOR ÖLDÜ. OYUN BÝTÝYOR.");
