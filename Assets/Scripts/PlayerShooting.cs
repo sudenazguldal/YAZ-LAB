@@ -6,7 +6,7 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private float fireRate = 0.15f;
     public float FireRate => fireRate; // Dışarıdan okumak için
     [SerializeField] private float damage = 25f;
-    [SerializeField] private LayerMask aimColliderLayerMask = default; // Gerekirse
+    [SerializeField] private LayerMask aimColliderLayerMask = default; 
 
     [Header("VFX")]
     [SerializeField] private Transform spawnBulletPosition;
@@ -15,19 +15,19 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private GameObject vfxHitOthers;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource audioSource; // Atış sesini çalacak AudioSource bileşeni
-    [SerializeField] private AudioClip shootSound;     // Ana atış sesi klibi
-    [SerializeField] private AudioClip hitTargetSound; // Zombiye vuruş sesi (Opsiyonel)
-    [SerializeField] private AudioClip hitOthersSound; // Duvara vuruş sesi (Opsiyonel)
+    [SerializeField] private AudioSource audioSource; 
+    [SerializeField] private AudioClip shootSound;     
+    [SerializeField] private AudioClip hitTargetSound; 
+    [SerializeField] private AudioClip hitOthersSound;
     [SerializeField] private AudioClip emptyGunSound;
     [Header("Cover Shooting")]
     private bool isPeeking = false; // PlayerController'dan gelen Cover Aim durumu
-    [SerializeField] private float peekHeightOffset = 0.6f; // Siperden uzanma yüksekliği (Örn: 0.6m)
+    [SerializeField] private float peekHeightOffset = 0.6f; // Siperden uzanma yüksekliği 
 
     [Header("Inventory")]
-    [Tooltip("Envanter veri ScriptableObject'ini buraya sürükleyin.")]
+   
     [SerializeField] private InventoryData inventoryData;
-    [SerializeField] private int ammoCostPerShot = 1; // Her atışta harcanan mermi miktarı (çoğu zaman 1'dir)
+    [SerializeField] private int ammoCostPerShot = 1; // Her atışta harcanan mermi miktarı 
 
     WeaponAmmo Ammo;
 
@@ -35,7 +35,7 @@ public class PlayerShooting : MonoBehaviour
     private bool isShooting = false;
     private bool currentIsAiming = false; // PlayerController'dan gelecek Aim durumunu tutar
 
-    // PlayerController'dan gelecek input'u yönetir
+    
 
     void Start()
     {
@@ -47,7 +47,7 @@ public class PlayerShooting : MonoBehaviour
     {
         currentIsAiming = isAiming;
 
-        // isPeeking durumu: Siperdeysen VE nişan alıyorsan TRUE
+        // isPeeking durumu Siperdeysen VE nişan alıyorsan TRUE
         isPeeking = isCovering && isAiming;
     }
     public void HandleShootInput(bool isPressed)
@@ -60,48 +60,40 @@ public class PlayerShooting : MonoBehaviour
     {
         // Güvenlik Kontrolleri
         if (currentIsAiming == false) return;
-        if (Ammo == null) { Debug.LogError("WeaponAmmo referansı eksik!"); return; }
+        if (Ammo == null) return; 
 
-        // ----------------------------------------------------------------------
-        // 1. MÜHİMMAT KONTROLÜ
-        // ----------------------------------------------------------------------
+        //ammo kontrol
         if (Ammo.CurrentAmmo <= 0)
         {
-            // Mermi bittiğinde tık sesi çal
+            // no ammo sound
             if (audioSource != null && emptyGunSound != null)
             {
                 audioSource.PlayOneShot(emptyGunSound);
             }
-            return; // Mermi yoksa ateşleme
+            return; 
         }
 
-        // ----------------------------------------------------------------------
-        // 2. MÜHİMMAT HARCAMA (SADECE ŞARJÖRDEN DÜŞ)
-        // ----------------------------------------------------------------------
-        Ammo.CurrentAmmo--; // Şarjörden 1 mermi düş
-                            // NOT: isabet veya harcama başarısız olsa bile mermi atıldığı için düşülür.
+        // atış var düşür ammo sayacını
+        Ammo.CurrentAmmo--; 
+                            
 
-        // ----------------------------------------------------------------------
-        // 3. POZİSYON VE PEEK HESAPLAMASI
-        // ----------------------------------------------------------------------
+        // pozisyon ve peek hesapları
         Vector3 bulletSpawnPosition = spawnBulletPosition.position;
 
         if (isPeeking)
         {
-            // Namlu pozisyonunu siperden uzanıyormuş gibi yukarı kaydır
+            // Namlu pozisyonunu siperden uzanıyormuş gibi yukarı kaydır animasyonda olmuyo ama işlevde oluyo
             bulletSpawnPosition += Vector3.up * peekHeightOffset;
         }
 
-        // ----------------------------------------------------------------------
-        // 4. VFX VE SES
-        // ----------------------------------------------------------------------
+        // vfx ve soundlar
         if (vfxMuzzleFlash != null)
         {
             // Muzzle Flash oluşturma ve yok etme mantığı (Mevcut kodunuz)
             GameObject muzzleFlashInstance = Instantiate(vfxMuzzleFlash, bulletSpawnPosition, spawnBulletPosition.rotation);
             ParticleSystem ps = muzzleFlashInstance.GetComponent<ParticleSystem>();
-            // ... (Kalan VFX mantığı)
-            Destroy(muzzleFlashInstance, 0.5f); // Basitleştirilmiş yok etme
+           
+            Destroy(muzzleFlashInstance, 0.5f); 
         }
 
         if (audioSource != null && shootSound != null)
@@ -109,9 +101,7 @@ public class PlayerShooting : MonoBehaviour
             audioSource.PlayOneShot(shootSound);
         }
 
-        // ----------------------------------------------------------------------
-        // 5. HITSCAN
-        // ----------------------------------------------------------------------
+        // hitscan
         Vector3 shootDirection = (targetPoint - bulletSpawnPosition).normalized;
         RaycastHit hitInfo;
 
@@ -144,16 +134,16 @@ public class PlayerShooting : MonoBehaviour
                 }
             }
 
-            //  Zombi Vuruş Sesi
+            
             if (audioSource != null && hitTargetSound != null)
             {
-                Debug.Log("Playing hit target sound");
+               
                 audioSource.PlayOneShot(hitTargetSound, 1.0f);
             }
         }
         else
         {
-            // Duvar/Zemin vuruldu
+           
             if (vfxHitOthers != null)
             {
                 GameObject hitVFX = Instantiate(vfxHitOthers, hitInfo.point, hitRotation);
@@ -179,7 +169,7 @@ public class PlayerShooting : MonoBehaviour
     
 
 
-        // Diğer Vuruş Sesi
+     
         if (audioSource != null && hitOthersSound != null)
         {
             AudioSource.PlayClipAtPoint(hitOthersSound, hitInfo.point);
@@ -189,7 +179,7 @@ public class PlayerShooting : MonoBehaviour
 
     private Vector3 GetAimTarget()
     {
-        //  Kamera Raycast Mantığı buraya taşındı!
+        
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
 
@@ -198,19 +188,19 @@ public class PlayerShooting : MonoBehaviour
             return raycastHit.point;
         }
 
-        return ray.GetPoint(999f); // Hiçbir şeye çarpmazsa uzak nokta
+        return ray.GetPoint(999f); // Hiçbir şeye çarpmazsa uzak noktaya gider
     }
 
    
     void Update()
     {
-        // 1. Nişan Alma Tespiti (Kameradan hedefi bulma) - Artık bu da burada!
+        // Nişan alma tespiti (Kameradan hedefi bulma) 
         Vector3 mouseWorldPosition = GetAimTarget();
 
-        // 2. Ateşleme Zamanlaması ve Kontrolü
+        //  Ateşleme zamanlaması ve kontrolü
         if (currentIsAiming && isShooting && Time.time >= nextFireTime)
         {
-            // YENİ KONTROL: Sadece nişan alıyorsak ateş et.
+            // Sadece nişan alıyorsak ateş et
             Shoot(GetAimTarget()); // GetAimTarget metodunu da Update içinde çağırabiliriz.
             nextFireTime = Time.time + FireRate;
         }

@@ -37,7 +37,7 @@ public class AimCameraController : MonoBehaviour
         targetCameraSide = aimCam.CameraSide;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
     void Start()
     {
         Vector3 angles = yawTarget.rotation.eulerAngles;
@@ -64,13 +64,11 @@ public class AimCameraController : MonoBehaviour
         targetCameraSide = aimCam.CameraSide < 0.5f ? 1f : 0f;
     }
 
-    // Update is called once per frame
+  
     void Update()
     {
         Vector2 look = lookInput.action.ReadValue<Vector2>();
         //look (x,y) seklinde look.x =+5 
-
-
 
         //hangi cihazi kullandigini anlamak icin
         if (Mouse.current != null && Mouse.current.delta.IsActuated())

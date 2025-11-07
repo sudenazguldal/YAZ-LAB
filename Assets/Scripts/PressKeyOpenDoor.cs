@@ -6,16 +6,16 @@ public class PressKeyOpenDoor : MonoBehaviour
 {   
     [HideInInspector] public bool isOpened = false;
     [Header("UI & References")]
-    public GameObject instructionUI;     // “Press E to open” yazısı
-    public Animator doorAnimator;        // Kapı animatörü (her kapıya özgü)
-    public string animationName; // Oynatılacak animasyon ismi
-    public GameObject triggerZone;       // Trigger objesi (isteğe bağlı)
+    public GameObject instructionUI;     
+    public Animator doorAnimator;        
+    public string animationName; 
+    public GameObject triggerZone;       
     public AudioSource DoorOpenSound;
 
     [Header("Door Sounds")]
-    public AudioSource DoorSoundSource; // Sesin çalınacağı AudioSource bileşeni
-    public AudioClip DefaultOpenSound;  // Normal kapılar için ses (Eski DoorOpenSound'un clip'i)
-    public AudioClip SideDoorOpenSound; // ⬅️ SideDoor için özel ses
+    public AudioSource DoorSoundSource; 
+    public AudioClip DefaultOpenSound; 
+    public AudioClip SideDoorOpenSound; 
 
     public AudioClip lockSound;
 
@@ -83,9 +83,9 @@ public class PressKeyOpenDoor : MonoBehaviour
     {
         if (canOpen && Input.GetKeyDown(KeyCode.E))
         {
-            TryOpenDoor(); // ⬅️ OpenDoor yerine TryOpenDoor metodunu çağıralım
+            TryOpenDoor(); 
         }
-        //Eğer SideDoor ise player'ı hedef noktaya doğru yürüt
+        
         if (isWalking && player != null && walkTargetPoint != null)
         {
             player.position = Vector3.MoveTowards(
@@ -94,20 +94,20 @@ public class PressKeyOpenDoor : MonoBehaviour
                 walkSpeed * Time.deltaTime
             );
 
-            // Hedefe ulaştıysa durdur
+          
             if (Vector3.Distance(player.position, walkTargetPoint.position) < 0.1f)
             {
                 isWalking = false;
             }
         }
     }
-    //  YENİ COROUTINE: Diyalogu gecikmeli olarak gösterir
+    // Gecikmeli diyalog gösterme için coroutine metodu ses biraz geç başlıyo 
     private IEnumerator ShowDialogueDelayed(string message, float delay)
     {
-        // Yarım saniye (veya belirlediğiniz süre) bekler
+        // Yarım saniye bekler
         yield return new WaitForSeconds(delay);
 
-        // Gecikmeden sonra diyalog metodunu çağırır.
+        // Gecikmeden sonra diyalog metodunu çağırır
         if (uiManager != null)
         {
             uiManager.ShowDialogue(message);
@@ -120,7 +120,7 @@ public class PressKeyOpenDoor : MonoBehaviour
         {
             if (inventoryData != null && inventoryData.HasKey)
             {
-                // Anahtar VAR
+                // Anahtar VARSA açar
                 OpenDoor();
                 inventoryData.SetKey(false);
                 if (uiManager != null)
@@ -132,22 +132,22 @@ public class PressKeyOpenDoor : MonoBehaviour
             {
                 
 
-                // 1. Kilit Sesi Çalma
+              
                 if (lockSound != null && DoorSoundSource != null)
                 {
-                    // Mevcut sesi durdur (gerekirse)
+                    // Mevcut sesi durdur  bazen kafayı yiyor diğer seslerle
                     DoorSoundSource.Stop();
-                    // Yeni klibi yükle ve hemen çal
+                    // Yeni klibi yükler ve çalar
                     DoorSoundSource.clip = lockSound;
                     DoorSoundSource.Play();
                 }
 
                 
-                // 2. Diyalog Mesajını Başlatma (Gecikmeli)
+                // gecikmeli dialogue
                 string dialogMessage = "Kilitli... Tabii ki kilitli. Biliyordum... Beni yine buraya getireceğini biliyordum. 'O gece' yarım kalan hesabı bitirmenin vakti geldi, Doktor. O anahtarı bulacağım.";
                 float dialogDelay = 0.5f; //  Yarım saniye (500 milisaniye) gecikme
 
-                // Coroutine'i başlat
+                
                 StartCoroutine(ShowDialogueDelayed(dialogMessage, dialogDelay));
 
                 if (uiManager != null)
@@ -158,7 +158,7 @@ public class PressKeyOpenDoor : MonoBehaviour
         }
         else
         {
-            // SideDoor değilse (Normal Kapı / Main Door) direkt aç
+            // SideDoor değilse direkt aç
             OpenDoor();
         }
     }
@@ -202,7 +202,7 @@ public class PressKeyOpenDoor : MonoBehaviour
         
         if (MainDoor)
         {
-            //  Zombileri Spawn Et
+            //  Zombileri spawn et
             if (spawner != null)
             {
                 spawner.SpawnAllEnemies(); 
@@ -212,37 +212,37 @@ public class PressKeyOpenDoor : MonoBehaviour
             if (saveData != null)
             {
                 saveData.enemiesSpawned = true;
-                Debug.Log(" enemiesSpawned TRUE yapıldı!");
+               
             }
 
             // 2. SES GEÇİŞİ
             if (CryingAudioSource != null && CryingAudioSource.isPlaying)
             {
                 CryingAudioSource.Stop();
-                Debug.Log("Ana Kapı açıldı: Ağlama sesi durduruldu.");
+                
             }
 
             if (TempoMusicSource != null)
             {
                 TempoMusicSource.loop = true;
                 TempoMusicSource.Play();
-                Debug.Log("Ana Kapı açıldı: Tempolu müzik başladı.");
+                
             }
 
             if (uiManager != null)
             {
-                // 1. Anlık Panik Diyaloğu (Alt-Orta)
+               
                 uiManager.ShowDialogue("Yine başlıyor... Olamaz, yine o geceki gibi! Kütüphaneye ulaşmam lazım. Her şeyin cevabı orda olmalı... Yan kapıdan!");
 
-                // 2. Kalıcı Görev Metni (Sol Üst)
+              
                 uiManager.SetObjective("Yan kapıdan kütüphaneye ulaş.");
             }
         }
 
-        // --- SideDoor Kontrolü (Ayrı) ---
-        if (isSideDoor) // ⬅️ Eğer açılan kapı SideDoor ise
+        
+        if (isSideDoor) //açılan kapı side door mu kontrolü
         {
-            //  YENİ EKLENTİ: Tempolu müziği durdur
+            
             if (TempoMusicSource != null && TempoMusicSource.isPlaying)
             {
                 TempoMusicSource.Stop();
@@ -261,20 +261,11 @@ public class PressKeyOpenDoor : MonoBehaviour
 
             if (uiManager != null)
             {
-                // 1. Anlık Panik Diyaloğu (Alt-Orta)
+                
                 uiManager.ShowDialogue("Sonunda... Kütüphane. O gece olan her şeyin cevabı bu odada olmalı. Biliyorum.");
             }
 
-                // Kalan SideDoor mantığı (Düşmanı aktive etme)
-                if (targetEnemy != null)
-            {
-                Debug.Log($"SideDoor açıldı! {targetEnemy.name} çağırılıyor...");
-                targetEnemy.ActivateChase(GameObject.FindGameObjectWithTag("Player").transform);
-            }
-            else
-            {
-                Debug.LogWarning("SideDoor açıldı ama targetEnemy atanmamış!");
-            }
+               
         }
     }
 }

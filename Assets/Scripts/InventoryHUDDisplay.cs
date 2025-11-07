@@ -5,9 +5,9 @@ using TMPro;
 
 public class InventoryHUDDisplay : MonoBehaviour
 {
-    //  Health Kit Sayacý için Kalýcý Referans
+   // helath kit sayacý için
     [SerializeField] private InventoryData inventoryData;
-    private TextMeshProUGUI textComponent; // Bu script'in takýlý olduðu Text bileþeni
+    private TextMeshProUGUI textComponent; 
 
     void Awake()
     {
@@ -23,7 +23,7 @@ public class InventoryHUDDisplay : MonoBehaviour
     {
         if (inventoryData != null)
         {
-            // KRÝTÝK ABONELÝK
+           
             inventoryData.OnHealthKitChange += UpdateHealthKitDisplay;
         }
     }
@@ -40,11 +40,10 @@ public class InventoryHUDDisplay : MonoBehaviour
     {
         if (textComponent != null)
         {
-            //  KALICI GÖSTERÝM: Yeni sayý 0 bile olsa gösterimde kalýr.
+            // Yeni sayý 0 bile olsa gösterimde kalýr.
             textComponent.text = $"Health Kit = {newCount}";
 
-            // Eðer isterseniz, 0 olunca gizleyebilirsiniz
-          //  textComponent.gameObject.SetActive(newCount > 0);
+          
         }
     }
 }

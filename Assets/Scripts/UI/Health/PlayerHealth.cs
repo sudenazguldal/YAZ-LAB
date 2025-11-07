@@ -17,17 +17,14 @@ public class PlayerHealth : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-            TakeDamage(10f);  // hasar 10
-        if (Input.GetKeyDown(KeyCode.J))
-            Heal(25f);        // iyileþme 25
+        
     }
 
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-        Debug.Log($"Took damage: -{damage} | Current Health: {currentHealth}");
+        
         FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth);
         UpdateHealthUI();
 
@@ -42,7 +39,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth += healAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-        Debug.Log($"Healed: +{healAmount} | Current Health: {currentHealth}");
+        
         FindObjectOfType<HealthUI>().UpdateHeart((int)currentHealth);
         UpdateHealthUI();
     }
@@ -50,12 +47,12 @@ public class PlayerHealth : MonoBehaviour
     void UpdateHealthUI()
     {
         if (healthText != null)
-            healthText.text = Mathf.CeilToInt(currentHealth).ToString();  // sayýyý yuvarlayarak göster
+            healthText.text = Mathf.CeilToInt(currentHealth).ToString();  // sayýyý yuvarlayarak gösterir
     }
 
     void Die()
     {
         Debug.Log("Player died!");
-        // Ölüm animasyonu, ekran, sahne reset gibi iþlemler
+        // Ölüm animasyonu, ekran, sahne reset gibi vs
     }
 }

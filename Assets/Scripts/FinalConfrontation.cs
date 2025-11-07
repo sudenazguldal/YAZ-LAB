@@ -8,7 +8,7 @@ public class FinalConfrontation : MonoBehaviour
     [Header("Referanslar")]
     [SerializeField] private UIManager uiManager;
     [SerializeField] private HealthEnemy doctorHealth;
-    [SerializeField] private PlayerController playerController; // Hareketi kilitlemek için hala gerekli
+    [SerializeField] private PlayerController playerController; 
     [SerializeField] private CameraSwitcher cameraSwitcher;
     [Header("Diyalog ve Zamanlama")]
     [SerializeField] private float dialogueDelay = 6.5f;
@@ -40,7 +40,7 @@ public class FinalConfrontation : MonoBehaviour
             {
                 doctorScript = doctorHealth.GetComponent<doctor>();
             }
-            // Player üzerindeki tüm gerekli script'leri al
+           
             playerController = other.GetComponent<PlayerController>();
             playerAnimator = other.GetComponentInChildren<Animator>();
             playerShooting = other.GetComponent<PlayerShooting>();
@@ -54,15 +54,15 @@ public class FinalConfrontation : MonoBehaviour
     {
         playerController.isInCutscene = true;
 
-        // 2. ZORLA NÝÞAN ALDIR (CameraSwitcher aracýlýðýyla)
+        // camSwitcher ile aimcam'e geçiþ yap daha sinematik olsun
         if (cameraSwitcher != null)
         {
             cameraSwitcher.ForceAim(true);
         }
 
-        yield return new WaitForSeconds(1.0f); // Kameranýn geçiþ yapmasý için
+        yield return new WaitForSeconds(1.0f); // Kameranýn geçiþ yapmasý için garip gözükmesini önlemek adýna kýsa bir bekleme
 
-        // 3. DÝYALOGLAR (Doktor)
+        //DÝYALOGLAR 
         if (doctorScript != null) doctorScript.SetTalking(true);
         uiManager.ShowDialogue("Ýnanýlmaz... Onca kusursuz yaratýmým arasýndan yine sen kaldýn. Yýllar geçti, ama hâlâ o gecenin hatasýný telafi edemedim.");
         yield return new WaitForSeconds(dialogueDelay);
@@ -91,33 +91,20 @@ public class FinalConfrontation : MonoBehaviour
         yield return new WaitForSeconds(dialogueDelay);
         if (doctorScript != null) doctorScript.SetTalking(false);
 
-        // 5. "DELÝRME" ANI (Flaþ Efekti)
-        uiManager.ShowDialogue(null); // Diyalog metnini temizle
-        uiManager.ShowDeliriumEffect(true); //  YENÝ FLAÞ EFEKTÝNÝ BAÞLAT
+        // Flaþ Efektleri
+        uiManager.ShowDialogue(null); 
+        uiManager.ShowDeliriumEffect(true);
         if (heartbeatSource != null)
         {
-            heartbeatSource.Play(); // Kalp atýþý baþlasýn
+            heartbeatSource.Play(); 
         }
         if (mainAudioFilter != null)
         {
-            mainAudioFilter.enabled = true; // Sesi boðuklaþtýr
+            mainAudioFilter.enabled = true; // Sesi boðuklaþtýrmasý için
         }
 
-        // 6. DOKTOR'UN ÖLÜMÜNÜ DÝNLE
-        if (doctorHealth != null)
-        {
-            //doctorHealth.onDeath.AddListener(EndGame);
-        }
+        
     }
 
-    
-    private void EndGame()
-    {
-        Debug.Log("DOKTOR ÖLDÜ. OYUN BÝTÝYOR.");
-        // Buraya oyun bitiþ ekranýný (Credits) yükleme kodunu ekleyebilirsiniz.
-        // Örn: UnityEngine.SceneManagement.SceneManager.LoadScene("CreditsScene");
-
-        // Þimdilik zamaný durduralým
-        Time.timeScale = 0f;
-    }
+   
 }

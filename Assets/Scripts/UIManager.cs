@@ -7,18 +7,18 @@ using System.Collections;
 public class UIManager : MonoBehaviour
 {
    
-    [Header("1. Notification (Sað Üst Bildirim)")]
+    [Header("1. Notification ")]
     [SerializeField] private TextMeshProUGUI notificationText;
     [SerializeField] private float displayDuration = 2.0f;
 
-    [Header("2. Dialogue (Alt Orta Konuþma)")]
+    [Header("2. Dialogue ")]
     [SerializeField] private TextMeshProUGUI dialogueText; 
     [SerializeField] private float dialogueDuration = 6.0f; 
 
-    [Header("3. Objective (Kalýcý Görev Metni)")]
+    [Header("3. Objective ")]
     [SerializeField] private TextMeshProUGUI objectiveText;
 
-    [Header("4. Delirium Effect (Psychotic Sprite)")]
+    [Header("4. Delirium Effect ")]
     [SerializeField] private Image deliriumEffectImage; 
     [SerializeField] private float deliriumFlashSpeed = 0.1f; 
     [SerializeField] private Color deliriumColor = Color.red; 
@@ -123,17 +123,17 @@ public class UIManager : MonoBehaviour
 
         while (true) // Doktor ölene kadar
         {
-            // ----- FLAÞ (YANIP SÖNME) -----
+            // ----- FLAÞ yanýp sönme -----
             flashColor.a = Random.Range(0.1f, 0.8f); // Alpha'yý rastgele yap
             deliriumEffectImage.color = flashColor;
 
-            // ----- TÝTREÞÝM (JITTER) -----
+            // ----- TÝTREÞÝM jitter olan -----
             float jitterX = originalImagePosition.x + Random.Range(-deliriumJitterAmount, deliriumJitterAmount);
             float jitterY = originalImagePosition.y + Random.Range(-deliriumJitterAmount, deliriumJitterAmount);
 
             deliriumEffectImage.rectTransform.anchoredPosition = new Vector2(jitterX, jitterY);
 
-            yield return new WaitForSeconds(deliriumFlashSpeed); // Çok hýzlý bekle
+            yield return new WaitForSeconds(deliriumFlashSpeed);
         }
     }
     private void HideNotification()

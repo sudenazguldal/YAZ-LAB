@@ -6,15 +6,20 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject CanvasMainMenu;    // CanvasMainMenu
-    public GameObject CanvasSettings;    // Canvas Settings
-    public GameObject SettingsPanel;     // SettingsPanel
+    public GameObject CanvasMainMenu;    
+    public GameObject CanvasSettings;    
+    public GameObject SettingsPanel;     
+
 
     void Start()
     {
-        //  Oyun her zaman ana menüden başlasın
+        // Oyun her zaman ana menüden başlasın
         if (CanvasMainMenu != null) CanvasMainMenu.SetActive(true);
         if (CanvasSettings != null) CanvasSettings.SetActive(false);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
     }
 
     public void ContinueGame()
@@ -30,7 +35,7 @@ public class MainMenu : MonoBehaviour
 
         if (saveFile == null || !File.Exists(savePath))
         {
-            Debug.Log("MainMenu: Kayıt bulunamadı. Yeni oyun başlatılıyor.");
+            
             SceneManager.LoadScene("MainScene");
             return;
         }
@@ -39,12 +44,12 @@ public class MainMenu : MonoBehaviour
         {
             saveFile.Load();
             string lastScene = saveFile.GetData<string>("SceneName");
-            Debug.Log("MainMenu: Kayıtlı sahneye yükleniyor: " + lastScene);
+            
             SceneManager.LoadScene(lastScene);
         }
         else
         {
-            Debug.Log("MainMenu: SceneName eksik. Yeni oyun başlatılıyor.");
+            
             SceneManager.LoadScene("MainScene");
         }
     }
@@ -67,7 +72,7 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("Settings opened");
 
-        //  Ana menüyü gizle
+        //  Ana menüyü gizler
         if (CanvasMainMenu != null)
             CanvasMainMenu.SetActive(false);
 
@@ -81,7 +86,7 @@ public class MainMenu : MonoBehaviour
 
     public void ExitGame()
     {
-        Debug.Log("The game is closing...");
+        
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

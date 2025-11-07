@@ -5,22 +5,22 @@ using System.Collections;
 
 public class HealthComponent : MonoBehaviour
 {
-    [Header("VERİ VE UI")]
+    [Header("Data and UI")]
     
     [SerializeField] public float maxHealth = 100f;
     public float currentHealth;
 
-    // UI Referansı (PlayerHealth'ten taşındı)
+    
     public TextMeshProUGUI healthText;
 
     [Header("Damage Feedback")]
-    [SerializeField] private Image damageVignetteImage; //  Yeni: Ekranı kırmızı yapan UI resmi
-    [SerializeField] private float flashDuration = 2.5f; // Kırmızı görüntünün ne kadar süreceği
+    [SerializeField] private Image damageVignetteImage; 
+    [SerializeField] private float flashDuration = 2.5f; 
     
   
-    [SerializeField] private float maxAlpha = 1f;     // Maksimum şeffaflık (Opacity)
+    [SerializeField] private float maxAlpha = 1f;     // max şeffaflık
 
-    
+
     [SerializeField] private Color damageColor = Color.red;
 
     private string IsDieTrigger = "isdie";
@@ -28,19 +28,17 @@ public class HealthComponent : MonoBehaviour
     [SerializeField]
     private Animator animator;
 
-    // -----------------------------------------------------------------
-    // EKLEME 1: Public Property'ler (InventoryCollector ve Envanter için)
-    // -----------------------------------------------------------------
+    
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
-    // -----------------------------------------------------------------
+    
 
     void Awake()
     {
         currentHealth = maxHealth;
     }
 
-    // PlayerHealth.cs'ten taşındı
+    
     void Start()
     {
         if (animator == null)
@@ -50,14 +48,12 @@ public class HealthComponent : MonoBehaviour
         UpdateHealthUI();
     }
 
-    // PlayerHealth.cs'ten taşındı (Test Input'ları)
+   
     void Update()
     {
     }
 
-    // -----------------------------------------------------------------
-    // TEMEL METOTLAR (UI Güncellemelerini ekledik)
-    // -----------------------------------------------------------------
+    
 
     public void TakeDamage(float amount)
     {
@@ -71,7 +67,7 @@ public class HealthComponent : MonoBehaviour
             StopAllCoroutines();
             StartCoroutine(FlashDamageVignette(amount));
         }
-        Debug.Log($"Hasar Aldı: -{amount} | Mevcut Can: {currentHealth}");
+        
 
         UpdateHealthUI(); 
         FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); 
@@ -87,33 +83,30 @@ public class HealthComponent : MonoBehaviour
         float normalizedDamage = damageTaken / currentMaxHealth;
         float targetAlpha = Mathf.Min(normalizedDamage * 2f, maxAlpha);
 
-        //  FADE-IN KISMI: Alpha değerini anında maksimuma set et
+        //  damage fx inin başlatılması -bir anda-
         Color flashColor = damageColor;
         flashColor.a = targetAlpha;
         damageVignetteImage.color = flashColor;
 
-        // ----------------------------------------------------
-        // YAVAŞ FADE OUT BAŞLANGICI
-        // ----------------------------------------------------
-
+        // fade out kısmı daha yavaş olacak şekilde ayarladık daha sinematik olsun diye
         float timer = 0f;
-        // flashDuration artık SADECE sönme süresini temsil eder (1.5 saniye)
+        
         while (timer < flashDuration)
         {
             timer += Time.deltaTime;
 
-            // Alpha değerini targetAlpha'dan (maksimum) 0'a doğru yavaşça Lerp et.
-            // Timer'ı toplam süreye oranlayarak yavaşlatırız.
+            // Alpha değerini targetAlpha'dan maxa 0'a doğru yavaşça Lerple
+            // Timer'ı toplam süreye oranlayarak yavaşlatır
             float currentAlpha = Mathf.Lerp(targetAlpha, 0f, timer / flashDuration);
 
-            // Alpha'yı uygula
+            // Alpha'yı uygular
             flashColor.a = currentAlpha;
             damageVignetteImage.color = flashColor;
 
             yield return null;
         }
 
-        // 3. Bitir: Tamamen şeffaf yap
+        // Bitiş tamamen şeffaf yapar
         flashColor.a = 0f;
         damageVignetteImage.color = flashColor;
     }
@@ -121,10 +114,10 @@ public class HealthComponent : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        Debug.Log($"İyileşti: +{amount} | Mevcut Can: {currentHealth}");
+        
 
-        UpdateHealthUI(); // UI'ı güncelle
-        FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); // Dış UI'ı güncelle
+        UpdateHealthUI(); // UI'ı güncellee
+        FindAnyObjectByType<HealthUI>().UpdateHeart((int)currentHealth); // Dış UI'ı güncellee
     }
 
     void UpdateHealthUI()
@@ -135,19 +128,19 @@ public class HealthComponent : MonoBehaviour
 
     public void Die()
     {
-        Debug.Log("Player öldü!");
+        
 
-        // 1️⃣ Ölüm animasyonunu tetikle
+        //  Ölüm animasyonunu tetikler
         if (animator != null)
             animator.SetTrigger(IsDieTrigger);
 
-        // 2️⃣ Ölüm animasyonu bittikten sonra Lose çağır
+        // Ölüm animasyonu bittikten sonra Lose ekranını çağırır
         StartCoroutine(DeathSequence());
     }
 
     private IEnumerator DeathSequence()
     {
-        // Ölüm animasyonu süresi kadar bekle (örneğin 2.5 saniye)
+        // Ölüm animasyonu süresi kadar bekletir yoksa ölemiyo karakter
         yield return new WaitForSeconds(3.5f);
 
         // GameManager'ı bul
@@ -157,7 +150,7 @@ public class HealthComponent : MonoBehaviour
         // Lose paneli göster
         if (gameManager != null)
             gameManager.PlayerLose();
-        else
-            Debug.LogError(" GameManager sahnede bulunamadı!");
+        
+            
     }
 }

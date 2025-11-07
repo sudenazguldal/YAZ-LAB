@@ -3,7 +3,7 @@ using Esper.ESave.Encryption;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq; // LINQ kullanımı için eklendi
+using System.Linq; 
 using UnityEngine;
 using static Esper.ESave.SaveFileSetupData;
 
@@ -17,8 +17,8 @@ public class PlayerSaveData : MonoBehaviour
     public Transform startPoint;
 
     [Header("Scene References")]
-    public List<PressKeyOpenDoor> doors; // Kapı script referansları
-    public List<HealthEnemy> zombies;    // Zombi can referansları (Boss dahil)
+    public List<PressKeyOpenDoor> doors; 
+    public List<HealthEnemy> zombies;   
 
     [Header("Optional")]
     public EnemySpawner enemySpawner;
@@ -31,7 +31,7 @@ public class PlayerSaveData : MonoBehaviour
 
     void Awake()
     {
-        // ... (Awake metodu aynı kalabilir) ...
+        
         string savePath = Path.Combine(Application.persistentDataPath, "YAZ-LAB", "MainSave.json");
         if (File.Exists(savePath))
         {
@@ -47,7 +47,7 @@ public class PlayerSaveData : MonoBehaviour
 
     void Start()
     {
-        // ... (Start metodu aynı kalabilir) ...
+      
         if (SaveStorage.instance == null)
         {
             Debug.LogError("SaveStorage sahnede bulunamadı!");
@@ -74,28 +74,26 @@ public class PlayerSaveData : MonoBehaviour
             LoadGame();
     }
 
-    // ============================================================
-    // -------------------------- SAVE -----------------------------
-    // ============================================================
+    
     public void SaveGame()
     {
         if (saveFile == null)
         {
-            Debug.LogError("SaveGame: saveFile null!");
+            
             return;
         }
 
         zombies.RemoveAll(z => z == null);
 
-        // Sahnedeki tüm aktif HealthEnemy bileşenlerini bul
+        // Sahnedeki tüm aktif HealthEnemy bileşenlerini bulur
         var allEnemiesInScene = FindObjectsOfType<HealthEnemy>();
         foreach (var enemy in allEnemiesInScene)
         {
-            // Eğer bu düşman zaten listede yoksa, onu listeye ekle
+            // Eğer bu düşman zaten listede yoksa, onu listeye ekler aktif olarak haritada bulunanları tutar
             if (!zombies.Contains(enemy))
             {
                 zombies.Add(enemy);
-                Debug.Log($"Kaydedilecek zombi listesine yeni eklendi: {enemy.name}");
+                
             }
         }
 
@@ -108,7 +106,7 @@ public class PlayerSaveData : MonoBehaviour
         if (playerHealth != null)
             saveFile.AddOrUpdateData("PlayerHealth", playerHealth.currentHealth);
 
-        // --- WEAPON & INVENTORY DATA ---
+        // --- silah & envanter datası ---
         if (weaponAmmo != null)
         {
             saveFile.AddOrUpdateData("CurrentAmmo", weaponAmmo.Current);
@@ -123,7 +121,7 @@ public class PlayerSaveData : MonoBehaviour
             }
         }
 
-        // 🔹 KAPI DURUMLARI
+        // kapıların durumu
         for (int i = 0; i < doors.Count; i++)
         {
             bool isOpened = false;
@@ -131,15 +129,14 @@ public class PlayerSaveData : MonoBehaviour
             if (anim != null)
             {
                 AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
-                // Kapının açıldığı animasyonun adını kontrol et
+                // Kapının açıldığı animasyonun adını kontrol eder
                 isOpened = state.IsName(doors[i].animationName) || doors[i].isOpened;
             }
             saveFile.AddOrUpdateData($"Door_{i}_IsOpen", isOpened);
         }
 
-        // 🔹 ZOMBİLER
-        // Sadece hayatta olanları kaydetmek daha verimli olabilir, 
-        // ancak mevcut yapıya sadık kalalım.
+        // ZOMBİLER
+       
         for (int i = 0; i < zombies.Count; i++)
         {
             var z = zombies[i];
@@ -157,47 +154,45 @@ public class PlayerSaveData : MonoBehaviour
         saveFile.AddOrUpdateData("SceneName", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         saveFile.Save(true);
 
-        Debug.Log(" Saved → " + Application.persistentDataPath + "/YAZ-LAB/MainSave.json");
+       
     }
 
-    // ============================================================
-    // -------------------------- LOAD -----------------------------
-    // ============================================================
+
     public void LoadGame()
     {
         if (enemySpawner == null)
         {
             enemySpawner = FindObjectOfType<EnemySpawner>();
-            Debug.LogWarning(" enemySpawner null bulundu, sahneden otomatik atandı!");
+            
         }
 
         EnsureSaveFileExists();
         if (saveFile == null)
         {
-            Debug.LogError("LoadGame: saveFile null!");
+            
             return;
         }
 
         saveFile.Load();
 
-        // --- ENEMIES SPAWN FLAG ---
+        
         if (saveFile.HasData("EnemiesSpawned"))
             enemiesSpawned = saveFile.GetData<bool>("EnemiesSpawned");
 
-        // Zombi listesini temizle
+        // Zombi listesini temizler
         zombies.RemoveAll(z => z == null);
 
-        // Sahneye bak: Boss hariç düşman var mı?
+        // Sahne kontorlü Boss hariç düşman var mı?
         bool sceneHasNonBossEnemy = FindObjectsOfType<HealthEnemy>().Any(z => !z.gameObject.CompareTag("Boss"));
 
         if (enemiesSpawned && !sceneHasNonBossEnemy && enemySpawner != null)
         {
-            Debug.Log("Save yükleniyor: Zombiler daha önce spawn olmuş, **spawner yeniden çağrılıyor...**");
+            
             enemySpawner.SpawnAllEnemies();
 
-            // Spawn işlemi Coroutine içinde gerçekleşiyorsa, yüklemeyi Coroutine bitince yapalım
+            
             StartCoroutine(PostSpawnLoad());
-            return; // LoadGame'i burada sonlandır
+            return; 
         }
         else
         {
@@ -208,38 +203,34 @@ public class PlayerSaveData : MonoBehaviour
         Debug.Log("Kayıt başarıyla yüklendi!");
     }
 
-    // ============================================================
-    // ----------------------- POST-SPAWN YÜKLEME -------------------
-    // ============================================================
+  
 
-    // Bu, düşmanlar spawn edildikten sonra (birkaç frame sonra) çağrılır.
+    // Bu, düşmanlar spawn edildikten sonra -birkaç frame sonra- çağrılır.
     private IEnumerator PostSpawnLoad()
     {
-        // SpawnAllEnemies'in Instantiation'ı bitirmesi için 1 frame bekle
+        
         yield return null;
 
-        // Yeni spawn olanları listeye ekle
+        
         foreach (var newZ in FindObjectsOfType<HealthEnemy>())
         {
             if (!zombies.Contains(newZ))
                 zombies.Add(newZ);
         }
 
-        // Gerçek yükleme işlemini yap
+        
         ApplyLoadedData();
 
-        Debug.Log("Kayıt başarıyla yüklendi (Spawn sonrası)!");
+       
     }
 
-    // ============================================================
-    // ----------------------- MERKEZİ YÜKLEME METODU ----------------
-    // ============================================================
+    
     public void ApplyLoadedData()
     {
-        // Listeyi null referanslardan temizle (önemli!)
+        
         zombies.RemoveAll(z => z == null);
 
-        // --- POSITION ---
+        // --- karakter pozisyonu ---
         if (saveFile.HasData("PlayerX"))
         {
             float x = saveFile.GetData<float>("PlayerX");
@@ -248,11 +239,11 @@ public class PlayerSaveData : MonoBehaviour
             transform.position = new Vector3(x, y, z);
         }
 
-        // --- HEALTH ---
+        // --- sağlık ---
         if (playerHealth != null && saveFile.HasData("PlayerHealth"))
             playerHealth.currentHealth = saveFile.GetData<float>("PlayerHealth");
 
-        // --- WEAPON AMMO ---
+        // --- mühimmat ---
         if (weaponAmmo != null)
         {
             if (saveFile.HasData("CurrentAmmo"))
@@ -266,7 +257,7 @@ public class PlayerSaveData : MonoBehaviour
                     ?.SetValue(weaponAmmo, saveFile.GetData<int>("ClipSize"));
         }
 
-        // --- INVENTORY DATA ---
+        // --- envanter ---
         if (weaponAmmo != null && weaponAmmo.playerInventoryData != null)
         {
             var inv = weaponAmmo.playerInventoryData;
@@ -294,7 +285,7 @@ public class PlayerSaveData : MonoBehaviour
             inv.ForceUpdateEvents();
         }
 
-        // 🔹 KAPI DURUMLARI
+        // kapıların durumu
         for (int i = 0; i < doors.Count; i++)
         {
             string key = $"Door_{i}_IsOpen";
@@ -309,7 +300,7 @@ public class PlayerSaveData : MonoBehaviour
             }
         }
 
-        // 🔹 ZOMBİLERİN KONUM & CAN YÜKLEMESİ VE AI SIFIRLAMASI
+        // zombi load 
         Transform playerTr = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         for (int i = 0; i < zombies.Count; i++)
@@ -319,7 +310,7 @@ public class PlayerSaveData : MonoBehaviour
 
             string prefix = $"Zombie_{i}_";
 
-            // 1. Canı Yükle
+            // 1- can
             if (saveFile.HasData(prefix + "Health"))
                 SetPrivateHealth(z, saveFile.GetData<float>(prefix + "Health"));
 
@@ -332,7 +323,7 @@ public class PlayerSaveData : MonoBehaviour
                 continue;
             }
 
-            // 2. Konumu Yükle
+            // 2- pozisyon
             if (saveFile.HasData(prefix + "X"))
             {
                 float zx = saveFile.GetData<float>(prefix + "X");
@@ -341,24 +332,24 @@ public class PlayerSaveData : MonoBehaviour
                 z.transform.position = new Vector3(zx, zy, zz);
             }
 
-            // 3. AI & NavMesh'i SIFIRLA (KRİTİK BÖLÜM)
+            // 3. AI & NavMesh'i SIFIRLAr
             var agent = z.GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent != null)
             {
                 agent.enabled = false;
-                agent.Warp(z.transform.position); // Konumu NavMesh'e bildir
+                agent.Warp(z.transform.position); // Konumu NavMesh'e bildirir
                 agent.enabled = true;
                 agent.isStopped = false;
                 agent.velocity = Vector3.zero;
             }
 
-            // AI Scriptlerini (enemy1 / doctor) yenile
+            // AI Scriptlerini -enemy1 , doctor yenile
             var ai = z.GetComponent<enemy1>();
-            var bossAI = z.GetComponent<doctor>(); // Boss'un scripti
+            var bossAI = z.GetComponent<doctor>(); // Boss un scripti
 
             if (ai != null)
             {
-                // Player referansını tazele
+                // Player referansını yeniler
                 var playerField = typeof(enemy1).GetField("player", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (playerField != null && playerTr != null)
                     playerField.SetValue(ai, playerTr);
@@ -368,18 +359,18 @@ public class PlayerSaveData : MonoBehaviour
 
             if (bossAI != null)
             {
-                // Doctor (Boss) Player referansını tazele
+                // Doctor (Boss) Player referansını yeniler
                 var playerField = typeof(doctor).GetField("player", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (playerField != null && playerTr != null)
                     playerField.SetValue(bossAI, playerTr);
 
-                // AI'ı sıfırla
+                // AI'ı sıfırlar
                 bossAI.enabled = false;
                 bossAI.enabled = true;
             }
         }
 
-        // --- UI UPDATE ---
+        // --- UI güncelleme ---
         if (ammoDisplay != null && weaponAmmo != null)
         {
             ammoDisplay.currentAmmo = weaponAmmo.Current;
@@ -389,11 +380,9 @@ public class PlayerSaveData : MonoBehaviour
     }
 
 
-    // ============================================================
-    // ----------------------- YARDIMCI METOTLAR -------------------
-    // ============================================================
+ 
 
-    // ... (GetPrivateHealth ve SetPrivateHealth aynı kalsın) ...
+
     private float GetPrivateHealth(HealthEnemy enemy)
     {
         var field = typeof(HealthEnemy).GetField("currentHealth", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -406,21 +395,16 @@ public class PlayerSaveData : MonoBehaviour
         field.SetValue(enemy, value);
     }
 
-    // NOT: SpawnEnemiesAfterFrame() metodu artık LoadGame içinde çağrılmıyor, 
-    // yerini PostSpawnLoad() ve LoadGame içindeki direkt if kontrolü aldı.
-    // Bu metodu silebilirsiniz, veya aşağıdaki gibi bırakabilirsiniz:
+    
     private IEnumerator SpawnEnemiesAfterFrame()
     {
         yield break;
     }
 
 
-    // ============================================================
-    // ----------------------- SAVEFILE OLUŞTURUCU ----------------
-    // ============================================================
     private void EnsureSaveFileExists()
     {
-        // ... (Bu metot aynı kalabilir) ...
+       
         if (saveFile != null && saveFile.fileName == "MainSave")
         {
             if (!SaveStorage.instance.ContainsKey("MainSave"))

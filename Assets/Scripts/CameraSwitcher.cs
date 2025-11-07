@@ -32,7 +32,7 @@ public class CameraSwitcher : MonoBehaviour
 
     private AimCameraController aimCamController;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+   
     void Awake()
     {
         crosshairUICanvas.SetActive(false);
@@ -57,7 +57,7 @@ public class CameraSwitcher : MonoBehaviour
             {
                 UpdateAimTargetPosition();
             }
-            return; // Oyuncu input'unu atla
+            return; 
         }
         bool aimPressed = aimAction.IsPressed();
         player.isAiming = aimPressed;

@@ -4,17 +4,16 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "NewInventory", menuName = "Game Data/Inventory Data")]
 public class InventoryData : ScriptableObject
 {
-    // Verileri Event'ler ile sarmalýyoruz ki, veriler deðiþtiðinde UI veya diðer scriptler anýnda haber alabilsin.
+    // Verileri Event'ler ile sarmalýyoruz ki, veriler deðiþtiðinde UI veya diðer scriptler anýnda haber alabilsin
 
-    // Mühimmat
+    
     [SerializeField] private int ammoCount = 24;
     public event UnityAction<int> OnAmmoChange;
 
-    // Can Kiti
+   
     [SerializeField] private int healthKits = 0;
     public event UnityAction<int> OnHealthKitChange;
 
-    // Anahtar
     [SerializeField] private bool hasKey = false;
     public event UnityAction OnKeyFound;
 
@@ -22,12 +21,12 @@ public class InventoryData : ScriptableObject
     public event UnityAction<bool> OnKeyChange;
 
 
-    // --- Metotlar ---
+    
 
     public void AddAmmo(int amount)
     {
         ammoCount += amount;
-        OnAmmoChange?.Invoke(ammoCount); // UI'ý güncelle
+        OnAmmoChange?.Invoke(ammoCount); //UI ve diðer baðlantýlarý güncelle
     }
 
     public void AddHealthKit()
@@ -39,7 +38,7 @@ public class InventoryData : ScriptableObject
     public void SetKey(bool value)
     {
         hasKey = value;
-        // Event'i tetikle ve yeni durumu gönder
+        
         OnKeyChange?.Invoke(hasKey);
     }
     public bool RemoveAmmo(int amount)
@@ -48,18 +47,18 @@ public class InventoryData : ScriptableObject
         {
             ammoCount -= amount;
             OnAmmoChange?.Invoke(ammoCount); // UI ve diðer dinleyicileri güncelle
-            return true; // Harcama baþarýlý
+            return true; 
         }
-        return false; // Yeterli mermi yok (Ateþleme engellenmeli)
+        return false; // yeterli mermi yok
     }
 
-    // Oyun yeniden baþladýðýnda kolayca sýfýrlama metodu
+    // Oyun yeniden baþladýðýnda kolayca sýfýrlamak için
     public void ResetInventory()
     {
         ammoCount = 24;
         healthKits = 0;
         hasKey = false;
-        // Tüm UI'larý sýfýrlamak için event'leri tekrar tetikleyin
+        // Tüm UI'larý sýfýrlamak için event'leri tekrar tetikleriz
         OnAmmoChange?.Invoke(ammoCount);
         OnHealthKitChange?.Invoke(healthKits);
     }
@@ -68,7 +67,7 @@ public class InventoryData : ScriptableObject
     public void RemoveHealthKit(int amount)
     {
         healthKits = Mathf.Max(0, healthKits - amount);
-        OnHealthKitChange?.Invoke(healthKits); // UI'ý güncelle
+        OnHealthKitChange?.Invoke(healthKits); 
     }
 
     // Diðer scriptlerin okumasý için getter'lar

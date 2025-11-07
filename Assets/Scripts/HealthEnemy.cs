@@ -58,7 +58,7 @@ public class HealthEnemy : MonoBehaviour
 
         onHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        //(SADECE EDITOR'DE G�NCELLEMEK ���N)
+        
 #if UNITY_EDITOR
 
         if (EditorUtility.IsDirty(this))
@@ -66,8 +66,8 @@ public class HealthEnemy : MonoBehaviour
             EditorUtility.SetDirty(this);
         }
 #endif
-        // --------------------------------------------------------
-        Debug.Log($"{gameObject.name} took {amount} damage. Current Health: {currentHealth}");
+        
+        
 
         if (currentHealth <= 0)
             Die();
@@ -75,7 +75,7 @@ public class HealthEnemy : MonoBehaviour
     }
     void Die()
     {
-        if (isDead) return; // Tekrar tetiklenmesin
+        if (isDead) return; // Tekrar tetiklenmesin diye kontrol
         isDead = true;
 
         if (agent != null && agent.isActiveAndEnabled)

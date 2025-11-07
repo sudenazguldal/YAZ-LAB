@@ -11,12 +11,12 @@ public enum ItemType
 
 public class PickupItem : MonoBehaviour
 {
-    // HATA ÇÖZÜMÜ: InventoryCollector'ýn beklediði tip bilgisi
+    
     public ItemType type;
 
-    // HATA ÇÖZÜMÜ: Ammo için miktar, HealthKit için iyileþtirme miktarý
+   
     [Header("Item Value")]
-    [Tooltip("Mermi ise eklenecek miktar, Can Kiti ise iyileþtirme miktarý.")]
+   
     public int value = 1;
 
     [Header("Visual Settings")]
@@ -24,7 +24,7 @@ public class PickupItem : MonoBehaviour
 
     void Update()
     {
-        // Görsel efekt: Yavaþça dön
+        // Görsel efekt yavaþça dönme
         if (rotationSpeed != 0)
         {
             transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
@@ -39,9 +39,9 @@ public class PickupItem : MonoBehaviour
 
             if (player != null)
             {
-                // Oyuncuya, bu objenin toplanmaya hazýr olduðunu bildir.
+                // item türünü atar
                 player.SetNearItem(this);
-                // Ýpucu: Burada UI'da "E tuþu ile topla" yazýsý belirebilir.
+               
             }
         }
     }
@@ -53,7 +53,7 @@ public class PickupItem : MonoBehaviour
             PlayerController player = other.GetComponent<PlayerController>();
             if (player != null)
             {
-                // Oyuncu uzaklaþtý, referansý sýfýrla.
+                // item referansýný temizler
                 player.SetNearItem(null);
             }
         }
@@ -64,7 +64,7 @@ public class PickupItem : MonoBehaviour
         switch (type)
         {
             case ItemType.Ammo:
-                collector.CollectAmmo(value); // Miktar (value) ile çaðrýlýr
+                collector.CollectAmmo(value); 
                 break;
             case ItemType.HealthKit:
                 collector.CollectHealthKit();
@@ -73,11 +73,11 @@ public class PickupItem : MonoBehaviour
                 collector.CollectKey();
                 break;
             default:
-                Debug.LogWarning($"Bilinmeyen öðe türü: {type}. Toplanmadý.");
+                
                 break;
         }
 
-        // Objenin dünyadan kaybolmasý
+        // Objenin dünyadan silinmesi
         Destroy(gameObject);
     }
 }

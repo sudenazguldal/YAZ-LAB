@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Esper.ESave;
@@ -11,7 +11,7 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Fade Settings")]
     public float fadeDuration = 0.4f;
-    public float buttonStaggerDelay = 0.05f; // butonlar arasý gecikme
+    public float buttonStaggerDelay = 0.05f; // butonlar arasÄ± gecikme icin
 
     public static bool GameIsPaused = false;
     public Animator animator;
@@ -32,14 +32,17 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = false;
         animator.Play("FadeOut");
 
+        //  Ä°mleci gizler ve ortada kilitler
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void Restart()
-    {// Kayýt dosyasýný sil (FileDeleter.cs görüntüsüne göre bu metot doðru yolu siliyor)
+    {
         FileDeleter.DeleteMainSave();
 
         Time.timeScale = 1f;
-        // Mevcut sahneyi yeniden yükle
+        // Mevcut sahneyi yeniden yÃ¼kler
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
@@ -65,6 +68,9 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = true;
         animator.Play("FadeIn");
 
+        // Ä°mleci gÃ¶rÃ¼nÃ¼r yapar ve serbest bÄ±rakÄ±r
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     IEnumerator FadeCanvas(bool fadeIn)
@@ -73,7 +79,7 @@ public class PauseMenu : MonoBehaviour
         float end = fadeIn ? 1 : 0;
         float elapsed = 0f;
 
-        // Eðer açýlýyorsa alpha 0'dan baþla ama aktif kal
+      
         canvasGroup.alpha = start;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
@@ -88,13 +94,14 @@ public class PauseMenu : MonoBehaviour
 
         canvasGroup.alpha = end;
 
-        // Eðer kapanýyorsa input'u kapat
+       
         if (!fadeIn)
         {
+            //inputu kapar
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
-        else{}
+        else { }
     }
 
 }

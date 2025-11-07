@@ -5,26 +5,28 @@ using System.Collections;
 public class doctor : MonoBehaviour
 {
     [Header("Target")]
-    public Transform player; // Hedef (Player)
+    public Transform player; 
 
     [Header("Movement")]
     public float moveSpeed = 3.5f;
-    public float stoppingDistance = 2f; // Ne kadar yaklaşsın
+    public float stoppingDistance = 2f; 
 
     [Header("Animation")]
     public Animator animator;
-    public string walkBoolName = "isWalk"; // Animator'daki parametre ismi (örnek: isWalk)
+    public string walkBoolName = "isWalk"; 
     private string talkBoolName = "isTalking";
 
     private NavMeshAgent agent;
-    private bool isChasing = false;
+    private bool isChasing = false; 
     private HealthEnemy healthEnemy;
     private GameManager gameManager;
+    private bool isCurrentlyTalking = false; 
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
-        agent.isStopped = true;
+        agent.isStopped = true; // Başlangıçta dursun diye
         healthEnemy = GetComponent<HealthEnemy>();
         gameManager = FindObjectOfType<GameManager>();
     }
@@ -33,6 +35,7 @@ public class doctor : MonoBehaviour
     {
         if (healthEnemy != null && healthEnemy.isDead)
         {
+            // --- ÖLÜM KODU  ---
             if (agent.enabled)
             {
                 agent.isStopped = true;
@@ -41,27 +44,24 @@ public class doctor : MonoBehaviour
             if (animator != null)
             {
                 animator.SetBool(walkBoolName, false);
-                // Burada ölüm animasyonu tetikleyicisini de çağırabilirsiniz:
-               // animator.SetTrigger("Die"); 
             }
             StartCoroutine(DeathSequence());
-            isChasing = false; // Kovalamayı tamamen durdur
-            return; // Update'in geri kalanını çalıştırma
+            isChasing = false;
+            return;
+            
         }
+
+        
         if (isChasing && player != null)
         {
-            // 1. Hareketi durdur (Garanti olsun)
-            agent.isStopped = true;
-            animator.SetBool(walkBoolName, false);
-
-            // 2. Oyuncuya doğru dön
+            
             Vector3 directionToPlayer = player.position - transform.position;
             directionToPlayer.y = 0; // Y ekseninde dönmesin
 
-            if (directionToPlayer.sqrMagnitude > 0.01f) // Çok yakınsa dönmeyi durdur
+            if (directionToPlayer.sqrMagnitude > 0.01f)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * agent.angularSpeed);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f); // Hızlı ve net dönsün diye
             }
         }
     }
@@ -70,21 +70,33 @@ public class doctor : MonoBehaviour
     public void ActivateChase(Transform target)
     {
         player = target;
-        isChasing = true; 
+        isChasing = true;   // Update'teki Slerp -dönme- kodunu başlatır
 
-       
-        agent.isStopped = true;
+        
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
 
-       
+        
+        if (animator != null)
+        {
+            animator.applyRootMotion = false;
+        }
+
+        
+
+        // başlangıç animasyonunu 'Idle' yapar
         animator.SetBool(walkBoolName, false);
-
-        Debug.Log($"{name} player'ı fark etti ve YERİNDE DURUYOR!");
 
         
     }
 
     public void SetTalking(bool isTalking)
     {
+        
+        isCurrentlyTalking = isTalking;
         if (animator != null)
         {
             animator.SetBool(talkBoolName, isTalking);
@@ -93,17 +105,14 @@ public class doctor : MonoBehaviour
 
     private IEnumerator DeathSequence()
     {
-        // Ölüm animasyonu süresi kadar bekle (örneğin 2.5 saniye)
+        
         yield return new WaitForSeconds(3.5f);
 
-        // GameManager'ı bul
         if (gameManager == null)
             gameManager = FindObjectOfType<GameManager>();
 
-        // Lose paneli göster
         if (gameManager != null)
             gameManager.PlayerWin();
-        else
-            Debug.LogError("❌ GameManager sahnede bulunamadı!");
+       
     }
 }

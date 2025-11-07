@@ -13,23 +13,20 @@ public class WeaponAmmo : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip ReloadSound;
 
-    public int Clip => ClipSize;          // 🔹 readonly property
-    public int Current => CurrentAmmo;    // 🔹 readonly property
+    public int Clip => ClipSize;          
+    public int Current => CurrentAmmo;   
 
     private bool loadedFromSave = false;
 
     void Start()
     {
-        /// 🔹 Eğer kayıt yüklenmemişse (ilk defa oyun başladıysa)
+        /// ilk defa oyun başladıysa
         if (!loadedFromSave)
         {
             CurrentAmmo = ClipSize;
-            Debug.Log(" Yeni oyun başladı — Şarjör dolu başlatıldı.");
+            
         }
-        else
-        {
-            Debug.Log($" Kayıttan yüklendi — CurrentAmmo = {CurrentAmmo}");
-        }
+       
     }
     public void MarkAsLoadedFromSave(int savedAmmo)
     {
