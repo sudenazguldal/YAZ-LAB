@@ -101,7 +101,7 @@ Aşağıda *Project: Macula* oyununda kullanılan temel sistem bileşenleri ve a
 * Karakter crouch pozisyonuna girip haraket edince sol elı anlamsız bir şekilde havaya kaldırıp görüntünün gerçekçiliğini bozuyordu, avatar mask kullanarak sadece sol eli etkileyen bir layer oluşturup çözdüm.
 * Bulduğum animasyonlarla karakterlerin root sisteminin isimlendirmesi uyuşmuyordu. Blender kullanarak kemikleri tekrar isimlendirdim. 2 günlük bu emeğin sonunda başka karakter kullanmaya karar verip olası yeni sounları çözdüm.
 * ### MERGE
-* + Modern video oyunlarında "Settings" menüsü yalnızca temel ses ve görüntü ayarlarını içermekle kalmaz; aynı zamanda oyuncu deneyimini kişiselleştirmeye yönelik erişilebilirlik, kontrol ve arayüz özelleştirme seçeneklerini de sunar. Özellikle Resident Evil 2 Remake gibi AAA yapımlar, kullanıcıların oyun içi zorluk seviyesinden nişangah görünümüne kadar birçok detayı düzenlemesine olanak tanımaktadır.
+* Modern video oyunlarında "Settings" menüsü yalnızca temel ses ve görüntü ayarlarını içermekle kalmaz; aynı zamanda oyuncu deneyimini kişiselleştirmeye yönelik erişilebilirlik, kontrol ve arayüz özelleştirme seçeneklerini de sunar. Özellikle Resident Evil 2 Remake gibi AAA yapımlar, kullanıcıların oyun içi zorluk seviyesinden nişangah görünümüne kadar birçok detayı düzenlemesine olanak tanımaktadır.
 + Oyun geliştirme literatüründe, sık tekrar eden nesnelerin (örneğin düşmanlar veya mermiler) sürekli oluşturulup silinmesi performans kaybına yol açabilir. Bu nedenle "Object Pooling" (nesne havuzu) yöntemi, var olan nesneleri yeniden kullanarak Garbage Collector yükünü azaltmak için önerilmektedir.
 Projemizde bu sistem henüz uygulanmamıştır; havuz mantığı kullanılarak respawn işlemleri daha verimli hale getirilebilir.
 
