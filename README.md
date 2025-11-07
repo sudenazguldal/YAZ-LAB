@@ -16,11 +16,13 @@ Düşman davranışları; Idle, Patrol, Chase, Attack ve Walk olmak üzere farkl
 Kullanıcı arayüzü, oyuncuya oyun içi bilgileri sade ve okunabilir biçimde sunacak şekilde tasarlanmıştır.
 + Can Barı (Health Bar): Oyuncunun sağlık durumunu gösterir.
 + Cephanelik Göstergesi (Ammo Display): Şarjörde kalan mermi miktarını gösterir.
-+ Pause ve Main Menu: Oyunun durdurulması, devam ettirilmesi veya ana menüye dönülmesini sağlar.
++ Pause Menu: Oyunun durdurulması, devam ettirilmesi, baştan başlaması, kaydedilmesi veya ana menüye dönülmesini sağlar.
++ Main Menu: Oyunun açılış ekranıdır; oyuna kaldığı yerden devam etmesini, baştan başlamasını, ayarlar menüsüne yönlendirilmessini veya oyundan çıkmasını sağlar.
 + Settings Menüsü: Ses, grafik ve kontrol ayarlarının düzenlenmesine olanak tanır.
 + Kayıt Sistemi (Save/Load): Oyunun ilerleyişi kaydedilebilir ve yeniden yüklenebilir.
-+ Eşya Toplama Sistemi: Oyuncu belirli nesneleri toplayabilir, envanterinde saklayabilir ve kullanabilir.
++ Eşya Toplama Sistemi: Oyuncu belirli nesneleri toplayabilir, saklayabilir ve kullanabilir.
 + Crosshair Seçimi: Oyuncu nişangah tasarımını kendi tercihlerine göre değiştirebilir.
+
 
 ## Geliştirme Ortamı
 + Oyun Motoru: Unity 6000.0.58f1 LTS
@@ -91,13 +93,16 @@ Diyalog bitince “Delirme Anı (Delirium)” başlar: ekran titreşir, sesler b
 
 Aşağıda *Project: Macula* oyununda kullanılan temel sistem bileşenleri ve aralarındaki ilişki gösterilmektedir:
 
+
 ##  Karşılaşılan Zorluklar ve Çözümler
 * Enemy'ler oyuncuyu sürekli takip edecek şekilde ayarlandığından, saldırı durumundayken oyuncu hareket ettiğinde kayarak takip ediyorlardı. İki gün süren uğraşlarım sonucunda, sorunun animatördeki “Has Exit Time” seçeneğini kapatmamla düzeldiğini fark ettim.
 * Projemiz düz bir zeminden oluşmadığı için, NavMesh Surface yere yerleştirilen küçük objeleri de dahil ediyordu. Bu durum, düşmanların bazen havada durmasına veya bazı bölgelerde geçişleri engel olarak algılayıp NavMesh yüzeyinin birleşmemesine neden oluyordu. İlk etapta tek tek duvarları ve yerdeki küçük eşyaları kaldırarak sorunu çözmeye çalıştım bu çözümün sonucunda haritanın anlamsız yerlerinde ev eşyaları bulmamızla sonladı (çalılıkların arasında uçan kitaplar vb.);  asıl çözümün, AI Navigation ayarlarını küçülterek sağlandığını fark ettim.
 * Enemy’lerin animasyonlarında zaman zaman beklenmeyen hatalar oluşuyor. Bazen animasyonlar düzgün şekilde çalışırken, bazen de hareketler yanlış bir biçimde tekrar ediyor. Bu sorunun nedenini tam olarak tespit edemedim.
 * Karakter crouch pozisyonuna girip haraket edince sol elı anlamsız bir şekilde havaya kaldırıp görüntünün gerçekçiliğini bozuyordu, avatar mask kullanarak sadece sol eli etkileyen bir layer oluşturup çözdüm.
 * Bulduğum animasyonlarla karakterlerin root sisteminin isimlendirmesi uyuşmuyordu. Blender kullanarak kemikleri tekrar isimlendirdim. 2 günlük bu emeğin sonunda başka karakter kullanmaya karar verip olası yeni sounları çözdüm.
-* 
 * ### MERGE
+* + Modern video oyunlarında "Settings" menüsü yalnızca temel ses ve görüntü ayarlarını içermekle kalmaz; aynı zamanda oyuncu deneyimini kişiselleştirmeye yönelik erişilebilirlik, kontrol ve arayüz özelleştirme seçeneklerini de sunar. Özellikle Resident Evil 2 Remake gibi AAA yapımlar, kullanıcıların oyun içi zorluk seviyesinden nişangah görünümüne kadar birçok detayı düzenlemesine olanak tanımaktadır.
++ Oyun geliştirme literatüründe, sık tekrar eden nesnelerin (örneğin düşmanlar veya mermiler) sürekli oluşturulup silinmesi performans kaybına yol açabilir. Bu nedenle "Object Pooling" (nesne havuzu) yöntemi, var olan nesneleri yeniden kullanarak Garbage Collector yükünü azaltmak için önerilmektedir.
+Projemizde bu sistem henüz uygulanmamıştır; havuz mantığı kullanılarak respawn işlemleri daha verimli hale getirilebilir.
 
 
