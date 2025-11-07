@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5b266ff5de68344f8a05d36f194706f, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
-  ammoCount: 0
+  ammoCount: 48
   healthKits: 0
   hasKey: 0

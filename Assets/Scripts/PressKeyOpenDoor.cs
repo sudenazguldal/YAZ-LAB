@@ -29,15 +29,15 @@ public class PressKeyOpenDoor : MonoBehaviour
     private Transform player;
 
     [Header("Inventory & UI References")]
-    [SerializeField] private InventoryData inventoryData; // Proje penceresindeki SO dosyası buraya sürüklenecek
-    [SerializeField] private UIManager uiManager;        // Canvas'a takılı UIManager buraya sürüklenecek
+    [SerializeField] private InventoryData inventoryData; 
+    [SerializeField] private UIManager uiManager;        
 
     [Header("Audio Transition - Main Door")]
-    [Tooltip("Ağlama sesini çalacak AudioSource (Evin İçinden Gelen)")]
     public AudioSource CryingAudioSource;
-    [Tooltip("Tempolu müziği çalacak AudioSource (Global)")]
-    public AudioSource TempoMusicSource;
     
+    public AudioSource TempoMusicSource;
+    public AudioSource LibraryTheme;
+
 
 
 
@@ -234,10 +234,18 @@ public class PressKeyOpenDoor : MonoBehaviour
             if (TempoMusicSource != null && TempoMusicSource.isPlaying)
             {
                 TempoMusicSource.Stop();
-                Debug.Log("SideDoor açıldı: Tempolu müzik durduruldu.");
-
+                
 
             }
+
+            if (LibraryTheme != null)
+            {
+                LibraryTheme.loop = true;
+                LibraryTheme.Play();
+                
+            }
+
+
 
             if (uiManager != null)
             {

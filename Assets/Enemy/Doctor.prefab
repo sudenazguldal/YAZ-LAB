@@ -1258,8 +1258,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  moveSpeed: 3.5
-  stoppingDistance: 2
+  moveSpeed: 1
+  stoppingDistance: 3.5
   animator: {fileID: 685311581113859265}
   walkBoolName: isWalk
 --- !u!1 &3244849269922644132

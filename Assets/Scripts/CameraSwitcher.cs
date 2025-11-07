@@ -28,6 +28,8 @@ public class CameraSwitcher : MonoBehaviour
     private Transform yawTarget;
     private Transform pitchTarget;
 
+    private bool isAimLocked = false;
+
     private AimCameraController aimCamController;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -47,6 +49,16 @@ public class CameraSwitcher : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (isAimLocked)
+        {
+            // Aim pozisyonunu (Raycast) güncellemeye devam et
+            if (isAiming)
+            {
+                UpdateAimTargetPosition();
+            }
+            return; // Oyuncu input'unu atla
+        }
         bool aimPressed = aimAction.IsPressed();
         player.isAiming = aimPressed;
 
@@ -75,6 +87,20 @@ public class CameraSwitcher : MonoBehaviour
             aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
         }
     }
+
+    public void ForceAim(bool forceOn)
+    {
+        if (forceOn)
+        {
+            isAimLocked = true;
+            EnterAimMode(); // Aim moduna girmeye zorla
+        }
+        else
+        {
+            isAimLocked = false;
+            ExitAimMode(); // Normal TPS moduna dön
+        }
+    }
     private void ExitAimMode()
     {
         crosshairUICanvas.SetActive(false);
@@ -83,8 +109,8 @@ public class CameraSwitcher : MonoBehaviour
 
         SnapFreeLookBehindPlayer();
 
-        aimCam.Priority = 10;
-        freelookCam.Priority = 20;
+        aimCam.Priority = 1;
+        freelookCam.Priority = 2;
 
         inputAxisController.enabled = true;
 
@@ -111,8 +137,8 @@ public class CameraSwitcher : MonoBehaviour
 
         SnapAimCameraToPlayerForward();
 
-        aimCam.Priority = 20;
-        freelookCam.Priority = 10;
+        aimCam.Priority = 2;
+        freelookCam.Priority = 1;
 
         inputAxisController.enabled = false;
 

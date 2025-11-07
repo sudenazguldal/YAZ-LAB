@@ -1,33 +1,38 @@
 
-
+using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
-    // ----------------------------------------------------
-    // BÖLGE 1: SAÐ ÜST BÝLDÝRÝM (Kýsa Süreli)
-    // ----------------------------------------------------
+   
     [Header("1. Notification (Sað Üst Bildirim)")]
     [SerializeField] private TextMeshProUGUI notificationText;
     [SerializeField] private float displayDuration = 2.0f;
 
-    // ----------------------------------------------------
-    // BÖLGE 2: ALT ORTA DÝYALOG/ÝÇ KONUÞMA (Karakter Konuþmasý)
-    // ----------------------------------------------------
     [Header("2. Dialogue (Alt Orta Konuþma)")]
-    [SerializeField] private TextMeshProUGUI dialogueText; //  YENÝ ALAN: Diyalog Text
-    [SerializeField] private float dialogueDuration = 4.0f; // Konuþma daha uzun kalmalý
+    [SerializeField] private TextMeshProUGUI dialogueText; 
+    [SerializeField] private float dialogueDuration = 6.0f; 
 
     [Header("3. Objective (Kalýcý Görev Metni)")]
     [SerializeField] private TextMeshProUGUI objectiveText;
 
+    [Header("4. Delirium Effect (Psychotic Sprite)")]
+    [SerializeField] private Image deliriumEffectImage; 
+    [SerializeField] private float deliriumFlashSpeed = 0.1f; 
+    [SerializeField] private Color deliriumColor = Color.red; 
+   
+ 
 
+    [SerializeField] private float deliriumJitterAmount = 50f;
+
+    private Coroutine deliriumCoroutine;
+    private Vector2 originalImagePosition;
 
     void Start()
     {
-        // ... (NotificationText sýfýrlama mantýðý)
+        
 
         if (dialogueText != null)
         {
@@ -37,17 +42,23 @@ public class UIManager : MonoBehaviour
 
         if (objectiveText != null)
         {
-            objectiveText.gameObject.SetActive(false); // Baþlangýçta gizli
+            objectiveText.gameObject.SetActive(false);
         }
+
+        if (deliriumEffectImage != null)
+        {
+            
+            originalImagePosition = deliriumEffectImage.rectTransform.anchoredPosition;
+            deliriumEffectImage.gameObject.SetActive(false);
+        }
+
     }
 
-    // ----------------------------------------------------
-    // METOT 1: BÝLDÝRÝM (Mermi/Kit Toplandý)
-    // ----------------------------------------------------
+    
+   
     public void ShowNotification(string message, Color color)
     {
-        // ... (Mevcut Notification kodu ayný kalýr)
-        // ... (CancelInvoke, text ayarý, Invoke("HideNotification", duration) vb.)
+       
         if (notificationText == null) return;
         CancelInvoke("HideNotification");
         notificationText.color = color;
@@ -56,9 +67,7 @@ public class UIManager : MonoBehaviour
         Invoke("HideNotification", displayDuration);
     }
 
-    // ----------------------------------------------------
-    // METOT 2: DÝYALOG/ÝÇ KONUÞMA (Karakter Konuþmasý/Kapý Kilitli)
-    // ----------------------------------------------------
+ 
     public void ShowDialogue(string message)
     {
         if (dialogueText == null) return;
@@ -67,7 +76,7 @@ public class UIManager : MonoBehaviour
 
         dialogueText.text = message;
         dialogueText.gameObject.SetActive(true);
-        // Diyaloglar beyaz renkte (varsayýlan) kalabilir.
+      
 
         Invoke("HideDialogue", dialogueDuration);
     }
@@ -80,6 +89,53 @@ public class UIManager : MonoBehaviour
         }
     }
 
+
+    public void ShowDeliriumEffect(bool show)
+    {
+        if (deliriumEffectImage == null) return;
+
+        if (show)
+        {
+            // Eðer zaten çalýþýyorsa durdur ve yeniden baþlat
+            if (deliriumCoroutine != null)
+            {
+                StopCoroutine(deliriumCoroutine);
+            }
+            deliriumCoroutine = StartCoroutine(FlashDeliriumEffect());
+        }
+        else
+        {
+            // Efekti durdur
+            if (deliriumCoroutine != null)
+            {
+                StopCoroutine(deliriumCoroutine);
+            }
+            deliriumCoroutine = null;
+            deliriumEffectImage.gameObject.SetActive(false);
+        }
+    }
+
+
+    private IEnumerator FlashDeliriumEffect()
+    {
+        deliriumEffectImage.gameObject.SetActive(true);
+        Color flashColor = deliriumColor;
+
+        while (true) // Doktor ölene kadar
+        {
+            // ----- FLAÞ (YANIP SÖNME) -----
+            flashColor.a = Random.Range(0.1f, 0.8f); // Alpha'yý rastgele yap
+            deliriumEffectImage.color = flashColor;
+
+            // ----- TÝTREÞÝM (JITTER) -----
+            float jitterX = originalImagePosition.x + Random.Range(-deliriumJitterAmount, deliriumJitterAmount);
+            float jitterY = originalImagePosition.y + Random.Range(-deliriumJitterAmount, deliriumJitterAmount);
+
+            deliriumEffectImage.rectTransform.anchoredPosition = new Vector2(jitterX, jitterY);
+
+            yield return new WaitForSeconds(deliriumFlashSpeed); // Çok hýzlý bekle
+        }
+    }
     private void HideNotification()
     {
         if (notificationText != null)

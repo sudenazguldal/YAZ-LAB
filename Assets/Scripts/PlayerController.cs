@@ -1,6 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
@@ -13,15 +14,15 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField] private float crouchPitchY = 0.641f;   // Çömelmişken pitchTarget'ın Y pozisyonu
 
     [Header("Components")]
-    [SerializeField] private PlayerShooting shootingHandler; // Yeni script'e referans
+    [SerializeField] public PlayerShooting shootingHandler; // Yeni script'e referans
 
     [Header("Movement")]
     [SerializeField] private float speed = 3;
     [SerializeField] private float sprintMultiplier = 1.6f;
 
 
-    [Header("Jump/Gravity")]
-    [SerializeField] private float jumpHeight = 2f;
+    [Header("Gravity")]
+   
     [SerializeField] private float gravity = -9.81f * 2f;   // biraz daha kuvvetli his için *2
     [SerializeField] private float groundedSnap = -2f;      // yere yapıştırma
     [SerializeField] private float coyoteTime = 0.1f;       // kısa tolerans
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField] private float speedThreshold = 0.05f;
 
     private float stepTimer;
+    public bool isInCutscene = false;
 
 
 
@@ -332,19 +334,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     }
 
-    public void OnJump(InputAction.CallbackContext ctx)
-    {
-        if (!ctx.performed) return;
-
-        // coyote time: son ~0.1 saniye içinde yerdeydiyse izin ver
-        bool grounded = controller.isGrounded || (Time.time - lastGroundedTime) <= coyoteTime;
-        if (grounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-
-
-        }
-    }
+    
     void PlayFootstepSound()
     {
         // Hangi dizinin kullanılacağını belirle
@@ -412,6 +402,31 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     void Update()
     {
+
+        if (isInCutscene)
+        {
+            //  HATA DÜZELTME (YÜRÜME TAKILMASI):
+            // Hareket parametrelerini sıfırla ki yürüme animasyonu dursun.
+            if (Player_anim != null)
+            {
+                Player_anim.SetFloat("MoveX", 0f);
+                Player_anim.SetFloat("MoveY", 0f);
+                Player_anim.SetFloat("Speed01", 0f);
+            }
+
+            //  KİLİTLİYKEN BİLE ÇALIŞMASI GEREKENLER:
+            // Rigging, AimLayer vb. yöneten fonksiyon.
+            HandleLayersAndRig();
+            
+            //  YENİ EK: YERÇEKİMİNİ DE DURDUR (Mıhlı kalması için)
+            if (controller.isGrounded && velocity.y < 0f)
+            {
+                velocity.y = groundedSnap; // Yere yapıştır
+            }
+            controller.Move(velocity * Time.deltaTime); // Sadece dikey hareketi uygula
+
+            return; // ⬅️ Hareketi, Dönüşü ATLA
+        }
         #region ESC & Cursor kontrolü
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -606,29 +621,23 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
         #endregion
 
-        #region Animator
+        #region Animator (Movement)
         if (Player_anim != null)
         {
-            //  Animasyon ve Rig geçişlerinin yumuşak ama hızlı olması için 
-            const float BLEND_SPEED = 30f;
-
-            // ------------------------------------------------
-            // HAREKET VE YÖN PARAMETRELERİ 
-            // -------------------------------------------------
             const float damp = 0.12f;
-
 
             float moveX;
             float moveY;
 
             if (currentStance == PlayerStance.Covering)
             {
-                // Sadece yatay hareket (strafe) ve dikey kilit (0)
                 moveX = moveInput.x;
-                moveY = 0f; // Dikey hareketi kilitler
+                moveY = 0f;
             }
             else
             {
+                //  HATA DÜZELTME: Bu değişkenlerin Update() içinde tanımlı olması gerekir.
+                // Bu değişkenleri #region Hareket ve hiz'dan almalıyız.
                 moveX = Vector3.Dot(moveDirection, camRight);
                 moveY = Vector3.Dot(moveDirection, camFwd);
             }
@@ -645,7 +654,25 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
             Player_anim.SetFloat("Speed01", speed01, damp, Time.deltaTime);
             Player_anim.SetBool("isAiming", isAiming);
+        }
+        #endregion
 
+        HandleLayersAndRig();
+
+
+
+
+    }
+
+
+    private void HandleLayersAndRig()
+    {
+        #region Animator
+        if (Player_anim != null)
+        {
+            if (Player_anim == null) return; // Güvenlik kontrolü
+
+            const float BLEND_SPEED = 30f;
 
             // -----------------------------------------------------------------
             // 1. AIM LAYER (Üst Vücut Nişan Alma) Kontrolü [Index 1]
@@ -684,13 +711,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             // 3. HAND LAYER (Crouch Düzeltme) Kontrolü [Index 2]
             // -------------------------------------------------------------
             {
-                int aimLayerHandIndex = 2; 
+                int aimLayerHandIndex = 2;
                 float currentHandWeight = Player_anim.GetLayerWeight(aimLayerHandIndex);
 
                 float targetHandWeight = 0f;
 
                 // KESİN ÖNCELİK MANTIĞI:Yalnızca ÇÖMELMİŞSEK VE NİŞAN ALMIYORSAK düzeltme katmanını aç.
-                
+
                 if (currentStance == PlayerStance.Crouching && !isAiming)
                 {
                     targetHandWeight = 1f;

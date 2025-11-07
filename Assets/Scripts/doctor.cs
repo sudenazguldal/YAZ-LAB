@@ -13,6 +13,7 @@ public class doctor : MonoBehaviour
     [Header("Animation")]
     public Animator animator;
     public string walkBoolName = "isWalk"; // Animator'daki parametre ismi (örnek: isWalk)
+    private string talkBoolName = "isTalking";
 
     private NavMeshAgent agent;
     private bool isChasing = false;
@@ -45,18 +46,18 @@ public class doctor : MonoBehaviour
         }
         if (isChasing && player != null)
         {
-            agent.SetDestination(player.position);
+            // 1. Hareketi durdur (Garanti olsun)
+            agent.isStopped = true;
+            animator.SetBool(walkBoolName, false);
 
-            // Hedefe yaklaşınca dur
-            if (Vector3.Distance(transform.position, player.position) <= stoppingDistance)
+            // 2. Oyuncuya doğru dön
+            Vector3 directionToPlayer = player.position - transform.position;
+            directionToPlayer.y = 0; // Y ekseninde dönmesin
+
+            if (directionToPlayer.sqrMagnitude > 0.01f) // Çok yakınsa dönmeyi durdur
             {
-                agent.isStopped = true;
-                animator.SetBool(walkBoolName, false);
-            }
-            else
-            {
-                agent.isStopped = false;
-                animator.SetBool(walkBoolName, true);
+                Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * agent.angularSpeed);
             }
         }
     }
@@ -65,9 +66,24 @@ public class doctor : MonoBehaviour
     public void ActivateChase(Transform target)
     {
         player = target;
-        isChasing = true;
-        agent.isStopped = false;
-        animator.SetBool(walkBoolName, true);
-        Debug.Log($"{name} player'ı fark etti ve yürümeye başladı!");
+        isChasing = true; 
+
+       
+        agent.isStopped = true;
+
+       
+        animator.SetBool(walkBoolName, false);
+
+        Debug.Log($"{name} player'ı fark etti ve YERİNDE DURUYOR!");
+
+        
+    }
+
+    public void SetTalking(bool isTalking)
+    {
+        if (animator != null)
+        {
+            animator.SetBool(talkBoolName, isTalking);
+        }
     }
 }
