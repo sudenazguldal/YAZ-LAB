@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PressKeyOpenDoor : MonoBehaviour
 {
+    [HideInInspector] public bool isOpened = false;
+
     [Header("UI & References")]
     public GameObject instructionUI;     // “Press E to open” yazısı
     public Animator doorAnimator;        // Kapı animatörü (her kapıya özgü)
@@ -27,11 +29,24 @@ public class PressKeyOpenDoor : MonoBehaviour
 
     public EnemySpawner spawner;
 
+    
     void Start()
     {
         if (instructionUI != null)
             instructionUI.SetActive(false);
     }
+
+    /*private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player")) 
+        {
+            if (!isWalking) 
+            {
+                isWalking=true;
+            }
+        }
+        
+    }*/
 
     /*void OnTriggerEnter(Collider other)
     {
@@ -46,6 +61,9 @@ public class PressKeyOpenDoor : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            // Eğer kapı zaten açıksa hiç işlem yapma
+            if (isOpened) return;
+
             player = other.transform;
 
             if (instructionUI != null)
@@ -74,7 +92,7 @@ public class PressKeyOpenDoor : MonoBehaviour
 
     void Update()
     {
-        if (canOpen && Input.GetKeyDown(KeyCode.E))
+        if (canOpen && !isOpened && Input.GetKeyDown(KeyCode.E))
         {
             OpenDoor();
         }
@@ -97,6 +115,8 @@ public class PressKeyOpenDoor : MonoBehaviour
 
     void OpenDoor()
     {
+        if (isOpened) return; // Kapı zaten açık, hiçbir şey yapma
+
         if (doorAnimator != null)
         {
             doorAnimator.Play(animationName);
@@ -112,15 +132,21 @@ public class PressKeyOpenDoor : MonoBehaviour
         if (triggerZone != null)
             triggerZone.SetActive(false);
 
-
-
-
         canOpen = false;
 
         if (MainDoor && spawner != null)
         {
             spawner.SpawnAllEnemies();
+
+            // ✅ enemiesSpawned true yap
+            var saveData = FindObjectOfType<PlayerSaveData>();
+            if (saveData != null)
+            {
+                saveData.enemiesSpawned = true;
+                Debug.Log("💾 enemiesSpawned TRUE yapıldı!");
+            }
         }
+
 
         if (isSideDoor && targetEnemy != null)
         {
@@ -131,6 +157,9 @@ public class PressKeyOpenDoor : MonoBehaviour
         {
             Debug.LogWarning(" targetEnemy atanmamış veya SideDoor false!");
         }
+
+        isOpened = true; 
+
 
     }
 }

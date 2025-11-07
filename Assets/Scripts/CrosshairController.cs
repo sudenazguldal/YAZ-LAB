@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
 public class CrosshairController : MonoBehaviour
@@ -27,7 +27,7 @@ public class CrosshairController : MonoBehaviour
             crosshairImage.rectTransform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         else
         {
-            // Diðer crosshair'lar için normal ölçek
+            // DiÃ°er crosshair'lar iÃ§in normal Ã¶lÃ§ek
             crosshairImage.rectTransform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
         }
     }

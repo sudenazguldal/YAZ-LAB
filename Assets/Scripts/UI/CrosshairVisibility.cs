@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
 public class CrosshairVisibilityUI : MonoBehaviour
@@ -8,12 +8,12 @@ public class CrosshairVisibilityUI : MonoBehaviour
     void Start()
     {
         crosshairImage = GetComponent<Image>();
-        crosshairImage.enabled = false; // oyun baþýnda gizli
+        crosshairImage.enabled = false; // oyun baÃ¾Ã½nda gizli
     }
 
     void Update()
     {
-        bool isAiming = Input.GetButton("Fire2"); // sað týk (niþan)
+        bool isAiming = Input.GetButton("Fire2"); // saÃ° tÃ½k (niÃ¾an)
         crosshairImage.enabled = isAiming;
     }
 }

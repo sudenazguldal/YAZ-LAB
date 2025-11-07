@@ -10,11 +10,16 @@ public class MainMenu : MonoBehaviour
     public GameObject CanvasSettings;    // Canvas Settings
     public GameObject SettingsPanel;     // SettingsPanel
 
+
     void Start()
     {
         //  Oyun her zaman ana menüden başlasın
         if (CanvasMainMenu != null) CanvasMainMenu.SetActive(true);
         if (CanvasSettings != null) CanvasSettings.SetActive(false);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
     }
 
     public void ContinueGame()

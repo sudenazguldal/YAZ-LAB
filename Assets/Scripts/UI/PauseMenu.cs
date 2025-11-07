@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Esper.ESave;
@@ -11,7 +11,7 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Fade Settings")]
     public float fadeDuration = 0.4f;
-    public float buttonStaggerDelay = 0.05f; // butonlar arası gecikme
+    public float buttonStaggerDelay = 0.05f; // butonlar arasÄ± gecikme
 
     public static bool GameIsPaused = false;
     public Animator animator;
@@ -32,14 +32,17 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = false;
         animator.Play("FadeOut");
 
+        //  Ä°mleci gizle ve ortada kilitle
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void Restart()
-    {// Kayıt dosyasını sil (FileDeleter.cs görüntüsüne göre bu metot doğru yolu siliyor)
+    {// KayÄ±t dosyasÄ±nÄ± sil (FileDeleter.cs gÃ¶rÃ¼ntÃ¼sÃ¼ne gÃ¶re bu metot doÄŸru yolu siliyor)
         FileDeleter.DeleteMainSave();
 
         Time.timeScale = 1f;
-        // Mevcut sahneyi yeniden yükle
+        // Mevcut sahneyi yeniden yÃ¼kle
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
@@ -65,6 +68,9 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = true;
         animator.Play("FadeIn");
 
+        // ğŸ”¹ Ä°mleci gÃ¶rÃ¼nÃ¼r ve serbest yap
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     IEnumerator FadeCanvas(bool fadeIn)
@@ -73,7 +79,7 @@ public class PauseMenu : MonoBehaviour
         float end = fadeIn ? 1 : 0;
         float elapsed = 0f;
 
-        // Eğer açılıyorsa alpha 0'dan başla ama aktif kal
+        // EÄŸer aÃ§Ä±lÄ±yorsa alpha 0'dan baÅŸla ama aktif kal
         canvasGroup.alpha = start;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
@@ -88,7 +94,7 @@ public class PauseMenu : MonoBehaviour
 
         canvasGroup.alpha = end;
 
-        // Eğer kapanıyorsa input'u kapat
+        // EÄŸer kapanÄ±yorsa input'u kapat
         if (!fadeIn)
         {
             canvasGroup.interactable = false;
