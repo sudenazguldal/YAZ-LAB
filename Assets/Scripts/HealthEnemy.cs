@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.AI;
 
@@ -10,8 +10,8 @@ public class HealthEnemy : MonoBehaviour
 {
     [Header("Health Settings")]
     public float maxHealth = 100f;
-   
-   
+
+
     [SerializeField]
     private float currentHealth;
 
@@ -25,7 +25,7 @@ public class HealthEnemy : MonoBehaviour
     private string dieTriggerName = "isdie";
 
     public Animator animator;
-    
+
 
     public bool isDead = false;
 
@@ -58,9 +58,9 @@ public class HealthEnemy : MonoBehaviour
 
         onHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        //(SADECE EDITOR'DE GÜNCELLEMEK ÝÇÝN)
+        //(SADECE EDITOR'DE Gï¿½NCELLEMEK ï¿½ï¿½ï¿½N)
 #if UNITY_EDITOR
-       
+
         if (EditorUtility.IsDirty(this))
         {
             EditorUtility.SetDirty(this);
@@ -86,15 +86,15 @@ public class HealthEnemy : MonoBehaviour
             if (col != null)
                 col.enabled = false;
         }
-        
+
 
         if (animator != null)
             animator.SetTrigger(dieTriggerName);
-        
+
         onDeath?.Invoke();
         OnEnemyDeath?.Invoke(this);
 
         Destroy(gameObject, destroyDelay);
     }
 
-    }
+}

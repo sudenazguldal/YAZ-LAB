@@ -60,6 +60,7 @@ public class PressKeyOpenDoor : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            if(isOpened) return;
             player = other.transform;
 
             if (instructionUI != null)
@@ -69,6 +70,7 @@ public class PressKeyOpenDoor : MonoBehaviour
             
         }
     }
+   
 
     void OnTriggerExit(Collider other)
     {
@@ -163,6 +165,8 @@ public class PressKeyOpenDoor : MonoBehaviour
 
     void OpenDoor()
     {
+
+        if(isOpened )return;
         if (doorAnimator != null)
         {
             doorAnimator.Play(animationName);
@@ -203,6 +207,7 @@ public class PressKeyOpenDoor : MonoBehaviour
             {
                 spawner.SpawnAllEnemies(); 
             }
+            
             var saveData = FindObjectOfType<PlayerSaveData>();
             if (saveData != null)
             {
