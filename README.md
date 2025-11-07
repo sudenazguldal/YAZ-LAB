@@ -117,7 +117,53 @@ Aşağıda *Project: Macula* oyununda kullanılan temel sistem bileşenleri ve a
 | **Düşman Türleri** | Çoklu Türler (Warden, Gorgon, Doktor vb.)          | Çoklu Türler                            | Çoklu Türler                      | Çoklu Türler                   | Çoklu Türler                  |
 | **Ses Sistemi**    | Dinamik 3D + 2D Müzik *(Atmosfer ve Müzik Geçişi)* | 3D Çevresel (Binaural)                  | 3D Çevresel                       | 3D Çevresel                    | 3D Çevresel                   |
 
-+ Modern video oyunlarında "Settings" menüsü yalnızca temel ses ve görüntü ayarlarını içermekle kalmaz; aynı zamanda oyuncu deneyimini kişiselleştirmeye yönelik erişilebilirlik, kontrol ve arayüz özelleştirme seçeneklerini de sunar. Özellikle Resident Evil 2 Remake gibi AAA yapımlar, kullanıcıların oyun içi zorluk seviyesinden nişangah görünümüne kadar birçok detayı düzenlemesine olanak tanımaktadır.
-+ Oyun geliştirme literatüründe, sık tekrar eden nesnelerin (örneğin düşmanlar veya mermiler) sürekli oluşturulup silinmesi performans kaybına yol açabilir. Bu nedenle "Object Pooling" (nesne havuzu) yöntemi, var olan nesneleri yeniden kullanarak Garbage Collector yükünü azaltmak için önerilmektedir.
-Projemizde bu sistem henüz uygulanmamıştır; havuz mantığı kullanılarak respawn işlemleri daha verimli hale getirilebilir.
+## Projemizin Farklılıkları ve Katkıları 
 
+### 1. Basitleştirilmiş ve Anlaşılır AI Sistemi
+Literatürde yer alan karmaşık Behavior Tree (Davranış Ağacı) sistemleri yerine, anlaşılması ve yönetilmesi daha kolay olan FSM (Finite State Machine – Sonlu Durum Makinesi) yaklaşımı kullanılmıştır.
+Bu yöntem, özellikle Unity öğrenen öğrenciler ve yeni başlayan geliştiriciler için daha erişilebilir ve öğretici bir yapı sunmaktadır.
+
+🔹  Resident Evil 2 Remake ve The Last of Us gibi AAA oyunlarda karmaşık davranış ağaçları kullanılırken, projemiz öğretici amaçla sadeleştirilmiş bir FSM sistemini tercih etmiştir.
+
+### 2. Eğitim Odaklı ve Modüler Yapı
+Her sistem (PlayerController, PlayerShooting, InventoryCollector, UIManager vb.) kendi sorumluluğunu bilen bağımsız component (bileşen) olarak tasarlanmıştır.
+Bu yapı, Component-Based Architecture prensiplerini doğrudan göstermekte ve gelecekte yapılacak yeni mekanik eklemeleri için kolaylık sağlamaktadır.
+
+🔹  Bu sayede oyun, Silent Hill 2 Remake gibi büyük ölçekli yapılara benzer bir organizasyon modelini eğitim ortamına uygun şekilde örneklemektedir.
+
+### 3. Esnek Kontrol Mekanikleri
+Projemiz, oyuncu konforunu (Quality of Life) ön planda tutarak, siper alma mekaniği için hem
+* Toggle (Bas-Çek – C tuşu)
+* Hold (Basılı Tut – Ctrl tuşu)
+seçeneklerini aynı anda destekler.
+Bu esneklik, türün birçok örneğinde bulunmayan bir kullanıcı deneyimi sağlamaktadır.
+
+🔹 Bu özellik, The Last of Us ve Resident Evil 2 Remake gibi modern TPS oyunlarında dahi nadir görülen bir çift kontrol seçeneği sunar.
+
+### 4. Settings Ayarları 
+Modern oyunlarda “Settings” menüsü yalnızca ses ve grafik ayarlarını değil, erişilebilirlik ve kişiselleştirme seçeneklerini de içerir.
+Projemizde:
+* Ses Kontrolleri: Master, Müzik, SFX ayrı ayrı ayarlanabilir.
+* Görüntü Kalitesi: Kalite seviyeleri ve tam ekran seçenekleri.
+* Kontrol Hassasiyeti: Nişangah (crosshair) tipi seçimi ve aim hassasiyeti ayarları.
+
+🔹 Bu yapı, Resident Evil 2 Remake gibi AAA oyunların menü sistemlerinden ilham alarak sadeleştirilmiş bir versiyon olarak tasarlanmıştır.
+
+### 5. Sık Tekrar Eden Nesneler
+ Oyun geliştirme literatüründe, sık tekrar eden nesnelerin (örneğin düşmanlar veya mermiler) sürekli oluşturulup silinmesi performans kaybına yol açabilir.
+Bu nedenle Object Pooling (Nesne Havuzu) yöntemi önerilmektedir.
+Projemizde bu sistem henüz uygulanmamıştır; ancak ilerleyen aşamalarda havuz mantığı ile respawn işlemleri daha verimli hale getirilebilir.
+
+🔹 Bu, The Evil Within gibi çok düşman içeren sahnelerde kullanılan optimizasyon tekniklerinin sadeleştirilmiş versiyonudur.
+
+### 6. Harita ve Atmosfer Tasarımı
+Proje, Resident Evil 2 ve Silent Hill 2’deki gibi kapalı, baskılayıcı mekân hissi yaratmayı amaçlamaktadır.
+Yalnızca “Korku Konağı” gibi küçük ama detaylı bir alan tasarımıyla, narratif yoğunluk (hikaye odaklı deneyim) ön plana çıkarılmıştır.
+
+🔹 Küçük alan + yüksek detay, performansı artırırken atmosfer derinliğini korur.
+
+### 7. Ses ve Müzik Sistemi
+Projemiz, 2D arka plan müziği ile 3D çevresel ses sistemini birleştirir.
+Oyun içi müzik geçişleri, oyuncunun bulunduğu alana ve duruma göre dinamik olarak değişmektedir.
+
+🔹 Bu yaklaşım, AAA oyunlardaki karmaşık “adaptive audio” sisteminin basitleştirilmiş bir eğitim versiyonudur.
