@@ -106,6 +106,17 @@ Aşağıda *Project: Macula* oyununda kullanılan temel sistem bileşenleri ve a
 + Settings kısımındaki ses sliderleri için başta aralık olarak -80dB 0dB aldım. Fakat ses henüz %75'teyken 0'landığı için desibeli -20'ye çekmeye karar verdim. İyi bir karardı.
 * ### MERGE
 ## Literatür Taraması 
+| **Özellik**        | **Projemiz (Project: Macula)**                     | **Resident Evil 2 (Remake)**            | **Silent Hill 2 (Remake)**        | **The Evil Within**            | **The Last of Us (Part I)**   |
+| ------------------ | -------------------------------------------------- | --------------------------------------- | --------------------------------- | ------------------------------ | ----------------------------- |
+| **Oyun Motoru**    | Unity 6                                            | RE Engine                               | Unreal Engine 5                   | id Tech 5 (Modifiye)           | Naughty Dog Engine            |
+| **Ana Tema**       | Psikolojik Gerilim (Deney, Travma)                 | Hayatta Kalma Korkusu (Biyolojik Silah) | Psikolojik Korku (Kişisel Travma) | Psikolojik Korku (Görsel/Gore) | Hayatta Kalma (Anlatı Odaklı) |
+| **Kamera**         | TPS (Omuz Üstü Aim)                                | TPS (Omuz Üstü Aim)                     | TPS (Omuz Üstü)                   | TPS (Omuz Üstü)                | TPS (Omuz Üstü)               |
+| **AI Sistemi**     | FSM + NavMesh                                      | Gelişmiş FSM / Davranışsal              | FSM                               | FSM + Behavior Tree            | Gelişmiş FSM / Davranışsal    |
+| **Pathfinding**    | NavMesh                                            | NavMesh (Özel)                          | NavMesh                           | NavMesh                        | NavMesh                       |
+| **Harita Yapısı**  | Kapalı Mekan (Korku Konağı)                        | Kapalı Mekan (Lineer İlerleme)          | Yarı-Açık Dünya (Kasaba)          | Bölüm Bazlı (Lineer)           | Geniş Lineer (Wide–Linear)    |
+| **Düşman Türleri** | Çoklu Türler (Warden, Gorgon, Doktor vb.)          | Çoklu Türler                            | Çoklu Türler                      | Çoklu Türler                   | Çoklu Türler                  |
+| **Ses Sistemi**    | Dinamik 3D + 2D Müzik *(Atmosfer ve Müzik Geçişi)* | 3D Çevresel (Binaural)                  | 3D Çevresel                       | 3D Çevresel                    | 3D Çevresel                   |
+
 + Modern video oyunlarında "Settings" menüsü yalnızca temel ses ve görüntü ayarlarını içermekle kalmaz; aynı zamanda oyuncu deneyimini kişiselleştirmeye yönelik erişilebilirlik, kontrol ve arayüz özelleştirme seçeneklerini de sunar. Özellikle Resident Evil 2 Remake gibi AAA yapımlar, kullanıcıların oyun içi zorluk seviyesinden nişangah görünümüne kadar birçok detayı düzenlemesine olanak tanımaktadır.
 + Oyun geliştirme literatüründe, sık tekrar eden nesnelerin (örneğin düşmanlar veya mermiler) sürekli oluşturulup silinmesi performans kaybına yol açabilir. Bu nedenle "Object Pooling" (nesne havuzu) yöntemi, var olan nesneleri yeniden kullanarak Garbage Collector yükünü azaltmak için önerilmektedir.
 Projemizde bu sistem henüz uygulanmamıştır; havuz mantığı kullanılarak respawn işlemleri daha verimli hale getirilebilir.
