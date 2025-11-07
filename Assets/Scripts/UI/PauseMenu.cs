@@ -32,6 +32,9 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = false;
         animator.Play("FadeOut");
 
+        Cursor.visible = false;                 // imleci gizle
+        Cursor.lockState = CursorLockMode.Locked; // imleci ekranýn ortasýna kilitle
+
     }
 
     public void Restart()
@@ -64,6 +67,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         GameIsPaused = true;
         animator.Play("FadeIn");
+        Cursor.visible = false;                 // imleci gizle
+        Cursor.lockState = CursorLockMode.Locked; // imleci ekranýn ortasýna kilitle
 
     }
 

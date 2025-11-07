@@ -85,19 +85,6 @@ public class PlayerSaveData : MonoBehaviour
             return;
         }
 
-        zombies.RemoveAll(z => z == null);
-
-        // Sahnedeki tüm aktif HealthEnemy bileşenlerini bul
-        var allEnemiesInScene = FindObjectsOfType<HealthEnemy>();
-        foreach (var enemy in allEnemiesInScene)
-        {
-            // Eğer bu düşman zaten listede yoksa, onu listeye ekle
-            if (!zombies.Contains(enemy))
-            {
-                zombies.Add(enemy);
-                Debug.Log($"Kaydedilecek zombi listesine yeni eklendi: {enemy.name}");
-            }
-        }
 
         Vector3 pos = transform.position;
 
